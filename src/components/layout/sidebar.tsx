@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { WIZARD_STEPS, useCaseStore, type WizardStep } from "@/store/case-store";
 import {
   getWorkflowSteps,
+  getFirstActiveStep,
   isStepInWorkflow,
   type WorkflowMode,
 } from "@/lib/wizard-steps";
@@ -83,9 +84,10 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
   ];
 
   const handleModeChange = (mode: WorkflowMode) => {
+    if (mode === workflowMode) return;
     setWorkflowMode(mode);
     if (!isStepInWorkflow(activeStep, mode)) {
-      setActiveStep(mode === "quick" ? "current" : "current");
+      setActiveStep(getFirstActiveStep(mode, input));
     }
   };
 
@@ -121,6 +123,11 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
             Full
           </Button>
         </div>
+        <p className="mt-2 text-[11px] leading-snug text-muted-foreground">
+          {workflowMode === "quick"
+            ? "3 setup steps → dashboard"
+            : "8 setup steps + full analysis"}
+        </p>
       </div>
       <nav className="flex-1 overflow-y-auto p-4">
         {groups.map((group) => (

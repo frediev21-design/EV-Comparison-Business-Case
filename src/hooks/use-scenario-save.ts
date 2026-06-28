@@ -9,7 +9,8 @@ import { showToast } from "@/lib/toast";
 
 export function useScenarioSave() {
   return useCallback(async (options?: { toast?: boolean; message?: string }) => {
-    const { input, caseId, caseName, tags, setCaseId, setLastSavedAt } = useCaseStore.getState();
+    const { input, caseId, caseName, tags, workflowMode, setCaseId, setLastSavedAt } =
+      useCaseStore.getState();
     const now = new Date().toISOString();
     const id = caseId ?? crypto.randomUUID();
     const existing = caseId ? await scenarioRepository.get(caseId) : undefined;
@@ -20,6 +21,7 @@ export function useScenarioSave() {
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
       snapshot: snapshotForSave(input),
+      workflowMode,
     };
     await scenarioRepository.save(record);
     setCaseId(id);

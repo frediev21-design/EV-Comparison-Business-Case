@@ -37,7 +37,7 @@ export function WizardNav({ step }: WizardNavProps) {
   return (
     <div className="space-y-3 border-t border-border pt-4">
       {!stepReady && (
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground" role="status" aria-live="polite">
           {getStepIncompleteHint(step, input)}
         </p>
       )}

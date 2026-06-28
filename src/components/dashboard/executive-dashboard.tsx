@@ -25,6 +25,7 @@ import { DecisionTimeline } from "@/components/decision/decision-timeline";
 import { DecisionAdvisor } from "@/components/decision/decision-advisor";
 import { InfographicPromptPanel } from "./infographic-prompt-panel";
 import { RecommendationSummaryCopyButton } from "./recommendation-summary-panel";
+import { QuickModeDefaultsBanner } from "./quick-mode-defaults-banner";
 
 export function ExecutiveDashboard() {
   const input = useCaseStore((s) => s.input);
@@ -42,6 +43,7 @@ export function ExecutiveDashboard() {
   return (
     <div className="space-y-8">
       <ValidationAlerts messages={validationMessages} />
+      <QuickModeDefaultsBanner />
       <div>
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>

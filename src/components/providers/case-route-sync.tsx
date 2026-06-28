@@ -49,7 +49,12 @@ export function CaseRouteSync() {
         return;
       }
       setRouteCaseMissing(false);
-      loadCase(record.snapshot, { id: record.id, name: record.name, tags: record.tags });
+      loadCase(record.snapshot, {
+        id: record.id,
+        name: record.name,
+        tags: record.tags,
+        workflowMode: record.workflowMode ?? "full",
+      });
       setLastSavedAt(record.updatedAt);
     });
   }, [pathname, caseId, loadCase, setLastSavedAt, setRouteCaseMissing]);

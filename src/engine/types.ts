@@ -249,6 +249,8 @@ export interface BusinessCaseResult {
   decision: DecisionIntelligence;
 }
 
+export type SavedWorkflowMode = "quick" | "full";
+
 export interface ScenarioRecord {
   id: string;
   name: string;
@@ -256,4 +258,6 @@ export interface ScenarioRecord {
   createdAt: string;
   updatedAt: string;
   snapshot: BusinessCaseInput;
+  /** Persisted wizard path — defaults to full for older saves. */
+  workflowMode?: SavedWorkflowMode;
 }

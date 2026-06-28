@@ -33,11 +33,13 @@ export function CurrentVehicleStep() {
   return (
     <div className="space-y-8">
       <ValidationAlerts messages={validationMessages} step="current" />
-      <FormSection title="Current Vehicle" description="Enter your existing vehicle — loan instalment, fuel use, and trade value. Running costs are calculated separately from your repayment.">
+      <FormSection
+        title="Vehicle essentials"
+        description="Required to continue — loan repayment, fuel use, and daily distance."
+      >
         <FormField label="Manufacturer" value={current.manufacturer} onChange={(v) => updateCurrent({ manufacturer: v })} />
         <FormField label="Model" value={current.model} onChange={(v) => updateCurrent({ model: v })} />
         <FormField label="Year" type="number" value={current.year} onChange={(v) => updateCurrent({ year: int(v) })} />
-        <FormField label="Mileage (km)" type="number" value={current.mileage} onChange={(v) => updateCurrent({ mileage: num(v) })} />
         <FormField label="Current Value" type="number" prefix="R" value={current.currentValue} onChange={(v) => updateCurrent({ currentValue: num(v), tradeInValue: num(v) })} />
         <FormField label="Outstanding Finance" type="number" prefix="R" value={current.outstandingFinance} onChange={(v) => updateCurrent({ outstandingFinance: num(v) })} />
         <FormField
@@ -50,6 +52,11 @@ export function CurrentVehicleStep() {
         />
         <FormSelect label="Fuel Type" value={current.fuelType} options={FUEL_OPTIONS} onChange={(v) => updateCurrent({ fuelType: v as typeof current.fuelType })} />
         <FormField label="Fuel Consumption" type="number" suffix="L/100km" value={current.fuelConsumption} onChange={(v) => updateCurrent({ fuelConsumption: num(v) })} step={0.1} />
+        <FormField label="Daily Distance" type="number" suffix="km/day" value={assumptions.dailyDistanceKm} onChange={(v) => updateAssumptions({ dailyDistanceKm: num(v) })} min={1} max={300} />
+      </FormSection>
+
+      <FormSection title="Additional details" description="Optional — improves accuracy of running costs and trade-in.">
+        <FormField label="Mileage (km)" type="number" value={current.mileage} onChange={(v) => updateCurrent({ mileage: num(v) })} />
         <FormField
           label="Fuel Price"
           type="number"
@@ -64,9 +71,7 @@ export function CurrentVehicleStep() {
         <FormField label="Tyres (annual)" type="number" prefix="R" value={current.tyres} onChange={(v) => updateCurrent({ tyres: num(v) })} />
         <FormField label="Licence (annual)" type="number" prefix="R" value={current.licence} onChange={(v) => updateCurrent({ licence: num(v) })} />
         <FormField label="Expected Annual Repairs" type="number" prefix="R" value={current.expectedAnnualRepairs} onChange={(v) => updateCurrent({ expectedAnnualRepairs: num(v) })} />
-        <FormField label="Trade-In Value" type="number" prefix="R" value={current.tradeInValue} onChange={(v) => updateCurrent({ tradeInValue: num(v), currentValue: num(v) })} />
         <FormField label="Residual Value" type="number" prefix="R" value={current.residualValue} onChange={(v) => updateCurrent({ residualValue: num(v) })} />
-        <FormField label="Daily Distance" type="number" suffix="km/day" value={assumptions.dailyDistanceKm} onChange={(v) => updateAssumptions({ dailyDistanceKm: num(v) })} min={10} max={300} />
         <FormField label="Fleet Size" type="number" suffix="vehicles" value={assumptions.fleetVehicleCount} onChange={(v) => updateAssumptions({ fleetVehicleCount: Math.max(1, int(v)) })} min={1} max={100} />
       </FormSection>
 

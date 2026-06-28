@@ -30,7 +30,7 @@ interface CaseCardProps {
 
 export function CaseCard({ scenario, onDelete }: CaseCardProps) {
   const preview = previewScenario(scenario.snapshot);
-  const resumeStep = getResumeStep(scenario.snapshot);
+  const resumeStep = getResumeStep(scenario.snapshot, scenario.workflowMode ?? "full");
   const href = `/case/${scenario.id}?step=${resumeStep}`;
   const updatedAgo = formatDistanceToNow(new Date(scenario.updatedAt), { addSuffix: true });
 

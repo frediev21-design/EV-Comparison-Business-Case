@@ -1,5 +1,7 @@
+import type { BusinessCaseInput } from "@/engine/types";
 import type { WizardStep } from "@/store/case-store";
 import { WIZARD_STEPS } from "@/store/case-store";
+import { isStepComplete } from "@/lib/wizard-validation";
 
 export type WorkflowMode = "quick" | "full";
 
@@ -53,4 +55,11 @@ export function getStepLabel(step: WizardStep): string {
 
 export function hasWhatIfOverrides(whatIf: object | undefined): boolean {
   return !!whatIf && Object.keys(whatIf).length > 0;
+}
+
+/** First incomplete step in the active workflow, or dashboard when setup is done. */
+export function getFirstActiveStep(mode: WorkflowMode, input: BusinessCaseInput): WizardStep {
+  const steps = getWorkflowSteps(mode);
+  const incomplete = steps.find((step) => !isStepComplete(step, input));
+  return incomplete ?? "dashboard";
 }

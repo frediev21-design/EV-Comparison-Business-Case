@@ -122,7 +122,12 @@ export function ScenarioManager() {
   const handleLoad = async (id: string) => {
     const record = await scenarioRepository.get(id);
     if (record) {
-      loadCase(record.snapshot, { id: record.id, name: record.name, tags: record.tags });
+      loadCase(record.snapshot, {
+        id: record.id,
+        name: record.name,
+        tags: record.tags,
+        workflowMode: record.workflowMode ?? "full",
+      });
     }
   };
 

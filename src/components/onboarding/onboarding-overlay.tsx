@@ -25,7 +25,15 @@ export function OnboardingOverlay() {
 
   const startQuick = () => {
     setWorkflowMode("quick");
-    useCaseStore.getState().resetCase();
+    const { input } = useCaseStore.getState();
+    const hasData =
+      !!input.current.manufacturer.trim() ||
+      !!input.current.model.trim() ||
+      input.current.currentValue > 0 ||
+      input.replacements.length > 0;
+    if (!hasData) {
+      useCaseStore.getState().resetCase();
+    }
     setActiveStep("current");
     dismiss();
   };

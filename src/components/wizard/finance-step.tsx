@@ -4,16 +4,45 @@ import { useCaseStore, useSelectedFinance } from "@/store/case-store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/format";
+import { ArrowRight, Car } from "lucide-react";
 
 export function FinanceStep() {
   const selectedId = useCaseStore((s) => s.input.selectedReplacementId);
   const replacements = useCaseStore((s) => s.input.replacements);
   const updateReplacement = useCaseStore((s) => s.updateReplacement);
+  const setActiveStep = useCaseStore((s) => s.setActiveStep);
   const finance = useSelectedFinance();
   const vehicle = replacements.find((v) => v.id === selectedId);
 
-  if (!vehicle || !finance) return null;
+  if (!vehicle || !finance) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-lg font-semibold">Finance Engine</h2>
+          <p className="text-sm text-muted-foreground">
+            Adjust interest rate and finance term once you have a replacement vehicle selected.
+          </p>
+        </div>
+        <Card className="border-dashed">
+          <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
+            <Car className="h-10 w-10 text-muted-foreground" />
+            <div>
+              <p className="font-medium">No replacement vehicle yet</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Add or select a new vehicle before configuring finance.
+              </p>
+            </div>
+            <Button onClick={() => setActiveStep("replacement")}>
+              Go to New Vehicle
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

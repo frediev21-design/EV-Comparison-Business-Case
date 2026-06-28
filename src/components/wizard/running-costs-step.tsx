@@ -2,6 +2,7 @@
 
 import { useCaseStore } from "@/store/case-store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FormField, FormSection } from "./form-field";
 import { formatCurrency } from "@/lib/format";
 import type { RunningCostBreakdown } from "@/engine/types";
 
@@ -43,18 +44,58 @@ function CostTable({ title, costs }: { title: string; costs: RunningCostBreakdow
 
 export function RunningCostsStep() {
   const running = useCaseStore((s) => s.result.running);
+  const assumptions = useCaseStore((s) => s.input.assumptions);
   const selectedId = useCaseStore((s) => s.input.selectedReplacementId);
+  const updateAssumptions = useCaseStore((s) => s.updateAssumptions);
   const selectedName = useCaseStore((s) =>
     s.input.replacements.find((v) => v.id === selectedId)?.name ?? "Replacement"
   );
   const selectedRunning = running.replacements[selectedId];
 
+  const num = (v: string) => parseFloat(v) || 0;
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-lg font-semibold">Running Costs</h2>
-        <p className="text-sm text-muted-foreground">Annual operating cost comparison.</p>
+        <p className="text-sm text-muted-foreground">
+          Adjust key assumptions, then compare annual operating costs side by side.
+        </p>
       </div>
+
+      <FormSection
+        title="Cost assumptions"
+        description="These drive fuel, electricity, and distance-based calculations."
+      >
+        <FormField
+          label="Daily distance"
+          type="number"
+          suffix="km/day"
+          value={assumptions.dailyDistanceKm}
+          onChange={(v) => updateAssumptions({ dailyDistanceKm: num(v) })}
+          min={1}
+          max={300}
+        />
+        <FormField
+          label="Fuel price"
+          type="number"
+          prefix="R"
+          suffix="/L"
+          value={assumptions.fuelPricePerLitre}
+          onChange={(v) => updateAssumptions({ fuelPricePerLitre: num(v) })}
+          step={0.1}
+        />
+        <FormField
+          label="Electricity tariff"
+          type="number"
+          prefix="R"
+          suffix="/kWh"
+          value={assumptions.electricityTariff}
+          onChange={(v) => updateAssumptions({ electricityTariff: num(v) })}
+          step={0.01}
+        />
+      </FormSection>
+
       <div className="grid gap-6 lg:grid-cols-2">
         <CostTable title="Current Vehicle" costs={running.current} />
         {selectedRunning && <CostTable title={selectedName} costs={selectedRunning} />}

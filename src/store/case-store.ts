@@ -74,7 +74,10 @@ interface CaseStore {
   updateReplacement: (id: string, partial: Partial<ReplacementVehicle>) => void;
   removeReplacement: (id: string) => void;
   selectReplacement: (id: string) => void;
-  loadCase: (input: BusinessCaseInput, meta?: { id?: string; name?: string; tags?: string[] }) => void;
+  loadCase: (
+    input: BusinessCaseInput,
+    meta?: { id?: string; name?: string; tags?: string[]; workflowMode?: WorkflowMode }
+  ) => void;
   resetCase: () => void;
   setPresentationMode: (on: boolean) => void;
   setLastSavedAt: (iso: string | null) => void;
@@ -243,6 +246,7 @@ export const useCaseStore = create<CaseStore>((set) => ({
       caseId: meta?.id ?? null,
       caseName: meta?.name ?? "Loaded Scenario",
       tags: meta?.tags ?? [],
+      workflowMode: meta?.workflowMode ?? state.workflowMode,
       lastSavedAt: null,
       routeCaseMissing: false,
       inputGeneration: state.inputGeneration + 1,

@@ -24,4 +24,11 @@ describe("scenario-preview", () => {
     snapshot.current.model = "";
     expect(getResumeStep(snapshot)).toBe("current");
   });
+
+  it("resumes quick mode at replacement when current vehicle is complete", () => {
+    const snapshot = createDefaultBusinessCase();
+    snapshot.replacements = [];
+    snapshot.selectedReplacementId = "";
+    expect(getResumeStep(snapshot, "quick")).toBe("replacement");
+  });
 });

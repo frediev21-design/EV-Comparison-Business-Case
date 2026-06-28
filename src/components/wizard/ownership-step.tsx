@@ -3,6 +3,7 @@
 import { useCaseStore } from "@/store/case-store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FormField, FormSection } from "./form-field";
 import { formatCurrency } from "@/lib/format";
 import type { OwnershipHorizon } from "@/engine/types";
 
@@ -47,6 +48,8 @@ function HorizonTable({ horizons }: { horizons: OwnershipHorizon[] }) {
 
 export function OwnershipStep() {
   const ownership = useCaseStore((s) => s.result.ownership);
+  const current = useCaseStore((s) => s.input.current);
+  const updateCurrent = useCaseStore((s) => s.updateCurrent);
   const selectedId = useCaseStore((s) => s.input.selectedReplacementId);
   const selectedName = useCaseStore((s) =>
     s.input.replacements.find((v) => v.id === selectedId)?.name ?? "Replacement"
@@ -54,6 +57,7 @@ export function OwnershipStep() {
   const horizon = useCaseStore((s) => s.ownershipHorizon);
   const setHorizon = useCaseStore((s) => s.setOwnershipHorizon);
   const selectedHorizons = ownership.replacements[selectedId] ?? [];
+  const num = (v: string) => parseFloat(v) || 0;
 
   return (
     <div className="space-y-6">
@@ -61,6 +65,17 @@ export function OwnershipStep() {
         <h2 className="text-lg font-semibold">Ownership Cost</h2>
         <p className="text-sm text-muted-foreground">Total cost of ownership across multiple horizons.</p>
       </div>
+
+      <FormSection title="Resale assumptions" description="Expected value of your current vehicle at end of ownership.">
+        <FormField
+          label="Current vehicle residual value"
+          type="number"
+          prefix="R"
+          value={current.residualValue}
+          onChange={(v) => updateCurrent({ residualValue: num(v) })}
+          hint="Used in net ownership cost after resale."
+        />
+      </FormSection>
 
       <Tabs value={String(horizon)} onValueChange={(v) => setHorizon(Number(v) as 5 | 7 | 10)}>
         <TabsList>

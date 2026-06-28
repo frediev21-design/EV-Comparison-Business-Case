@@ -12,6 +12,7 @@ export function AutoSaveProvider({ children }: { children: React.ReactNode }) {
   const tags = useCaseStore((s) => s.tags);
   const input = useCaseStore((s) => s.input);
   const inputGeneration = useCaseStore((s) => s.inputGeneration);
+  const workflowMode = useCaseStore((s) => s.workflowMode);
   const setCaseId = useCaseStore((s) => s.setCaseId);
   const setLastSavedAt = useCaseStore((s) => s.setLastSavedAt);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -37,6 +38,7 @@ export function AutoSaveProvider({ children }: { children: React.ReactNode }) {
         createdAt: existing?.createdAt ?? now,
         updatedAt: now,
         snapshot: snapshotForSave(state.input),
+        workflowMode: state.workflowMode,
       };
       await scenarioRepository.save(record);
       if (generationAtStart !== useCaseStore.getState().inputGeneration) return;
@@ -78,6 +80,7 @@ export function AutoSaveProvider({ children }: { children: React.ReactNode }) {
         createdAt: now,
         updatedAt: now,
         snapshot: snapshotForSave(state.input),
+        workflowMode: state.workflowMode,
       };
       const existing = await scenarioRepository.get(state.caseId);
       if (existing) record.createdAt = existing.createdAt;
@@ -88,7 +91,7 @@ export function AutoSaveProvider({ children }: { children: React.ReactNode }) {
     }, 2000);
 
     return () => clearTimeout(timerRef.current);
-  }, [caseId, caseName, tags, input, inputGeneration, setLastSavedAt]);
+  }, [caseId, caseName, tags, input, inputGeneration, workflowMode, setLastSavedAt]);
 
   return <>{children}</>;
 }
