@@ -25,6 +25,7 @@ export function OnboardingOverlay() {
 
   const startQuick = () => {
     setWorkflowMode("quick");
+    useCaseStore.getState().resetCase();
     setActiveStep("current");
     dismiss();
   };

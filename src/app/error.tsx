@@ -24,7 +24,7 @@ export default function Error({
       <div className="flex gap-3">
         <Button onClick={reset}>Try again</Button>
         <Button variant="outline" asChild>
-          <Link href="/case/new">Open app</Link>
+          <Link href="/case/new?fresh=1">Open app</Link>
         </Button>
       </div>
     </div>

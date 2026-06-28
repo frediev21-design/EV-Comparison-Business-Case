@@ -10,7 +10,7 @@ export default function HomePage() {
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 lg:px-6">
           <span className="font-semibold tracking-tight">Fleet EV TCO</span>
           <Button variant="outline" size="sm" asChild>
-            <Link href="/case/new">Open app</Link>
+            <Link href="/case/new?fresh=1">Open app</Link>
           </Button>
         </div>
       </header>
@@ -27,7 +27,7 @@ export default function HomePage() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button size="lg" asChild>
-              <Link href="/case/new">
+              <Link href="/case/new?fresh=1">
                 Start free analysis
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>

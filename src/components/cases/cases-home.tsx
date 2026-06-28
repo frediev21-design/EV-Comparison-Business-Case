@@ -40,7 +40,7 @@ export function CasesHome() {
             Fleet EV TCO
           </Link>
           <Button asChild>
-            <Link href="/case/new">
+            <Link href="/case/new?fresh=1">
               <Plus className="mr-2 h-4 w-4" />
               New analysis
             </Link>
@@ -66,7 +66,7 @@ export function CasesHome() {
               Start a new comparison — your progress saves automatically as you complete each step.
             </p>
             <Button asChild className="mt-6" size="lg">
-              <Link href="/case/new">
+              <Link href="/case/new?fresh=1">
                 Start free analysis
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>

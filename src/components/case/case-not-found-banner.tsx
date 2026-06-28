@@ -28,7 +28,7 @@ export function CaseNotFoundBanner() {
           Dismiss
         </Button>
         <Button size="sm" asChild>
-          <Link href="/case/new">Start new analysis</Link>
+          <Link href="/case/new?fresh=1">Start new analysis</Link>
         </Button>
       </div>
     </div>
