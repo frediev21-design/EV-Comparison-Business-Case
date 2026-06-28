@@ -5,6 +5,7 @@ import { ThemeToggle } from "./theme-toggle";
 import { Menu, Presentation, SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { hasWhatIfOverrides } from "@/lib/wizard-steps";
+import { HeaderInvestmentScore, HeaderInvestmentScoreMobile } from "./header-investment-score";
 
 interface AppHeaderProps {
   onMenuClick?: () => void;
@@ -50,6 +51,8 @@ export function AppHeader({ onMenuClick }: AppHeaderProps) {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <HeaderInvestmentScoreMobile />
+          <HeaderInvestmentScore />
           <Button variant="outline" size="sm" className="hidden sm:flex" onClick={() => setPresentationMode(true)}>
             <Presentation className="mr-2 h-4 w-4" />
             Present
