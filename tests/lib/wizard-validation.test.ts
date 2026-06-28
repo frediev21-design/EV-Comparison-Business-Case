@@ -4,9 +4,9 @@ import { createDefaultBusinessCase } from "@/store/defaults";
 import { runFullBusinessCase } from "@/engine";
 
 describe("wizard validation", () => {
-  it("marks current step complete for default case", () => {
+  it("marks vehicles step complete for default case", () => {
     const input = createDefaultBusinessCase();
-    expect(isStepComplete("current", input)).toBe(true);
+    expect(isStepComplete("vehicles", input)).toBe(true);
   });
 
   it("warns when instalment looks like total monthly cost", () => {
@@ -21,7 +21,7 @@ describe("wizard validation", () => {
   it("reports data entry progress", () => {
     const input = createDefaultBusinessCase();
     const progress = getDataEntryProgress(input, "quick");
-    expect(progress.total).toBe(3);
+    expect(progress.total).toBe(2);
     expect(progress.completed).toBeGreaterThan(0);
   });
 });

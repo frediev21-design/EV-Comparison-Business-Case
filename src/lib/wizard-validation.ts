@@ -34,7 +34,7 @@ export function getCaseValidationMessages(
       severity: "warning",
       message:
         "Monthly loan instalment looks like total vehicle cost (fuel + maintenance included). Enter finance payment only — running costs are calculated separately.",
-      step: "current",
+      step: "vehicles",
     });
   }
 
@@ -62,7 +62,7 @@ export function getCaseValidationMessages(
       id: "missing-vehicle",
       severity: "error",
       message: "Enter manufacturer and model for the current vehicle.",
-      step: "current",
+      step: "vehicles",
     });
   }
 
@@ -71,32 +71,39 @@ export function getCaseValidationMessages(
       id: "no-replacement",
       severity: "error",
       message: "Add at least one replacement vehicle.",
-      step: "replacement",
+      step: "vehicles",
     });
   }
 
   return messages;
 }
 
+function isCurrentVehicleComplete(input: BusinessCaseInput): boolean {
+  const { current } = input;
+  return (
+    !!current.manufacturer.trim() &&
+    !!current.model.trim() &&
+    current.year > 1990 &&
+    current.currentValue > 0 &&
+    current.monthlyInstalment >= 0 &&
+    current.fuelConsumption > 0 &&
+    input.assumptions.dailyDistanceKm > 0
+  );
+}
+
+function isReplacementComplete(input: BusinessCaseInput): boolean {
+  return (
+    input.replacements.length > 0 &&
+    input.replacements.some((v) => v.price > 0 && !!v.name.trim())
+  );
+}
+
 export function isStepComplete(step: WizardStep, input: BusinessCaseInput): boolean {
   const { current } = input;
 
   switch (step) {
-    case "current":
-      return (
-        !!current.manufacturer.trim() &&
-        !!current.model.trim() &&
-        current.year > 1990 &&
-        current.currentValue > 0 &&
-        current.monthlyInstalment >= 0 &&
-        current.fuelConsumption > 0 &&
-        input.assumptions.dailyDistanceKm > 0
-      );
-    case "replacement":
-      return (
-        input.replacements.length > 0 &&
-        input.replacements.some((v) => v.price > 0 && !!v.name.trim())
-      );
+    case "vehicles":
+      return isCurrentVehicleComplete(input) && isReplacementComplete(input);
     case "trade-in":
       return current.currentValue > 0 && current.outstandingFinance >= 0;
     case "finance":
@@ -121,15 +128,16 @@ export function getStepIncompleteHint(step: WizardStep, input: BusinessCaseInput
   const { current } = input;
 
   switch (step) {
-    case "current":
-      if (!current.manufacturer.trim() || !current.model.trim()) return "Enter manufacturer and model.";
+    case "vehicles":
+      if (!current.manufacturer.trim() || !current.model.trim())
+        return "Enter manufacturer and model for your current vehicle.";
       if (current.year <= 1990) return "Enter a valid vehicle year.";
       if (current.currentValue <= 0) return "Enter current vehicle value.";
       if (current.fuelConsumption <= 0) return "Enter fuel consumption (L/100km).";
       if (input.assumptions.dailyDistanceKm <= 0) return "Enter daily distance (km/day).";
+      if (!isReplacementComplete(input))
+        return "Add at least one replacement vehicle with a name and price.";
       return "Complete the required fields above.";
-    case "replacement":
-      return "Add at least one replacement vehicle with a name and price.";
     case "trade-in":
       return "Enter current value and outstanding finance.";
     case "finance":

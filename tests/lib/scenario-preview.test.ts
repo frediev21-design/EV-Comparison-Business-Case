@@ -22,6 +22,6 @@ describe("scenario-preview", () => {
     const snapshot = createDefaultBusinessCase();
     snapshot.current.manufacturer = "";
     snapshot.current.model = "";
-    expect(getResumeStep(snapshot)).toBe("current");
+    expect(getResumeStep(snapshot)).toBe("vehicles");
   });
 });

@@ -34,8 +34,7 @@ export function WizardProgress() {
           const done = isStepComplete(step, input);
           const active = activeStep === step;
           const labels: Record<string, string> = {
-            current: "Current",
-            replacement: "New",
+            vehicles: "Vehicles",
             "trade-in": "Trade-In",
             finance: "Finance",
             "running-costs": "Running",

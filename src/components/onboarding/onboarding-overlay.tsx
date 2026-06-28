@@ -25,7 +25,7 @@ export function OnboardingOverlay() {
 
   const startQuick = () => {
     setWorkflowMode("quick");
-    setActiveStep("current");
+    setActiveStep("vehicles");
     dismiss();
   };
 
@@ -48,8 +48,8 @@ export function OnboardingOverlay() {
         </p>
         <ol className="mt-6 space-y-4">
           {[
-            { icon: Car, title: "Enter your current vehicle", text: "Loan instalment, fuel use, and trade value." },
-            { icon: BarChart3, title: "Pick a replacement", text: "BYD Shark 6 is pre-loaded — or add your own." },
+            { icon: Car, title: "Enter both vehicles", text: "Your current car and replacement side by side on one screen." },
+            { icon: BarChart3, title: "Trade-in & finance", text: "Deposit, equity, and loan terms — then review the dashboard." },
             { icon: ArrowRight, title: "Review the dashboard", text: "Monthly savings, payback, and investment score." },
           ].map(({ icon: Icon, title, text }) => (
             <li key={title} className="flex gap-3">
