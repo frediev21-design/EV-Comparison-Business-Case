@@ -7,6 +7,7 @@ import { getNextStep, type WorkflowMode } from "@/lib/wizard-steps";
 import { isStepComplete } from "@/lib/wizard-validation";
 import { useScenarioSave } from "@/hooks/use-scenario-save";
 import { DATA_ENTRY_STEP_IDS } from "@/lib/wizard-steps";
+import { showToast } from "@/lib/toast";
 
 function defaultCaseNameFromVehicle(manufacturer: string, model: string): string | null {
   const name = `${manufacturer} ${model}`.trim();
@@ -41,7 +42,8 @@ export function useWizardStepAdvance() {
             if (autoName) state.setCaseName(autoName);
           }
 
-          const record = await saveScenario();
+          const record = await saveScenario({ toast: false });
+          showToast("Progress saved", "success");
           const isNewRoute = pathname.endsWith("/case/new");
 
           if (isNewRoute && record.id) {

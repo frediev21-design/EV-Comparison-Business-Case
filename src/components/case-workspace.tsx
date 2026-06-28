@@ -1,6 +1,7 @@
 "use client";
 
 import { useCaseStore, type WizardStep } from "@/store/case-store";
+import { AnimatePresence, motion } from "framer-motion";
 import { CurrentVehicleStep } from "@/components/wizard/current-vehicle-step";
 import { ReplacementVehiclesStep } from "@/components/wizard/replacement-vehicles-step";
 import { TradeInStep } from "@/components/wizard/trade-in-step";
@@ -42,7 +43,17 @@ export function CaseWorkspace() {
 
   return (
     <WizardStepShell step={activeStep}>
-      <Component />
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeStep}
+          initial={{ opacity: 0, x: 16 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -16 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+        >
+          <Component />
+        </motion.div>
+      </AnimatePresence>
     </WizardStepShell>
   );
 }

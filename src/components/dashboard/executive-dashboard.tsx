@@ -5,6 +5,7 @@ import { getCaseValidationMessages } from "@/lib/wizard-validation";
 import { ValidationAlerts } from "@/components/wizard/validation-alerts";
 import { KpiCard } from "@/components/kpi/kpi-card";
 import { formatCurrency } from "@/lib/format";
+import { DashboardHeroStrip } from "./dashboard-hero-strip";
 import { RecommendationCard } from "./recommendation-card";
 import { SavingsBreakdownCard } from "./savings-breakdown-card";
 import { CurrentMonthlyBreakdownCard } from "./current-monthly-breakdown-card";
@@ -59,6 +60,14 @@ export function ExecutiveDashboard() {
         </div>
       </div>
 
+      <DashboardHeroStrip
+        monthlySaving={kpis.monthlySaving}
+        amountFinanced={tradeIn.amountFinanced}
+        investmentScore={decision.investmentScore.total}
+        rating={decision.investmentScore.rating}
+        trafficLight={decision.trafficLight.status}
+      />
+
       <ExecutiveScoreCard score={decision.investmentScore} />
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -77,11 +86,41 @@ export function ExecutiveDashboard() {
       <CurrentMonthlyBreakdownCard />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 max-sm:flex max-sm:gap-4 max-sm:overflow-x-auto max-sm:pb-2 max-sm:snap-x max-sm:snap-mandatory">
-        <KpiCard title="Monthly Saving" value={formatCurrency(kpis.monthlySaving)} positiveIsGood className="max-sm:min-w-[240px] max-sm:snap-center" />
-        <KpiCard title="Annual Saving" value={formatCurrency(kpis.annualSaving)} positiveIsGood className="max-sm:min-w-[240px] max-sm:snap-center" />
-        <KpiCard title="10-Year Saving" value={formatCurrency(kpis.tenYearSaving)} positiveIsGood />
-        <KpiCard title="Finance Required" value={formatCurrency(tradeIn.amountFinanced)} />
-        <KpiCard title="Trade Equity" value={formatCurrency(tradeIn.tradeEquity)} />
+        <KpiCard
+          title="Monthly Saving"
+          value={formatCurrency(kpis.monthlySaving)}
+          numericValue={kpis.monthlySaving}
+          formatValue={(n) => formatCurrency(n)}
+          positiveIsGood
+          className="max-sm:min-w-[240px] max-sm:snap-center"
+        />
+        <KpiCard
+          title="Annual Saving"
+          value={formatCurrency(kpis.annualSaving)}
+          numericValue={kpis.annualSaving}
+          formatValue={(n) => formatCurrency(n)}
+          positiveIsGood
+          className="max-sm:min-w-[240px] max-sm:snap-center"
+        />
+        <KpiCard
+          title="10-Year Saving"
+          value={formatCurrency(kpis.tenYearSaving)}
+          numericValue={kpis.tenYearSaving}
+          formatValue={(n) => formatCurrency(n)}
+          positiveIsGood
+        />
+        <KpiCard
+          title="Finance Required"
+          value={formatCurrency(tradeIn.amountFinanced)}
+          numericValue={tradeIn.amountFinanced}
+          formatValue={(n) => formatCurrency(n)}
+        />
+        <KpiCard
+          title="Trade Equity"
+          value={formatCurrency(tradeIn.tradeEquity)}
+          numericValue={tradeIn.tradeEquity}
+          formatValue={(n) => formatCurrency(n)}
+        />
         <KpiCard title="Solar Contribution" value={`${solar.solarContributionPercent.toFixed(0)}%`} subtitle="of charging" />
         <KpiCard title="Fuel Saving" value={formatCurrency(kpis.fuelSaving)} subtitle="annual" positiveIsGood />
         <KpiCard title="Break-even Point" value={kpis.paybackMonths > 0 ? `${kpis.paybackMonths} months` : "N/A"} />
@@ -91,6 +130,8 @@ export function ExecutiveDashboard() {
         <KpiCard
           title="Current Vehicle Cost"
           value={formatCurrency(currentMonthlyFromInputs.totalMonthly)}
+          numericValue={currentMonthlyFromInputs.totalMonthly}
+          formatValue={(n) => formatCurrency(n)}
           subtitle="per month · from your inputs"
         />
       </div>

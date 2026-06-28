@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { SCENARIO_TAGS } from "@/store/defaults";
 import { Copy, Trash2, FolderOpen, Save, Download, Upload } from "lucide-react";
 import { ScenarioComparisonTable } from "./scenario-comparison-table";
+import { showToast } from "@/lib/toast";
 
 export function ScenarioManager() {
   const [scenarios, setScenarios] = useState<ScenarioRecord[]>([]);
@@ -41,7 +42,7 @@ export function ScenarioManager() {
 
   useEffect(() => {
     const handler = () => {
-      saveScenario().then(() => refresh());
+      saveScenario({ message: "Scenario saved" }).then(() => refresh());
     };
     window.addEventListener("fleet-tco:save", handler);
     return () => window.removeEventListener("fleet-tco:save", handler);
@@ -51,7 +52,7 @@ export function ScenarioManager() {
     setSaving(true);
     setImportError(null);
     try {
-      await saveScenario();
+      await saveScenario({ message: "Scenario saved" });
       await refresh();
     } finally {
       setSaving(false);
@@ -62,6 +63,7 @@ export function ScenarioManager() {
     setImportError(null);
     const data = exportCaseToJson(caseName, tags, input);
     downloadCaseJson(data, `${caseName.replace(/\s+/g, "-")}-export`);
+    showToast("Export downloaded", "success");
   };
 
   const handleImport = async (file: File) => {
@@ -71,8 +73,10 @@ export function ScenarioManager() {
       const data = parseCaseImport(text);
       loadCase(data.snapshot, { name: data.name, tags: data.tags });
       await refresh();
+      showToast("Scenario imported", "success");
     } catch (e) {
       setImportError(e instanceof Error ? e.message : "Could not import file — check the JSON format.");
+      showToast("Import failed", "error");
     }
   };
 
@@ -82,6 +86,7 @@ export function ScenarioManager() {
       saved.map((s) => exportCaseToJson(s.name, s.tags, s.snapshot))
     );
     downloadScenarioBundle(bundle, "fleet-ev-scenarios-backup");
+    showToast("Backup downloaded", "success");
   };
 
   const handleImportBundle = async (file: File) => {
@@ -107,8 +112,10 @@ export function ScenarioManager() {
         });
       }
       await refresh();
+      showToast(`${bundle.scenarios.length} scenarios imported`, "success");
     } catch (e) {
       setImportError(e instanceof Error ? e.message : "Could not import bundle — check the JSON format.");
+      showToast("Import failed", "error");
     }
   };
 

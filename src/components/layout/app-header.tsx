@@ -11,6 +11,15 @@ interface AppHeaderProps {
   onMenuClick?: () => void;
 }
 
+function useVehicleComparisonLabel() {
+  const input = useCaseStore((s) => s.input);
+  const current = `${input.current.manufacturer} ${input.current.model}`.trim();
+  const replacement =
+    input.replacements.find((v) => v.id === input.selectedReplacementId)?.name ?? "Replacement";
+  if (!current.replace(/\s/g, "")) return replacement;
+  return `${current} → ${replacement}`;
+}
+
 export function AppHeader({ onMenuClick }: AppHeaderProps) {
   const caseName = useCaseStore((s) => s.caseName);
   const tags = useCaseStore((s) => s.tags);
@@ -18,6 +27,7 @@ export function AppHeader({ onMenuClick }: AppHeaderProps) {
   const resetWhatIf = useCaseStore((s) => s.resetWhatIf);
   const setPresentationMode = useCaseStore((s) => s.setPresentationMode);
   const lastSavedAt = useCaseStore((s) => s.lastSavedAt);
+  const vehicleComparison = useVehicleComparisonLabel();
 
   const whatIfActive = hasWhatIfOverrides(whatIf);
 
@@ -43,6 +53,10 @@ export function AppHeader({ onMenuClick }: AppHeaderProps) {
           <div>
             <h1 className="text-sm font-semibold lg:text-base">{caseName}</h1>
             <p className="text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-1 font-medium text-foreground/80">
+                {vehicleComparison}
+              </span>
+              {tags.length > 0 && <span className="mx-1.5">·</span>}
               {tags.join(" · ")}
               {lastSavedAt && (
                 <span className="ml-2">· Saved {new Date(lastSavedAt).toLocaleTimeString()}</span>

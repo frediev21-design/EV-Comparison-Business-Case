@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { renderStars } from "@/engine/decision";
 import type { InvestmentScore } from "@/engine/decision/types";
 import { cn } from "@/lib/utils";
+import { AnimatedNumber } from "@/components/ui/animated-number";
 
 interface ExecutiveScoreCardProps {
   score: InvestmentScore;
@@ -26,7 +27,7 @@ export function ExecutiveScoreCard({ score, className }: ExecutiveScoreCardProps
           Executive Investment Score
         </p>
         <p className="mt-4 text-6xl font-bold tabular-nums tracking-tight lg:text-7xl">
-          {score.total}
+          <AnimatedNumber value={score.total} format={(n) => `${Math.round(n)}`} durationMs={600} />
           <span className="text-2xl font-normal text-muted-foreground lg:text-3xl"> / 100</span>
         </p>
         <p className="mt-3 text-2xl tracking-widest text-warning">{renderStars(score.stars)}</p>

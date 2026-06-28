@@ -2,6 +2,7 @@
 
 import { useCaseStore } from "@/store/case-store";
 import { getDataEntryProgress } from "@/lib/wizard-validation";
+import { AnimatedNumber } from "@/components/ui/animated-number";
 import { cn } from "@/lib/utils";
 import type { TrafficLightStatus } from "@/engine/decision/types";
 
@@ -47,7 +48,7 @@ export function HeaderInvestmentScore() {
           Investment score
         </span>
         <span className="mt-0.5 text-xl font-bold tabular-nums">
-          {score.total}
+          <AnimatedNumber value={score.total} format={(n) => `${Math.round(n)}`} />
           <span className="text-xs font-normal opacity-70">/100</span>
         </span>
       </div>
@@ -73,7 +74,9 @@ export function HeaderInvestmentScoreMobile() {
       title={`Investment score ${score.total}/100 — ${completed}/${total} setup steps`}
     >
       <span className={cn("h-2 w-2 rounded-full", STATUS_DOT[trafficLight.status])} />
-      <span className="text-sm font-bold tabular-nums">{score.total}</span>
+      <span className="text-sm font-bold tabular-nums">
+        <AnimatedNumber value={score.total} format={(n) => `${Math.round(n)}`} durationMs={350} />
+      </span>
     </button>
   );
 }

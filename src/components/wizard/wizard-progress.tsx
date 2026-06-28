@@ -5,6 +5,7 @@ import { getDataEntryProgress } from "@/lib/wizard-validation";
 import { isStepComplete } from "@/lib/wizard-validation";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
+import { motion } from "framer-motion";
 
 export function WizardProgress() {
   const input = useCaseStore((s) => s.input);
@@ -21,9 +22,11 @@ export function WizardProgress() {
         </p>
       </div>
       <div className="mb-3 h-2 overflow-hidden rounded-full bg-muted">
-        <div
-          className="h-full rounded-full bg-accent transition-all duration-300"
-          style={{ width: `${total > 0 ? (completed / total) * 100 : 0}%` }}
+        <motion.div
+          className="h-full rounded-full bg-accent"
+          initial={false}
+          animate={{ width: `${total > 0 ? (completed / total) * 100 : 0}%` }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
         />
       </div>
       <div className="flex flex-wrap gap-2">

@@ -3,10 +3,14 @@
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { TrendingDown, TrendingUp } from "lucide-react";
+import { AnimatedNumber } from "@/components/ui/animated-number";
 
 interface KpiCardProps {
   title: string;
   value: string;
+  /** When set, animates the displayed value using this numeric source. */
+  numericValue?: number;
+  formatValue?: (value: number) => string;
   subtitle?: string;
   delta?: number;
   deltaLabel?: string;
@@ -17,6 +21,8 @@ interface KpiCardProps {
 export function KpiCard({
   title,
   value,
+  numericValue,
+  formatValue,
   subtitle,
   delta,
   deltaLabel,
@@ -28,6 +34,7 @@ export function KpiCard({
 
   return (
     <motion.div
+      layout
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
@@ -37,7 +44,13 @@ export function KpiCard({
       )}
     >
       <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{title}</p>
-      <p className="mt-2 text-2xl font-bold tabular-nums tracking-tight lg:text-3xl">{value}</p>
+      <p className="mt-2 text-2xl font-bold tabular-nums tracking-tight lg:text-3xl">
+        {numericValue !== undefined && formatValue ? (
+          <AnimatedNumber value={numericValue} format={formatValue} />
+        ) : (
+          value
+        )}
+      </p>
       {subtitle && <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>}
       {delta !== undefined && (
         <div
