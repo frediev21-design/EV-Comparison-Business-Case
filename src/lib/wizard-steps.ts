@@ -4,13 +4,14 @@ import { WIZARD_STEPS } from "@/store/case-store";
 export type WorkflowMode = "quick" | "full";
 
 export const DATA_ENTRY_STEP_IDS: WizardStep[] = WIZARD_STEPS.filter(
-  (s) => s.step >= 1 && s.step <= 7
+  (s) => s.step >= 1 && s.step <= 8
 ).map((s) => s.id);
 
-export const QUICK_DATA_ENTRY_IDS: WizardStep[] = ["vehicles", "trade-in"];
+export const QUICK_DATA_ENTRY_IDS: WizardStep[] = ["current", "replacement", "trade-in"];
 
 export const QUICK_WORKFLOW_STEPS: WizardStep[] = [
-  "vehicles",
+  "current",
+  "replacement",
   "trade-in",
   "dashboard",
   "what-if",

@@ -10,15 +10,8 @@ import { CaseRouteSync } from "@/components/providers/case-route-sync";
 const VALID_STEPS = new Set<WizardStep>(WIZARD_STEPS.map((s) => s.id));
 
 const LEGACY_STEP_ALIASES: Record<string, WizardStep> = {
-  current: "vehicles",
-  replacement: "vehicles",
+  vehicles: "current",
 };
-
-function resolveStepParam(stepParam: string | null): WizardStep | null {
-  if (!stepParam) return null;
-  const mapped = LEGACY_STEP_ALIASES[stepParam] ?? stepParam;
-  return VALID_STEPS.has(mapped as WizardStep) ? (mapped as WizardStep) : null;
-}
 
 function WorkflowSyncInner() {
   const searchParams = useSearchParams();
@@ -30,9 +23,10 @@ function WorkflowSyncInner() {
   const { advanceFromStep } = useWizardStepAdvance();
 
   useEffect(() => {
-    const resolved = resolveStepParam(searchParams.get("step"));
-    if (resolved) {
-      setActiveStep(resolved);
+    const stepParam = searchParams.get("step");
+    const mapped = stepParam ? (LEGACY_STEP_ALIASES[stepParam] ?? stepParam) : null;
+    if (mapped && VALID_STEPS.has(mapped as WizardStep)) {
+      setActiveStep(mapped as WizardStep);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate step from URL once on load
   }, []);

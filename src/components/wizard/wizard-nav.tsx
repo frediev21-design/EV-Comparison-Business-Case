@@ -41,9 +41,9 @@ export function WizardNav({ step }: WizardNavProps) {
           {getStepIncompleteHint(step, input)}
         </p>
       )}
-      {stepReady && step === "vehicles" && (
+      {stepReady && step === "current" && (
         <p className="text-xs text-muted-foreground">
-          Continuing will save your vehicles to this scenario.
+          Continuing will save your current vehicle to this scenario.
         </p>
       )}
       <div className="flex items-center justify-between">

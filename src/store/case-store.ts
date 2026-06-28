@@ -6,7 +6,8 @@ import type { WorkflowMode } from "@/lib/wizard-steps";
 import { inputForLoad } from "@/lib/snapshot-sanitize";
 
 export type WizardStep =
-  | "vehicles"
+  | "current"
+  | "replacement"
   | "trade-in"
   | "finance"
   | "running-costs"
@@ -22,13 +23,14 @@ export type WizardStep =
   | "market";
 
 export const WIZARD_STEPS: { id: WizardStep; label: string; step: number }[] = [
-  { id: "vehicles", label: "Vehicles", step: 1 },
-  { id: "trade-in", label: "Trade-In", step: 2 },
-  { id: "finance", label: "Finance", step: 3 },
-  { id: "running-costs", label: "Running Costs", step: 4 },
-  { id: "solar", label: "Solar Edge", step: 5 },
-  { id: "ownership", label: "Ownership", step: 6 },
-  { id: "risk", label: "Risk Analysis", step: 7 },
+  { id: "current", label: "Current Vehicle", step: 1 },
+  { id: "replacement", label: "New Vehicle", step: 2 },
+  { id: "trade-in", label: "Trade-In", step: 3 },
+  { id: "finance", label: "Finance", step: 4 },
+  { id: "running-costs", label: "Running Costs", step: 5 },
+  { id: "solar", label: "Solar Edge", step: 6 },
+  { id: "ownership", label: "Ownership", step: 7 },
+  { id: "risk", label: "Risk Analysis", step: 8 },
   { id: "dashboard", label: "Dashboard", step: 9 },
   { id: "decision", label: "Decision Intel", step: 0 },
   { id: "market", label: "SA Market", step: 0 },
@@ -85,7 +87,7 @@ export const useCaseStore = create<CaseStore>((set) => ({
   tags: ["Business Use"],
   input: defaultInput,
   result: computeResult(defaultInput),
-  activeStep: "vehicles",
+  activeStep: "current",
   workflowMode: "full",
   ownershipHorizon: 10,
   presentationMode: false,
@@ -236,7 +238,7 @@ export const useCaseStore = create<CaseStore>((set) => ({
       tags: ["Business Use"],
       input,
       result: computeResult(input),
-      activeStep: "vehicles",
+      activeStep: "current",
       presentationMode: false,
       lastSavedAt: null,
       routeCaseMissing: false,

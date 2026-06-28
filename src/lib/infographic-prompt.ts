@@ -3,7 +3,11 @@ import { formatCurrency } from "./format";
 import { isStepComplete } from "./wizard-validation";
 
 export function isInfographicPromptReady(input: BusinessCaseInput): boolean {
-  return isStepComplete("vehicles", input) && isStepComplete("trade-in", input);
+  return (
+    isStepComplete("current", input) &&
+    isStepComplete("replacement", input) &&
+    isStepComplete("trade-in", input)
+  );
 }
 
 export function generateInfographicPrompt(

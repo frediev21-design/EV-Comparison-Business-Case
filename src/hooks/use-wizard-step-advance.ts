@@ -34,7 +34,7 @@ export function useWizardStepAdvance() {
         setSaving(true);
         try {
           const state = useCaseStore.getState();
-          if (step === "vehicles" && state.caseName === "Current Situation") {
+          if (step === "current" && state.caseName === "Current Situation") {
             const autoName = defaultCaseNameFromVehicle(
               input.current.manufacturer,
               input.current.model

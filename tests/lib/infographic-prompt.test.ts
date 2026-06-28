@@ -7,7 +7,7 @@ import {
 } from "@/lib/infographic-prompt";
 
 describe("infographic-prompt", () => {
-  it("is ready when vehicles and trade-in are complete", () => {
+  it("is ready when current, replacement, and trade-in are complete", () => {
     const input = createDefaultBusinessCase();
     expect(isInfographicPromptReady(input)).toBe(true);
   });

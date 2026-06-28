@@ -2,7 +2,8 @@
 
 import { useCaseStore, type WizardStep } from "@/store/case-store";
 import { AnimatePresence, motion } from "framer-motion";
-import { VehiclesComparisonStep } from "@/components/wizard/vehicles-comparison-step";
+import { CurrentVehicleStep } from "@/components/wizard/current-vehicle-step";
+import { ReplacementVehiclesStep } from "@/components/wizard/replacement-vehicles-step";
 import { TradeInStep } from "@/components/wizard/trade-in-step";
 import { FinanceStep } from "@/components/wizard/finance-step";
 import { RunningCostsStep } from "@/components/wizard/running-costs-step";
@@ -19,7 +20,8 @@ import { MarketIntelligenceStep } from "@/components/market/market-intelligence-
 import { WizardStepShell } from "@/components/wizard/wizard-step-shell";
 
 const STEP_COMPONENTS: Record<WizardStep, React.ComponentType> = {
-  vehicles: VehiclesComparisonStep,
+  current: CurrentVehicleStep,
+  replacement: ReplacementVehiclesStep,
   "trade-in": TradeInStep,
   finance: FinanceStep,
   "running-costs": RunningCostsStep,

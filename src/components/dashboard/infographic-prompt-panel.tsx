@@ -82,7 +82,7 @@ export function InfographicPromptPanel({
           title={
             ready
               ? "Generate a ChatGPT prompt to create an infographic from your analysis"
-              : "Complete Vehicles and Trade-In steps first"
+              : "Complete Current Vehicle, New Vehicle, and Trade-In first"
           }
         >
           <Sparkles className="mr-2 h-4 w-4" />
@@ -109,7 +109,8 @@ export function InfographicPromptPanel({
 
       {!ready && (
         <p className="text-xs text-muted-foreground">
-          Complete the Vehicles and Trade-In steps to unlock the infographic prompt.
+          Complete the Current Vehicle, New Vehicle, and Trade-In steps to unlock the
+          infographic prompt.
         </p>
       )}
 

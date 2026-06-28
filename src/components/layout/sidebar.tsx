@@ -31,7 +31,8 @@ import {
 import { Button } from "@/components/ui/button";
 
 const STEP_ICONS: Record<WizardStep, React.ComponentType<{ className?: string }>> = {
-  vehicles: Car,
+  current: Car,
+  replacement: Car,
   "trade-in": ArrowLeftRight,
   finance: Wallet,
   "running-costs": Calculator,
@@ -63,7 +64,7 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
   const groups = [
     {
       label: "Data Entry",
-      steps: WIZARD_STEPS.filter((s) => s.step >= 1 && s.step <= 7).filter((s) =>
+      steps: WIZARD_STEPS.filter((s) => s.step >= 1 && s.step <= 8).filter((s) =>
         visibleSteps.includes(s.id)
       ),
     },
@@ -84,7 +85,7 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
   const handleModeChange = (mode: WorkflowMode) => {
     setWorkflowMode(mode);
     if (!isStepInWorkflow(activeStep, mode)) {
-      setActiveStep("vehicles");
+      setActiveStep(mode === "quick" ? "current" : "current");
     }
   };
 
