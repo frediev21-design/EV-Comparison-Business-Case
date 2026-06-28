@@ -23,6 +23,7 @@ import { RiskMatrixDashboard } from "@/components/decision/risk-matrix-dashboard
 import { SwotPanel } from "@/components/decision/swot-panel";
 import { DecisionTimeline } from "@/components/decision/decision-timeline";
 import { DecisionAdvisor } from "@/components/decision/decision-advisor";
+import { InfographicPromptPanel } from "./infographic-prompt-panel";
 
 export function ExecutiveDashboard() {
   const input = useCaseStore((s) => s.input);
@@ -79,6 +80,7 @@ export function ExecutiveDashboard() {
             </Button>
           </div>
         </div>
+        <InfographicPromptPanel className="mt-4" />
       </div>
 
       <DashboardHeroStrip
