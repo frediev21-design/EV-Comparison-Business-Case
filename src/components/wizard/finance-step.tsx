@@ -1,0 +1,116 @@
+"use client";
+
+import { useCaseStore, useSelectedFinance } from "@/store/case-store";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
+import { Label } from "@/components/ui/label";
+import { formatCurrency } from "@/lib/format";
+
+export function FinanceStep() {
+  const selectedId = useCaseStore((s) => s.input.selectedReplacementId);
+  const replacements = useCaseStore((s) => s.input.replacements);
+  const updateReplacement = useCaseStore((s) => s.updateReplacement);
+  const finance = useSelectedFinance();
+  const vehicle = replacements.find((v) => v.id === selectedId);
+
+  if (!vehicle || !finance) return null;
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-lg font-semibold">Finance Engine</h2>
+        <p className="text-sm text-muted-foreground">Instant recalculation as you adjust rate and term.</p>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Finance Parameters</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <Label>Interest Rate</Label>
+                <span className="text-sm font-medium tabular-nums">{vehicle.interestRate}%</span>
+              </div>
+              <Slider
+                value={[vehicle.interestRate]}
+                min={3}
+                max={18}
+                step={0.1}
+                onValueChange={([v]) => updateReplacement(selectedId, { interestRate: v })}
+              />
+            </div>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <Label>Finance Term</Label>
+                <span className="text-sm font-medium tabular-nums">{vehicle.financeTermMonths} months</span>
+              </div>
+              <Slider
+                value={[vehicle.financeTermMonths]}
+                min={12}
+                max={96}
+                step={6}
+                onValueChange={([v]) => updateReplacement(selectedId, { financeTermMonths: v })}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Finance Summary</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4 sm:grid-cols-2">
+            {[
+              { label: "Amount Financed", value: finance.amountFinanced },
+              { label: "Monthly Instalment", value: finance.monthlyInstalment },
+              { label: "Total Interest", value: finance.totalInterest },
+              { label: "Total Payments", value: finance.totalPayments },
+            ].map(({ label, value }) => (
+              <div key={label} className="rounded-lg bg-muted/50 p-4">
+                <p className="text-xs text-muted-foreground">{label}</p>
+                <p className="text-xl font-bold tabular-nums">{formatCurrency(value)}</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Amortisation Schedule</CardTitle>
+        </CardHeader>
+        <CardContent className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border text-left text-muted-foreground">
+                <th className="pb-2 pr-4">Month</th>
+                <th className="pb-2 pr-4">Payment</th>
+                <th className="pb-2 pr-4">Interest</th>
+                <th className="pb-2 pr-4">Capital</th>
+                <th className="pb-2">Balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              {finance.schedule.slice(0, 24).map((row) => (
+                <tr key={row.month} className="border-b border-border/50">
+                  <td className="py-2 pr-4 tabular-nums">{row.month}</td>
+                  <td className="py-2 pr-4 tabular-nums">{formatCurrency(row.payment)}</td>
+                  <td className="py-2 pr-4 tabular-nums">{formatCurrency(row.interest)}</td>
+                  <td className="py-2 pr-4 tabular-nums">{formatCurrency(row.capital)}</td>
+                  <td className="py-2 tabular-nums">{formatCurrency(row.balance)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {finance.schedule.length > 24 && (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Showing first 24 of {finance.schedule.length} months
+            </p>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
