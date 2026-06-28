@@ -6,14 +6,8 @@ import { scenarioRepository } from "@/lib/db";
 import type { ScenarioRecord } from "@/engine/types";
 
 export function useScenarioSave() {
-  const input = useCaseStore((s) => s.input);
-  const caseId = useCaseStore((s) => s.caseId);
-  const caseName = useCaseStore((s) => s.caseName);
-  const tags = useCaseStore((s) => s.tags);
-  const setCaseId = useCaseStore((s) => s.setCaseId);
-  const setLastSavedAt = useCaseStore((s) => s.setLastSavedAt);
-
   return useCallback(async () => {
+    const { input, caseId, caseName, tags, setCaseId, setLastSavedAt } = useCaseStore.getState();
     const now = new Date().toISOString();
     const id = caseId ?? crypto.randomUUID();
     const existing = caseId ? await scenarioRepository.get(caseId) : undefined;
@@ -29,5 +23,5 @@ export function useScenarioSave() {
     setCaseId(id);
     setLastSavedAt(now);
     return record;
-  }, [caseId, caseName, tags, input, setCaseId, setLastSavedAt]);
+  }, []);
 }

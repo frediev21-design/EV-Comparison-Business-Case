@@ -1,10 +1,13 @@
 "use client";
 
+import { useMemo } from "react";
 import { useCaseStore } from "@/store/case-store";
 import { getCaseValidationMessages } from "@/lib/wizard-validation";
+import { buildCurrentMonthlyFromInputs } from "@/lib/current-monthly-breakdown";
 import { ValidationAlerts } from "./validation-alerts";
 import { FormField, FormSelect, FormSection } from "./form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatCurrency } from "@/lib/format";
 
 const FUEL_OPTIONS = [
   { value: "diesel", label: "Diesel" },
@@ -20,8 +23,9 @@ export function CurrentVehicleStep() {
   const result = useCaseStore((s) => s.result);
   const updateCurrent = useCaseStore((s) => s.updateCurrent);
   const updateAssumptions = useCaseStore((s) => s.updateAssumptions);
-  const dailyDistance = useCaseStore((s) => s.input.assumptions.dailyDistanceKm);
+  const assumptions = input.assumptions;
   const validationMessages = getCaseValidationMessages(input, result);
+  const monthlyPreview = useMemo(() => buildCurrentMonthlyFromInputs(input), [input]);
 
   const num = (v: string) => parseFloat(v) || 0;
   const int = (v: string) => parseInt(v, 10) || 0;
@@ -45,6 +49,15 @@ export function CurrentVehicleStep() {
         />
         <FormSelect label="Fuel Type" value={current.fuelType} options={FUEL_OPTIONS} onChange={(v) => updateCurrent({ fuelType: v as typeof current.fuelType })} />
         <FormField label="Fuel Consumption" type="number" suffix="L/100km" value={current.fuelConsumption} onChange={(v) => updateCurrent({ fuelConsumption: num(v) })} step={0.1} />
+        <FormField
+          label="Fuel Price"
+          type="number"
+          prefix="R"
+          suffix="/L"
+          value={assumptions.fuelPricePerLitre}
+          onChange={(v) => updateAssumptions({ fuelPricePerLitre: num(v) })}
+          step={0.1}
+        />
         <FormField label="Insurance (annual)" type="number" prefix="R" value={current.insurance} onChange={(v) => updateCurrent({ insurance: num(v) })} />
         <FormField label="Maintenance (annual)" type="number" prefix="R" value={current.maintenance} onChange={(v) => updateCurrent({ maintenance: num(v) })} />
         <FormField label="Tyres (annual)" type="number" prefix="R" value={current.tyres} onChange={(v) => updateCurrent({ tyres: num(v) })} />
@@ -52,9 +65,32 @@ export function CurrentVehicleStep() {
         <FormField label="Expected Annual Repairs" type="number" prefix="R" value={current.expectedAnnualRepairs} onChange={(v) => updateCurrent({ expectedAnnualRepairs: num(v) })} />
         <FormField label="Trade-In Value" type="number" prefix="R" value={current.tradeInValue} onChange={(v) => updateCurrent({ tradeInValue: num(v) })} />
         <FormField label="Residual Value" type="number" prefix="R" value={current.residualValue} onChange={(v) => updateCurrent({ residualValue: num(v) })} />
-        <FormField label="Daily Distance" type="number" suffix="km/day" value={dailyDistance} onChange={(v) => updateAssumptions({ dailyDistanceKm: num(v) })} min={10} max={300} />
-        <FormField label="Fleet Size" type="number" suffix="vehicles" value={input.assumptions.fleetVehicleCount} onChange={(v) => updateAssumptions({ fleetVehicleCount: Math.max(1, int(v)) })} min={1} max={100} />
+        <FormField label="Daily Distance" type="number" suffix="km/day" value={assumptions.dailyDistanceKm} onChange={(v) => updateAssumptions({ dailyDistanceKm: num(v) })} min={10} max={300} />
+        <FormField label="Fleet Size" type="number" suffix="vehicles" value={assumptions.fleetVehicleCount} onChange={(v) => updateAssumptions({ fleetVehicleCount: Math.max(1, int(v)) })} min={1} max={100} />
       </FormSection>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Estimated Monthly Cost (from your inputs above)</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3 text-sm">
+          <div className="flex justify-between gap-4">
+            <span className="text-muted-foreground">Loan instalment</span>
+            <span className="font-medium tabular-nums">{formatCurrency(monthlyPreview.instalment)}</span>
+          </div>
+          {monthlyPreview.lines.map((line) => (
+            <div key={line.label} className="flex justify-between gap-4">
+              <span className="text-muted-foreground">{line.label}</span>
+              <span className="tabular-nums">{formatCurrency(line.monthly)}</span>
+            </div>
+          ))}
+          <div className="flex justify-between gap-4 border-t border-border pt-3 font-semibold">
+            <span>Total monthly cost</span>
+            <span className="tabular-nums text-accent">{formatCurrency(monthlyPreview.totalMonthly)}</span>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Vehicle Flags</CardTitle>

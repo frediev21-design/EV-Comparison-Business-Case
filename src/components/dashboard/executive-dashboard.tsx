@@ -7,6 +7,8 @@ import { KpiCard } from "@/components/kpi/kpi-card";
 import { formatCurrency } from "@/lib/format";
 import { RecommendationCard } from "./recommendation-card";
 import { SavingsBreakdownCard } from "./savings-breakdown-card";
+import { CurrentMonthlyBreakdownCard } from "./current-monthly-breakdown-card";
+import { buildCurrentMonthlyFromInputs } from "@/lib/current-monthly-breakdown";
 import { downloadBoardPack } from "@/lib/export-pdf";
 import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
@@ -26,6 +28,7 @@ export function ExecutiveDashboard() {
   const tradeIn = result.tradeIn;
   const solar = result.solar;
   const validationMessages = getCaseValidationMessages(input, result);
+  const currentMonthlyFromInputs = buildCurrentMonthlyFromInputs(input);
   const selected = input.replacements.find((v) => v.id === input.selectedReplacementId);
   const currentName = `${input.current.manufacturer} ${input.current.model}`;
 
@@ -71,6 +74,8 @@ export function ExecutiveDashboard() {
 
       <SavingsBreakdownCard />
 
+      <CurrentMonthlyBreakdownCard />
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 max-sm:flex max-sm:gap-4 max-sm:overflow-x-auto max-sm:pb-2 max-sm:snap-x max-sm:snap-mandatory">
         <KpiCard title="Monthly Saving" value={formatCurrency(kpis.monthlySaving)} positiveIsGood className="max-sm:min-w-[240px] max-sm:snap-center" />
         <KpiCard title="Annual Saving" value={formatCurrency(kpis.annualSaving)} positiveIsGood className="max-sm:min-w-[240px] max-sm:snap-center" />
@@ -83,7 +88,11 @@ export function ExecutiveDashboard() {
         <KpiCard title="Net Cost per km" value={`R${kpis.costPerKmReplacement.toFixed(2)}`} subtitle="replacement" />
         <KpiCard title="Warranty Remaining" value={`${kpis.batteryWarrantyRemainingYears} years`} subtitle="battery" />
         <KpiCard title="Estimated Resale" value={formatCurrency(selected?.expectedResale ?? 0)} />
-        <KpiCard title="Current Vehicle Cost" value={formatCurrency(kpis.currentMonthlyCost)} subtitle="per month" />
+        <KpiCard
+          title="Current Vehicle Cost"
+          value={formatCurrency(currentMonthlyFromInputs.totalMonthly)}
+          subtitle="per month · from your inputs"
+        />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">

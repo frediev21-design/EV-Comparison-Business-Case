@@ -116,8 +116,8 @@ export function createDefaultBusinessCase(): BusinessCaseInput {
     current: {
       manufacturer: "Ford",
       model: "Wildtrak Bi-Turbo",
-      year: 2021,
-      mileage: 85000,
+      year: 2023,
+      mileage: 36000,
       currentValue: 620000,
       outstandingFinance: 272000,
       monthlyInstalment: 10450,

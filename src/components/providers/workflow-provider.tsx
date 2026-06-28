@@ -4,6 +4,8 @@ import { useEffect, Suspense } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useCaseStore, WIZARD_STEPS, type WizardStep } from "@/store/case-store";
 import { getNextStep, getPrevStep } from "@/lib/wizard-steps";
+import { useWizardStepAdvance } from "@/hooks/use-wizard-step-advance";
+import { CaseRouteSync } from "@/components/providers/case-route-sync";
 
 const VALID_STEPS = new Set<WizardStep>(WIZARD_STEPS.map((s) => s.id));
 
@@ -14,6 +16,7 @@ function WorkflowSyncInner() {
   const activeStep = useCaseStore((s) => s.activeStep);
   const workflowMode = useCaseStore((s) => s.workflowMode);
   const setActiveStep = useCaseStore((s) => s.setActiveStep);
+  const { advanceFromStep } = useWizardStepAdvance();
 
   useEffect(() => {
     const stepParam = searchParams.get("step") as WizardStep | null;
@@ -44,7 +47,7 @@ function WorkflowSyncInner() {
         const next = getNextStep(activeStep, workflowMode);
         if (next) {
           e.preventDefault();
-          setActiveStep(next);
+          void advanceFromStep(activeStep);
         }
       }
       if (e.key === "ArrowLeft" || e.key === "[") {
@@ -57,7 +60,7 @@ function WorkflowSyncInner() {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [activeStep, workflowMode, setActiveStep]);
+  }, [activeStep, workflowMode, setActiveStep, advanceFromStep]);
 
   return null;
 }
@@ -65,6 +68,7 @@ function WorkflowSyncInner() {
 export function WorkflowProvider({ children }: { children: React.ReactNode }) {
   return (
     <>
+      <CaseRouteSync />
       <Suspense fallback={null}>
         <WorkflowSyncInner />
       </Suspense>
