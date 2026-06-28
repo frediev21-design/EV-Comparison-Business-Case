@@ -17,6 +17,7 @@ import {
   ArrowLeftRight,
   FolderOpen,
   Brain,
+  Globe,
 } from "lucide-react";
 
 const STEP_ICONS: Record<WizardStep, React.ComponentType<{ className?: string }>> = {
@@ -30,6 +31,7 @@ const STEP_ICONS: Record<WizardStep, React.ComponentType<{ className?: string }>
   risk: Shield,
   dashboard: LayoutDashboard,
   decision: Brain,
+  market: Globe,
   charts: LineChart,
   "what-if": SlidersHorizontal,
   scenarios: FolderOpen,
@@ -47,7 +49,7 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
 
   const groups = [
     { label: "Data Entry", steps: WIZARD_STEPS.slice(0, 8) },
-    { label: "Analysis", steps: WIZARD_STEPS.filter((s) => ["dashboard", "decision", "charts", "what-if"].includes(s.id)) },
+    { label: "Analysis", steps: WIZARD_STEPS.filter((s) => ["dashboard", "decision", "market", "charts", "what-if"].includes(s.id)) },
     { label: "Management", steps: WIZARD_STEPS.filter((s) => ["scenarios", "reports"].includes(s.id)) },
   ];
 

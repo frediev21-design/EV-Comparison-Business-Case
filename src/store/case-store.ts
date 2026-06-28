@@ -17,7 +17,8 @@ export type WizardStep =
   | "what-if"
   | "scenarios"
   | "reports"
-  | "decision";
+  | "decision"
+  | "market";
 
 export const WIZARD_STEPS: { id: WizardStep; label: string; step: number }[] = [
   { id: "current", label: "Current Vehicle", step: 1 },
@@ -30,6 +31,7 @@ export const WIZARD_STEPS: { id: WizardStep; label: string; step: number }[] = [
   { id: "risk", label: "Risk Analysis", step: 8 },
   { id: "dashboard", label: "Dashboard", step: 9 },
   { id: "decision", label: "Decision Intel", step: 0 },
+  { id: "market", label: "SA Market", step: 0 },
   { id: "charts", label: "Charts", step: 10 },
   { id: "what-if", label: "What-If", step: 11 },
   { id: "scenarios", label: "Scenarios", step: 12 },

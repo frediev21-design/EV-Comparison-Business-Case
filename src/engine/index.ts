@@ -145,3 +145,4 @@ export { analyzeRisk } from "./risk";
 export { calculateKpis } from "./comparison";
 export { generateRecommendation } from "./recommendation";
 export { runDecisionIntelligence } from "./decision";
+export { lookupNewVehicle, lookupTradeIn, buildMarketExecutiveSummary } from "./market";
