@@ -1,4 +1,5 @@
 import { calculateFinance } from "./finance";
+import { buildCurrentFinanceResult } from "./current-finance";
 import { calculateTradeIn } from "./trade-in";
 import { calculateRunningCosts } from "./running-costs";
 import { calculateSolar } from "./solar";
@@ -86,6 +87,7 @@ export function runFullBusinessCase(input: BusinessCaseInput): BusinessCaseResul
   );
 
   const selectedFinance = finance.find((f) => f.vehicleId === selected?.id);
+  const currentFinance = buildCurrentFinanceResult(current);
 
   const ownership = calculateOwnership(
     running.current,
@@ -93,7 +95,8 @@ export function runFullBusinessCase(input: BusinessCaseInput): BusinessCaseResul
     finance,
     current.residualValue,
     replacementResales,
-    assumptions.dailyDistanceKm
+    assumptions.dailyDistanceKm,
+    currentFinance
   );
 
   const risk = analyzeRisk(current, replacements);

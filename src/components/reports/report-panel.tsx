@@ -14,6 +14,7 @@ const REPORT_TYPES = [
   "Comparison Report",
   "Bank Finance Report",
   "Fleet Proposal",
+  "Board Pack",
 ] as const;
 
 export function ReportPanel() {

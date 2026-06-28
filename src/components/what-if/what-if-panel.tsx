@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/format";
 import { SavingsBreakdownCard } from "@/components/dashboard/savings-breakdown-card";
+import { WHAT_IF_PRESETS } from "@/lib/what-if-presets";
+import { Badge } from "@/components/ui/badge";
 
 function WhatIfSlider({
   label,
@@ -80,6 +82,22 @@ export function WhatIfPanel() {
       </div>
 
       <SavingsBreakdownCard />
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm">Assumption Presets</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-2">
+          {WHAT_IF_PRESETS.map((preset) => (
+            <button key={preset.id} type="button" onClick={() => {
+              if (preset.id === "baseline") resetWhatIf();
+              else updateWhatIf(preset.overrides);
+            }}>
+              <Badge variant="outline" title={preset.description}>{preset.label}</Badge>
+            </button>
+          ))}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardContent className="grid gap-6 pt-6 sm:grid-cols-2">

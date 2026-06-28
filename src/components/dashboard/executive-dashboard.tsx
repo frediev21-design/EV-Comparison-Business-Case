@@ -7,6 +7,9 @@ import { KpiCard } from "@/components/kpi/kpi-card";
 import { formatCurrency } from "@/lib/format";
 import { RecommendationCard } from "./recommendation-card";
 import { SavingsBreakdownCard } from "./savings-breakdown-card";
+import { downloadBoardPack } from "@/lib/export-pdf";
+import { Button } from "@/components/ui/button";
+import { FileText } from "lucide-react";
 import { ExecutiveScoreCard } from "@/components/decision/executive-score-card";
 import { DecisionTrafficLight } from "@/components/decision/decision-traffic-light";
 import { BoardSummaryPanel } from "@/components/decision/board-summary-panel";
@@ -30,10 +33,22 @@ export function ExecutiveDashboard() {
     <div className="space-y-8">
       <ValidationAlerts messages={validationMessages} />
       <div>
-        <h2 className="text-xl font-bold tracking-tight">Executive Dashboard</h2>
-        <p className="text-sm text-muted-foreground">
-          Investment decision intelligence · {currentName} vs {selected?.name ?? ""}
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-bold tracking-tight">Executive Dashboard</h2>
+            <p className="text-sm text-muted-foreground">
+              Investment decision intelligence · {currentName} vs {selected?.name ?? ""}
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => downloadBoardPack(input, result)}
+          >
+            <FileText className="mr-2 h-4 w-4" />
+            Board Pack
+          </Button>
+        </div>
       </div>
 
       <ExecutiveScoreCard score={decision.investmentScore} />

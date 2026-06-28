@@ -10,7 +10,32 @@ export function AutoSaveProvider({ children }: { children: React.ReactNode }) {
   const caseName = useCaseStore((s) => s.caseName);
   const tags = useCaseStore((s) => s.tags);
   const input = useCaseStore((s) => s.input);
+  const setCaseId = useCaseStore((s) => s.setCaseId);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    const saveNow = async () => {
+      const now = new Date().toISOString();
+      const id = caseId ?? crypto.randomUUID();
+      const existing = caseId ? await scenarioRepository.get(caseId) : undefined;
+      const record: ScenarioRecord = {
+        id,
+        name: caseName,
+        tags,
+        createdAt: existing?.createdAt ?? now,
+        updatedAt: now,
+        snapshot: input,
+      };
+      await scenarioRepository.save(record);
+      setCaseId(id);
+    };
+
+    const handler = () => {
+      saveNow();
+    };
+    window.addEventListener("fleet-tco:save", handler);
+    return () => window.removeEventListener("fleet-tco:save", handler);
+  }, [caseId, caseName, tags, input, setCaseId]);
 
   useEffect(() => {
     if (!caseId) return;

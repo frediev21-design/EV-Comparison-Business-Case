@@ -40,10 +40,11 @@ export function calculateOwnership(
   financeResults: FinanceResult[],
   currentResale: number,
   replacementResales: Record<string, number>,
-  dailyKm: number
+  dailyKm: number,
+  currentFinance?: FinanceResult
 ): OwnershipResult {
   const current = HORIZONS.map((years) =>
-    computeHorizon(years, undefined, currentRunning, currentResale, dailyKm)
+    computeHorizon(years, currentFinance, currentRunning, currentResale, dailyKm)
   );
 
   const replacements: Record<string, OwnershipHorizon[]> = {};

@@ -60,6 +60,8 @@ export function generatePrintHtml(
   <ul>${result.decision.advisorTips.map(t => `<li>${t.message}</li>`).join("")}</ul>
   ` : ""}
 
+  ${reportType === "Board Pack" ? generateBoardPackSections(input, result) : ""}
+
   <h2>Trade-In Summary</h2>
   <table>
     <tr><td>Current Vehicle Value</td><td>${formatCurrency(result.tradeIn.currentVehicleValue)}</td></tr>
@@ -97,4 +99,45 @@ export function printReport(input: BusinessCaseInput, result: BusinessCaseResult
 
 export function downloadPdfViaPrint(input: BusinessCaseInput, result: BusinessCaseResult, reportType: string) {
   printReport(input, result, reportType);
+}
+
+/** Combined executive board pack for CFO / board presentations. */
+export function downloadBoardPack(input: BusinessCaseInput, result: BusinessCaseResult) {
+  printReport(input, result, "Board Pack");
+}
+
+export function generateBoardPackSections(input: BusinessCaseInput, result: BusinessCaseResult): string {
+  const selectedName =
+    input.replacements.find((v) => v.id === input.selectedReplacementId)?.name ?? "Replacement";
+  const d = result.decision;
+
+  return `
+  <h2>Investment Decision</h2>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Score</div><div class="kpi-value">${d.investmentScore.total}/100</div></div>
+    <div class="kpi"><div class="kpi-label">Status</div><div class="kpi-value">${d.trafficLight.label}</div></div>
+    <div class="kpi"><div class="kpi-label">Operating Saving/mo</div><div class="kpi-value">${formatCurrency(result.kpis.operatingMonthlySaving)}</div></div>
+    <div class="kpi"><div class="kpi-label">Finance Δ/mo</div><div class="kpi-value">${formatCurrency(result.kpis.financeMonthlyDelta)}</div></div>
+    <div class="kpi"><div class="kpi-label">Net Saving/mo</div><div class="kpi-value">${formatCurrency(result.kpis.monthlySaving)}</div></div>
+    <div class="kpi"><div class="kpi-label">Payback</div><div class="kpi-value">${result.kpis.paybackMonths > 0 ? result.kpis.paybackMonths + " mo" : "N/A"}</div></div>
+  </div>
+
+  <h2>Board Summary</h2>
+  <table>
+    <tr><td>Current Situation</td><td>${d.boardSummary.currentSituation}</td></tr>
+    <tr><td>Proposed Investment</td><td>${d.boardSummary.proposedInvestment}</td></tr>
+    <tr><td>Amount Financed</td><td>${formatCurrency(d.boardSummary.amountFinanced)}</td></tr>
+    <tr><td>Monthly Cash Flow Impact</td><td>${formatCurrency(d.boardSummary.monthlyCashFlow)}</td></tr>
+    <tr><td>10-Year Savings</td><td>${formatCurrency(d.boardSummary.tenYearSavings)}</td></tr>
+    <tr><td>Recommendation</td><td>${d.boardSummary.overallRecommendation}</td></tr>
+  </table>
+
+  <h2>Monthly Cost Comparison</h2>
+  <table>
+    <tr><th></th><th>Current (${input.current.manufacturer} ${input.current.model})</th><th>Replacement (${selectedName})</th></tr>
+    <tr><td>Finance</td><td>${formatCurrency(result.kpis.currentFinanceInstalment)}</td><td>${formatCurrency(result.kpis.replacementFinanceInstalment)}</td></tr>
+    <tr><td>Running costs</td><td>${formatCurrency(result.kpis.currentRunningMonthly)}</td><td>${formatCurrency(result.kpis.replacementRunningMonthly)}</td></tr>
+    <tr><td><strong>Total / month</strong></td><td><strong>${formatCurrency(result.kpis.currentMonthlyCost)}</strong></td><td><strong>${formatCurrency(result.kpis.replacementMonthlyCost)}</strong></td></tr>
+  </table>
+  `;
 }
