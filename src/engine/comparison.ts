@@ -6,6 +6,7 @@ import type {
   RunningCostResult,
   SolarResult,
 } from "./types";
+import { resolveCurrentFinanceInstalment } from "./current-finance";
 import { getOwnershipForHorizon } from "./ownership";
 
 export function calculateKpis(
@@ -21,11 +22,16 @@ export function calculateKpis(
   const currentHorizon = getOwnershipForHorizon(ownership, "current", 10);
   const replacementHorizon = getOwnershipForHorizon(ownership, selectedId, 10);
 
-  const currentMonthlyCost =
-    input.current.monthlyInstalment + running.current.total / 12;
-  const replacementMonthlyCost =
-    (selectedFinance?.monthlyInstalment ?? 0) + (selectedRunning?.total ?? 0) / 12;
+  const currentFinanceInstalment = resolveCurrentFinanceInstalment(input.current);
+  const currentRunningMonthly = running.current.total / 12;
+  const replacementFinanceInstalment = selectedFinance?.monthlyInstalment ?? 0;
+  const replacementRunningMonthly = (selectedRunning?.total ?? 0) / 12;
+
+  const currentMonthlyCost = currentFinanceInstalment + currentRunningMonthly;
+  const replacementMonthlyCost = replacementFinanceInstalment + replacementRunningMonthly;
   const monthlySaving = currentMonthlyCost - replacementMonthlyCost;
+  const operatingMonthlySaving = currentRunningMonthly - replacementRunningMonthly;
+  const financeMonthlyDelta = currentFinanceInstalment - replacementFinanceInstalment;
   const annualSaving = monthlySaving * 12;
   const tenYearSaving = annualSaving * 10;
 
@@ -50,6 +56,12 @@ export function calculateKpis(
   return {
     currentMonthlyCost,
     replacementMonthlyCost,
+    currentFinanceInstalment,
+    currentRunningMonthly,
+    replacementFinanceInstalment,
+    replacementRunningMonthly,
+    operatingMonthlySaving,
+    financeMonthlyDelta,
     monthlySaving,
     annualSaving,
     tenYearSaving,

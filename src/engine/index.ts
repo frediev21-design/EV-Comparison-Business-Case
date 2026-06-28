@@ -65,7 +65,7 @@ export function runFullBusinessCase(input: BusinessCaseInput): BusinessCaseResul
       dailyDistanceKm: w.dailyDistanceKm,
       fuelPricePerLitre: w.fuelPricePerLitre,
       electricityTariff: w.electricityTariff,
-      maintenance: w.maintenance,
+      currentMaintenance: w.maintenance,
       insurance: w.insurance,
     }
   );

@@ -30,7 +30,13 @@ export function CurrentVehicleStep() {
         <FormField label="Mileage (km)" type="number" value={current.mileage} onChange={(v) => updateCurrent({ mileage: num(v) })} />
         <FormField label="Current Value" type="number" prefix="R" value={current.currentValue} onChange={(v) => updateCurrent({ currentValue: num(v) })} />
         <FormField label="Outstanding Finance" type="number" prefix="R" value={current.outstandingFinance} onChange={(v) => updateCurrent({ outstandingFinance: num(v) })} />
-        <FormField label="Monthly Instalment" type="number" prefix="R" value={current.monthlyInstalment} onChange={(v) => updateCurrent({ monthlyInstalment: num(v) })} />
+        <FormField
+          label="Monthly Loan Instalment"
+          type="number"
+          prefix="R"
+          value={current.monthlyInstalment}
+          onChange={(v) => updateCurrent({ monthlyInstalment: num(v) })}
+        />
         <FormSelect label="Fuel Type" value={current.fuelType} options={FUEL_OPTIONS} onChange={(v) => updateCurrent({ fuelType: v as typeof current.fuelType })} />
         <FormField label="Fuel Consumption" type="number" suffix="L/100km" value={current.fuelConsumption} onChange={(v) => updateCurrent({ fuelConsumption: num(v) })} step={0.1} />
         <FormField label="Insurance (annual)" type="number" prefix="R" value={current.insurance} onChange={(v) => updateCurrent({ insurance: num(v) })} />

@@ -42,7 +42,9 @@ function buildBreakdown(
 export function calculateCurrentRunningCosts(
   current: CurrentVehicle,
   assumptions: Assumptions,
-  overrides?: Partial<Assumptions & { maintenance?: number; insurance?: number }>
+  overrides?: Partial<
+    Assumptions & { currentMaintenance?: number; maintenance?: number; insurance?: number }
+  >
 ): RunningCostBreakdown {
   const dailyKm = overrides?.dailyDistanceKm ?? assumptions.dailyDistanceKm;
   const fuelPrice = overrides?.fuelPricePerLitre ?? assumptions.fuelPricePerLitre;
@@ -57,7 +59,7 @@ export function calculateCurrentRunningCosts(
     0,
     0,
     0,
-    overrides?.maintenance ?? current.maintenance,
+    overrides?.currentMaintenance ?? overrides?.maintenance ?? current.maintenance,
     overrides?.insurance ?? current.insurance,
     current.tyres,
     current.licence,

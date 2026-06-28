@@ -87,7 +87,27 @@ export function WhatIfPanel() {
           <WhatIfSlider label="Trade Value" value={whatIf.tradeValue ?? input.current.currentValue} min={100000} max={1500000} step={10000} format={formatCurrency} onChange={(v) => updateWhatIf({ tradeValue: v })} />
           <WhatIfSlider label="Outstanding Finance" value={whatIf.outstandingFinance ?? input.current.outstandingFinance} min={0} max={800000} step={5000} format={formatCurrency} onChange={(v) => updateWhatIf({ outstandingFinance: v })} />
           <WhatIfSlider label="Solar %" value={solarPercent} min={0} max={100} step={5} format={(v) => `${v}%`} onChange={(v) => updateWhatIf({ solarPercent: v, gridPercent: 100 - v })} />
-          <WhatIfSlider label="Maintenance" value={whatIf.maintenance ?? input.current.maintenance} min={0} max={50000} step={500} format={formatCurrency} onChange={(v) => updateWhatIf({ maintenance: v })} />
+          <WhatIfSlider label="Current Maintenance (annual)" value={whatIf.maintenance ?? input.current.maintenance} min={0} max={50000} step={500} format={formatCurrency} onChange={(v) => updateWhatIf({ maintenance: v })} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm">Monthly Cost Breakdown</CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-3 text-sm sm:grid-cols-2">
+          <div className="rounded-lg bg-muted/50 p-3">
+            <p className="font-medium">Current vehicle</p>
+            <p className="text-muted-foreground">Finance: {formatCurrency(kpis.currentFinanceInstalment)}</p>
+            <p className="text-muted-foreground">Running: {formatCurrency(kpis.currentRunningMonthly)}</p>
+            <p className="font-semibold tabular-nums">Total: {formatCurrency(kpis.currentMonthlyCost)}</p>
+          </div>
+          <div className="rounded-lg bg-muted/50 p-3">
+            <p className="font-medium">Replacement vehicle</p>
+            <p className="text-muted-foreground">Finance: {formatCurrency(kpis.replacementFinanceInstalment)}</p>
+            <p className="text-muted-foreground">Running: {formatCurrency(kpis.replacementRunningMonthly)}</p>
+            <p className="font-semibold tabular-nums">Total: {formatCurrency(kpis.replacementMonthlyCost)}</p>
+          </div>
         </CardContent>
       </Card>
     </div>

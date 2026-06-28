@@ -186,6 +186,12 @@ export interface RiskResult {
 export interface ComparisonKpis {
   currentMonthlyCost: number;
   replacementMonthlyCost: number;
+  currentFinanceInstalment: number;
+  currentRunningMonthly: number;
+  replacementFinanceInstalment: number;
+  replacementRunningMonthly: number;
+  operatingMonthlySaving: number;
+  financeMonthlyDelta: number;
   monthlySaving: number;
   annualSaving: number;
   tenYearSaving: number;
