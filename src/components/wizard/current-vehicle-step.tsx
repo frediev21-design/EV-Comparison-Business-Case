@@ -1,6 +1,8 @@
 "use client";
 
 import { useCaseStore } from "@/store/case-store";
+import { getCaseValidationMessages } from "@/lib/wizard-validation";
+import { ValidationAlerts } from "./validation-alerts";
 import { FormField, FormSelect, FormSection } from "./form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -14,16 +16,20 @@ const FUEL_OPTIONS = [
 
 export function CurrentVehicleStep() {
   const current = useCaseStore((s) => s.input.current);
+  const input = useCaseStore((s) => s.input);
+  const result = useCaseStore((s) => s.result);
   const updateCurrent = useCaseStore((s) => s.updateCurrent);
   const updateAssumptions = useCaseStore((s) => s.updateAssumptions);
   const dailyDistance = useCaseStore((s) => s.input.assumptions.dailyDistanceKm);
+  const validationMessages = getCaseValidationMessages(input, result);
 
   const num = (v: string) => parseFloat(v) || 0;
   const int = (v: string) => parseInt(v, 10) || 0;
 
   return (
     <div className="space-y-8">
-      <FormSection title="Current Vehicle" description="Capture your existing vehicle details and operating assumptions.">
+      <ValidationAlerts messages={validationMessages} step="current" />
+      <FormSection title="Current Vehicle" description="Capture your existing vehicle details. Loan instalment is finance payment only — fuel and maintenance are calculated separately.">
         <FormField label="Manufacturer" value={current.manufacturer} onChange={(v) => updateCurrent({ manufacturer: v })} />
         <FormField label="Model" value={current.model} onChange={(v) => updateCurrent({ model: v })} />
         <FormField label="Year" type="number" value={current.year} onChange={(v) => updateCurrent({ year: int(v) })} />

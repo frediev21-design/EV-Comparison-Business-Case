@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { runFullBusinessCase } from "@/engine";
 import type { BusinessCaseInput, BusinessCaseResult, ReplacementVehicle, WhatIfOverrides } from "@/engine/types";
 import { createDefaultBusinessCase, createId } from "./defaults";
+import type { WorkflowMode } from "@/lib/wizard-steps";
 
 export type WizardStep =
   | "current"
@@ -45,12 +46,14 @@ interface CaseStore {
   input: BusinessCaseInput;
   result: BusinessCaseResult;
   activeStep: WizardStep;
+  workflowMode: WorkflowMode;
   ownershipHorizon: 5 | 7 | 10;
   presentationMode: boolean;
   setCaseId: (id: string | null) => void;
   setCaseName: (name: string) => void;
   setTags: (tags: string[]) => void;
   setActiveStep: (step: WizardStep) => void;
+  setWorkflowMode: (mode: WorkflowMode) => void;
   setOwnershipHorizon: (years: 5 | 7 | 10) => void;
   updateCurrent: (partial: Partial<BusinessCaseInput["current"]>) => void;
   updateTradeIn: (partial: Partial<BusinessCaseInput["tradeIn"]>) => void;
@@ -79,7 +82,8 @@ export const useCaseStore = create<CaseStore>((set) => ({
   tags: ["Business Use"],
   input: defaultInput,
   result: computeResult(defaultInput),
-  activeStep: "dashboard",
+  activeStep: "current",
+  workflowMode: "full",
   ownershipHorizon: 10,
   presentationMode: false,
 
@@ -87,6 +91,7 @@ export const useCaseStore = create<CaseStore>((set) => ({
   setCaseName: (name) => set({ caseName: name }),
   setTags: (tags) => set({ tags }),
   setActiveStep: (step) => set({ activeStep: step }),
+  setWorkflowMode: (mode) => set({ workflowMode: mode }),
   setOwnershipHorizon: (years) => set({ ownershipHorizon: years }),
   setPresentationMode: (on) => set({ presentationMode: on }),
 
@@ -200,7 +205,7 @@ export const useCaseStore = create<CaseStore>((set) => ({
       tags: ["Business Use"],
       input,
       result: computeResult(input),
-      activeStep: "dashboard",
+      activeStep: "current",
       presentationMode: false,
     });
   },

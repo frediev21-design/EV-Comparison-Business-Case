@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { SCENARIO_TAGS } from "@/store/defaults";
 import { Copy, Trash2, FolderOpen, Save } from "lucide-react";
+import { ScenarioComparisonTable } from "./scenario-comparison-table";
 
 export function ScenarioManager() {
   const [scenarios, setScenarios] = useState<ScenarioRecord[]>([]);
@@ -97,6 +98,8 @@ export function ScenarioManager() {
           </Button>
         </CardContent>
       </Card>
+
+      <ScenarioComparisonTable />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {scenarios.map((scenario) => (

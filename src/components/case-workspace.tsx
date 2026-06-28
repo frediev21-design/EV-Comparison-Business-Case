@@ -16,6 +16,7 @@ import { ScenarioManager } from "@/components/scenarios/scenario-manager";
 import { ReportPanel } from "@/components/reports/report-panel";
 import { DecisionIntelligenceStep } from "@/components/decision/decision-intelligence-step";
 import { MarketIntelligenceStep } from "@/components/market/market-intelligence-step";
+import { WizardStepShell } from "@/components/wizard/wizard-step-shell";
 
 const STEP_COMPONENTS: Record<WizardStep, React.ComponentType> = {
   current: CurrentVehicleStep,
@@ -39,5 +40,9 @@ export function CaseWorkspace() {
   const activeStep = useCaseStore((s) => s.activeStep);
   const Component = STEP_COMPONENTS[activeStep];
 
-  return <Component />;
+  return (
+    <WizardStepShell step={activeStep}>
+      <Component />
+    </WizardStepShell>
+  );
 }

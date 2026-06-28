@@ -6,6 +6,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/format";
+import { SavingsBreakdownCard } from "@/components/dashboard/savings-breakdown-card";
 
 function WhatIfSlider({
   label,
@@ -77,6 +78,8 @@ export function WhatIfPanel() {
           <CardContent><p className="text-2xl font-bold tabular-nums">{kpis.paybackMonths > 0 ? `${kpis.paybackMonths} mo` : "N/A"}</p></CardContent>
         </Card>
       </div>
+
+      <SavingsBreakdownCard />
 
       <Card>
         <CardContent className="grid gap-6 pt-6 sm:grid-cols-2">

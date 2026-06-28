@@ -126,7 +126,9 @@ export function calculateRunningCosts(
   assumptions: Assumptions,
   solarPercent: number,
   gridPercent: number,
-  overrides?: Partial<Assumptions & { maintenance?: number; insurance?: number }>
+  overrides?: Partial<
+    Assumptions & { currentMaintenance?: number; maintenance?: number; insurance?: number }
+  >
 ): RunningCostResult {
   const currentBreakdown = calculateCurrentRunningCosts(current, assumptions, overrides);
   const replacementMap: Record<string, RunningCostBreakdown> = {};

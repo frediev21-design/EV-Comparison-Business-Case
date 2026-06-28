@@ -1,6 +1,9 @@
 "use client";
 
 import { useCaseStore } from "@/store/case-store";
+import { getCaseValidationMessages } from "@/lib/wizard-validation";
+import { ValidationAlerts } from "./validation-alerts";
+import { MarketSyncCard } from "./market-sync-card";
 import { FormField } from "./form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/format";
@@ -42,12 +45,15 @@ function WaterfallRow({
 
 export function TradeInStep() {
   const tradeIn = useCaseStore((s) => s.result.tradeIn);
-  const current = useCaseStore((s) => s.input.current);
-  const whatIf = useCaseStore((s) => s.input.whatIf);
-  const additionalCash = useCaseStore((s) => s.input.tradeIn.additionalCashDeposit);
+  const input = useCaseStore((s) => s.input);
+  const result = useCaseStore((s) => s.result);
+  const current = input.current;
+  const whatIf = input.whatIf;
+  const additionalCash = input.tradeIn.additionalCashDeposit;
   const updateTradeIn = useCaseStore((s) => s.updateTradeIn);
   const updateCurrent = useCaseStore((s) => s.updateCurrent);
   const resetWhatIf = useCaseStore((s) => s.resetWhatIf);
+  const validationMessages = getCaseValidationMessages(input, result);
 
   const num = (v: string) => parseFloat(v) || 0;
   const hasWhatIfOverrides =
@@ -55,6 +61,8 @@ export function TradeInStep() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
+      <ValidationAlerts messages={validationMessages} step="trade-in" />
+      <MarketSyncCard />
       <div>
         <h2 className="text-lg font-semibold">Trade-In Calculator</h2>
         <p className="text-sm text-muted-foreground">

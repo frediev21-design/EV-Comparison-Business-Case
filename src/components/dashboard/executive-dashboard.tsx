@@ -1,9 +1,12 @@
 "use client";
 
 import { useCaseStore } from "@/store/case-store";
+import { getCaseValidationMessages } from "@/lib/wizard-validation";
+import { ValidationAlerts } from "@/components/wizard/validation-alerts";
 import { KpiCard } from "@/components/kpi/kpi-card";
 import { formatCurrency } from "@/lib/format";
 import { RecommendationCard } from "./recommendation-card";
+import { SavingsBreakdownCard } from "./savings-breakdown-card";
 import { ExecutiveScoreCard } from "@/components/decision/executive-score-card";
 import { DecisionTrafficLight } from "@/components/decision/decision-traffic-light";
 import { BoardSummaryPanel } from "@/components/decision/board-summary-panel";
@@ -13,17 +16,19 @@ import { DecisionTimeline } from "@/components/decision/decision-timeline";
 import { DecisionAdvisor } from "@/components/decision/decision-advisor";
 
 export function ExecutiveDashboard() {
+  const input = useCaseStore((s) => s.input);
   const kpis = useCaseStore((s) => s.result.kpis);
-  const decision = useCaseStore((s) => s.result.decision);
-  const tradeIn = useCaseStore((s) => s.result.tradeIn);
-  const solar = useCaseStore((s) => s.result.solar);
-  const selected = useCaseStore((s) =>
-    s.input.replacements.find((v) => v.id === s.input.selectedReplacementId)
-  );
-  const currentName = useCaseStore((s) => `${s.input.current.manufacturer} ${s.input.current.model}`);
+  const result = useCaseStore((s) => s.result);
+  const decision = result.decision;
+  const tradeIn = result.tradeIn;
+  const solar = result.solar;
+  const validationMessages = getCaseValidationMessages(input, result);
+  const selected = input.replacements.find((v) => v.id === input.selectedReplacementId);
+  const currentName = `${input.current.manufacturer} ${input.current.model}`;
 
   return (
     <div className="space-y-8">
+      <ValidationAlerts messages={validationMessages} />
       <div>
         <h2 className="text-xl font-bold tracking-tight">Executive Dashboard</h2>
         <p className="text-sm text-muted-foreground">
@@ -43,6 +48,8 @@ export function ExecutiveDashboard() {
           subtitle={decision.investmentScore.rating}
         />
       </div>
+
+      <SavingsBreakdownCard />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 max-sm:flex max-sm:gap-4 max-sm:overflow-x-auto max-sm:pb-2 max-sm:snap-x max-sm:snap-mandatory">
         <KpiCard title="Monthly Saving" value={formatCurrency(kpis.monthlySaving)} positiveIsGood className="max-sm:min-w-[240px] max-sm:snap-center" />
