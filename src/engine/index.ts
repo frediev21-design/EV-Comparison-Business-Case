@@ -5,8 +5,8 @@ import { calculateSolar } from "./solar";
 import { calculateOwnership } from "./ownership";
 import { analyzeRisk } from "./risk";
 import { calculateKpis } from "./comparison";
-import { generateRecommendation } from "./recommendation";
 import { buildChartSeries } from "./charts";
+import { runDecisionIntelligence } from "./decision";
 import type { BusinessCaseInput, BusinessCaseResult } from "./types";
 
 function applyWhatIf(input: BusinessCaseInput) {
@@ -104,11 +104,14 @@ export function runFullBusinessCase(input: BusinessCaseInput): BusinessCaseResul
     solarResult,
     ownership
   );
-  const recommendation = generateRecommendation(
-    { ...input, replacements },
+  const decision = runDecisionIntelligence(
+    { ...input, current, replacements, assumptions, solar },
     kpis,
+    tradeIn,
+    running,
     solarResult,
-    tradeIn
+    ownership,
+    risk
   );
   const charts = buildChartSeries(
     finance,
@@ -126,8 +129,9 @@ export function runFullBusinessCase(input: BusinessCaseInput): BusinessCaseResul
     ownership,
     risk,
     kpis,
-    recommendation,
+    recommendation: decision.executiveRecommendation,
     charts,
+    decision,
   };
 }
 
@@ -140,3 +144,4 @@ export { calculateOwnership } from "./ownership";
 export { analyzeRisk } from "./risk";
 export { calculateKpis } from "./comparison";
 export { generateRecommendation } from "./recommendation";
+export { runDecisionIntelligence } from "./decision";

@@ -38,15 +38,17 @@ function ChartCard({ title, children }: { title: string; children: React.ReactNo
 
 const tooltipFormatter = (value: number) => formatCurrency(value);
 
-export function ChartSuite() {
+export function ChartSuite({ compact = false }: { compact?: boolean }) {
   const charts = useCaseStore((s) => s.result.charts);
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold">Interactive Charts</h2>
-        <p className="text-sm text-muted-foreground">Real-time visual analysis of your business case.</p>
-      </div>
+      {!compact && (
+        <div>
+          <h2 className="text-lg font-semibold">Interactive Charts</h2>
+          <p className="text-sm text-muted-foreground">Real-time visual analysis of your business case.</p>
+        </div>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-2">
         <ChartCard title="Monthly Cash Flow">

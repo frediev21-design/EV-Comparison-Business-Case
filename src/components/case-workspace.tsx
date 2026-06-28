@@ -14,6 +14,7 @@ import { ChartSuite } from "@/components/charts/chart-suite";
 import { WhatIfPanel } from "@/components/what-if/what-if-panel";
 import { ScenarioManager } from "@/components/scenarios/scenario-manager";
 import { ReportPanel } from "@/components/reports/report-panel";
+import { DecisionIntelligenceStep } from "@/components/decision/decision-intelligence-step";
 
 const STEP_COMPONENTS: Record<WizardStep, React.ComponentType> = {
   current: CurrentVehicleStep,
@@ -25,6 +26,7 @@ const STEP_COMPONENTS: Record<WizardStep, React.ComponentType> = {
   ownership: OwnershipStep,
   risk: RiskStep,
   dashboard: ExecutiveDashboard,
+  decision: DecisionIntelligenceStep,
   charts: ChartSuite,
   "what-if": WhatIfPanel,
   scenarios: ScenarioManager,

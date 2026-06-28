@@ -16,6 +16,7 @@ import {
   Wallet,
   ArrowLeftRight,
   FolderOpen,
+  Brain,
 } from "lucide-react";
 
 const STEP_ICONS: Record<WizardStep, React.ComponentType<{ className?: string }>> = {
@@ -28,6 +29,7 @@ const STEP_ICONS: Record<WizardStep, React.ComponentType<{ className?: string }>
   ownership: Gauge,
   risk: Shield,
   dashboard: LayoutDashboard,
+  decision: Brain,
   charts: LineChart,
   "what-if": SlidersHorizontal,
   scenarios: FolderOpen,
@@ -45,8 +47,8 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
 
   const groups = [
     { label: "Data Entry", steps: WIZARD_STEPS.slice(0, 8) },
-    { label: "Analysis", steps: WIZARD_STEPS.slice(8, 11) },
-    { label: "Management", steps: WIZARD_STEPS.slice(11) },
+    { label: "Analysis", steps: WIZARD_STEPS.filter((s) => ["dashboard", "decision", "charts", "what-if"].includes(s.id)) },
+    { label: "Management", steps: WIZARD_STEPS.filter((s) => ["scenarios", "reports"].includes(s.id)) },
   ];
 
   return (

@@ -14,6 +14,9 @@ export async function exportToExcel(
   summary.addRow(["Generated", new Date().toLocaleString()]);
   summary.addRow([]);
   summary.addRow(["KPI", "Value"]);
+  summary.addRow(["Investment Score", result.decision.investmentScore.total]);
+  summary.addRow(["Rating", result.decision.investmentScore.rating]);
+  summary.addRow(["Decision", result.decision.trafficLight.label]);
   summary.addRow(["Current Monthly Cost", result.kpis.currentMonthlyCost]);
   summary.addRow(["Replacement Monthly Cost", result.kpis.replacementMonthlyCost]);
   summary.addRow(["Monthly Saving", result.kpis.monthlySaving]);
@@ -49,6 +52,20 @@ export async function exportToExcel(
   running.addRow(["Maintenance", result.running.current.maintenance, selectedRunning?.maintenance ?? 0]);
   running.addRow(["Insurance", result.running.current.insurance, selectedRunning?.insurance ?? 0]);
   running.addRow(["Total", result.running.current.total, selectedRunning?.total ?? 0]);
+
+  if (reportType === "Executive Report" || reportType === "Business Case") {
+    const swot = workbook.addWorksheet("SWOT");
+    swot.addRow(["Strengths", result.decision.swot.strengths.join("; ")]);
+    swot.addRow(["Weaknesses", result.decision.swot.weaknesses.join("; ")]);
+    swot.addRow(["Opportunities", result.decision.swot.opportunities.join("; ")]);
+    swot.addRow(["Threats", result.decision.swot.threats.join("; ")]);
+
+    const scoreSheet = workbook.addWorksheet("Investment Score");
+    scoreSheet.addRow(["Criterion", "Score", "Weight"]);
+    result.decision.investmentScore.criteria.forEach((c) => {
+      scoreSheet.addRow([c.label, Math.round(c.score), c.weight]);
+    });
+  }
 
   if (reportType === "Comparison Report") {
     const comparison = workbook.addWorksheet("Comparison");

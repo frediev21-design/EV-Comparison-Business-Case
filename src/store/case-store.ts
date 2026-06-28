@@ -16,7 +16,8 @@ export type WizardStep =
   | "charts"
   | "what-if"
   | "scenarios"
-  | "reports";
+  | "reports"
+  | "decision";
 
 export const WIZARD_STEPS: { id: WizardStep; label: string; step: number }[] = [
   { id: "current", label: "Current Vehicle", step: 1 },
@@ -28,6 +29,7 @@ export const WIZARD_STEPS: { id: WizardStep; label: string; step: number }[] = [
   { id: "ownership", label: "Ownership", step: 7 },
   { id: "risk", label: "Risk Analysis", step: 8 },
   { id: "dashboard", label: "Dashboard", step: 9 },
+  { id: "decision", label: "Decision Intel", step: 0 },
   { id: "charts", label: "Charts", step: 10 },
   { id: "what-if", label: "What-If", step: 11 },
   { id: "scenarios", label: "Scenarios", step: 12 },
@@ -42,6 +44,7 @@ interface CaseStore {
   result: BusinessCaseResult;
   activeStep: WizardStep;
   ownershipHorizon: 5 | 7 | 10;
+  presentationMode: boolean;
   setCaseId: (id: string | null) => void;
   setCaseName: (name: string) => void;
   setTags: (tags: string[]) => void;
@@ -59,6 +62,7 @@ interface CaseStore {
   selectReplacement: (id: string) => void;
   loadCase: (input: BusinessCaseInput, meta?: { id?: string; name?: string; tags?: string[] }) => void;
   resetCase: () => void;
+  setPresentationMode: (on: boolean) => void;
 }
 
 function computeResult(input: BusinessCaseInput): BusinessCaseResult {
@@ -75,12 +79,14 @@ export const useCaseStore = create<CaseStore>((set) => ({
   result: computeResult(defaultInput),
   activeStep: "dashboard",
   ownershipHorizon: 10,
+  presentationMode: false,
 
   setCaseId: (id) => set({ caseId: id }),
   setCaseName: (name) => set({ caseName: name }),
   setTags: (tags) => set({ tags }),
   setActiveStep: (step) => set({ activeStep: step }),
   setOwnershipHorizon: (years) => set({ ownershipHorizon: years }),
+  setPresentationMode: (on) => set({ presentationMode: on }),
 
   updateCurrent: (partial) =>
     set((state) => {
@@ -193,6 +199,7 @@ export const useCaseStore = create<CaseStore>((set) => ({
       input,
       result: computeResult(input),
       activeStep: "dashboard",
+      presentationMode: false,
     });
   },
 }));

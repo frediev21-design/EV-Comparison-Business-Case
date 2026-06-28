@@ -40,6 +40,7 @@ describe("full business case", () => {
     expect(result.finance).toHaveLength(1);
     expect(result.kpis.monthlySaving).toBeDefined();
     expect(result.recommendation).toContain("BYD Shark 6");
+    expect(result.decision.executiveRecommendation).toContain("BYD Shark 6");
     expect(result.charts.monthlyCashFlow).toHaveLength(12);
   });
 });

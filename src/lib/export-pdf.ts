@@ -35,13 +35,30 @@ export function generatePrintHtml(
   <p class="meta">Generated ${new Date().toLocaleString()} · ${input.current.manufacturer} ${input.current.model} → ${selectedName}</p>
 
   <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Investment Score</div><div class="kpi-value">${result.decision.investmentScore.total}/100</div></div>
+    <div class="kpi"><div class="kpi-label">${result.decision.trafficLight.label}</div><div class="kpi-value">${result.decision.investmentScore.rating}</div></div>
     <div class="kpi"><div class="kpi-label">Monthly Saving</div><div class="kpi-value">${formatCurrency(result.kpis.monthlySaving)}</div></div>
     <div class="kpi"><div class="kpi-label">Annual Saving</div><div class="kpi-value">${formatCurrency(result.kpis.annualSaving)}</div></div>
     <div class="kpi"><div class="kpi-label">10-Year Saving</div><div class="kpi-value">${formatCurrency(result.kpis.tenYearSaving)}</div></div>
     <div class="kpi"><div class="kpi-label">Amount Financed</div><div class="kpi-value">${formatCurrency(result.tradeIn.amountFinanced)}</div></div>
-    <div class="kpi"><div class="kpi-label">ROI</div><div class="kpi-value">${result.kpis.roi.toFixed(1)}%</div></div>
-    <div class="kpi"><div class="kpi-label">Payback</div><div class="kpi-value">${result.kpis.paybackMonths > 0 ? result.kpis.paybackMonths + " months" : "N/A"}</div></div>
   </div>
+
+  ${reportType === "Executive Report" ? `
+  <h2>Score Breakdown</h2>
+  <table>
+    <tr><th>Criterion</th><th>Score</th><th>Weight</th></tr>
+    ${result.decision.investmentScore.criteria.map(c =>
+      `<tr><td>${c.label}</td><td>${Math.round(c.score)}</td><td>${(c.weight * 100).toFixed(0)}%</td></tr>`
+    ).join("")}
+  </table>
+  <h2>SWOT Analysis</h2>
+  <h3>Strengths</h3><ul>${result.decision.swot.strengths.map(s => `<li>${s}</li>`).join("")}</ul>
+  <h3>Weaknesses</h3><ul>${result.decision.swot.weaknesses.map(s => `<li>${s}</li>`).join("")}</ul>
+  <h3>Opportunities</h3><ul>${result.decision.swot.opportunities.map(s => `<li>${s}</li>`).join("")}</ul>
+  <h3>Threats</h3><ul>${result.decision.swot.threats.map(s => `<li>${s}</li>`).join("")}</ul>
+  <h2>Decision Advisor</h2>
+  <ul>${result.decision.advisorTips.map(t => `<li>${t.message}</li>`).join("")}</ul>
+  ` : ""}
 
   <h2>Trade-In Summary</h2>
   <table>
@@ -53,7 +70,7 @@ export function generatePrintHtml(
   </table>
 
   <h2>Executive Recommendation</h2>
-  <div class="recommendation">${result.recommendation}</div>
+  <div class="recommendation">${result.decision.executiveRecommendation}</div>
 
   ${reportType === "Bank Finance Report" ? `
   <h2>Finance Schedule (First 12 Months)</h2>

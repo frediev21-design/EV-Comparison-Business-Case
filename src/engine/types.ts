@@ -1,3 +1,5 @@
+import type { DecisionIntelligence } from "./decision/types";
+
 export type FuelType = "diesel" | "petrol" | "hybrid" | "electric" | "phev";
 export type BusinessCaseType = "fleet-ev";
 
@@ -235,6 +237,7 @@ export interface BusinessCaseResult {
   kpis: ComparisonKpis;
   recommendation: string;
   charts: ChartSeries;
+  decision: DecisionIntelligence;
 }
 
 export interface ScenarioRecord {

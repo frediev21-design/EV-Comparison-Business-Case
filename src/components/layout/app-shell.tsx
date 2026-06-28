@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Sidebar } from "./sidebar";
 import { AppHeader } from "./app-header";
+import { PresentationView } from "@/components/decision/presentation-view";
+import { useCaseStore } from "@/store/case-store";
 import { cn } from "@/lib/utils";
 
 interface AppShellProps {
@@ -11,10 +13,15 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const presentationMode = useCaseStore((s) => s.presentationMode);
+
+  if (presentationMode) {
+    return <PresentationView />;
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      <div className="hidden lg:block">
+      <div className="hidden lg:block no-print">
         <Sidebar />
       </div>
       {mobileOpen && (

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Quote } from "lucide-react";
 
 export function RecommendationCard() {
-  const recommendation = useCaseStore((s) => s.result.recommendation);
+  const recommendation = useCaseStore((s) => s.result.decision?.executiveRecommendation ?? s.result.recommendation);
 
   return (
     <Card className="border-accent/20 bg-accent/5">
