@@ -11,8 +11,10 @@ import { SavingsBreakdownCard } from "./savings-breakdown-card";
 import { CurrentMonthlyBreakdownCard } from "./current-monthly-breakdown-card";
 import { buildCurrentMonthlyFromInputs } from "@/lib/current-monthly-breakdown";
 import { downloadBoardPack } from "@/lib/export-pdf";
+import { downloadExecutiveSummary } from "@/lib/executive-summary-pdf";
 import { Button } from "@/components/ui/button";
-import { FileText } from "lucide-react";
+import { FileDown, FileText } from "lucide-react";
+import { showToast } from "@/lib/toast";
 import { ExecutiveScoreCard } from "@/components/decision/executive-score-card";
 import { DecisionTrafficLight } from "@/components/decision/decision-traffic-light";
 import { BoardSummaryPanel } from "@/components/decision/board-summary-panel";
@@ -25,6 +27,7 @@ export function ExecutiveDashboard() {
   const input = useCaseStore((s) => s.input);
   const kpis = useCaseStore((s) => s.result.kpis);
   const result = useCaseStore((s) => s.result);
+  const caseName = useCaseStore((s) => s.caseName);
   const decision = result.decision;
   const tradeIn = result.tradeIn;
   const solar = result.solar;
@@ -49,14 +52,31 @@ export function ExecutiveDashboard() {
               )}
             </p>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => downloadBoardPack(input, result)}
-          >
-            <FileText className="mr-2 h-4 w-4" />
-            Board Pack
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="default"
+              size="sm"
+              onClick={async () => {
+                try {
+                  await downloadExecutiveSummary(input, result, caseName);
+                  showToast("Executive summary downloaded", "success");
+                } catch {
+                  showToast("Could not generate PDF", "error");
+                }
+              }}
+            >
+              <FileDown className="mr-2 h-4 w-4" />
+              Executive summary
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => downloadBoardPack(input, result)}
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              Board Pack
+            </Button>
+          </div>
         </div>
       </div>
 

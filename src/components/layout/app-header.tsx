@@ -2,7 +2,8 @@
 
 import { useCaseStore } from "@/store/case-store";
 import { ThemeToggle } from "./theme-toggle";
-import { Menu, Presentation, SlidersHorizontal, X } from "lucide-react";
+import Link from "next/link";
+import { Menu, Presentation, SlidersHorizontal, X, LayoutGrid } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { hasWhatIfOverrides } from "@/lib/wizard-steps";
 import { HeaderInvestmentScore, HeaderInvestmentScoreMobile } from "./header-investment-score";
@@ -65,6 +66,12 @@ export function AppHeader({ onMenuClick }: AppHeaderProps) {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" className="hidden sm:flex" asChild>
+            <Link href="/cases">
+              <LayoutGrid className="mr-2 h-4 w-4" />
+              My analyses
+            </Link>
+          </Button>
           <HeaderInvestmentScoreMobile />
           <HeaderInvestmentScore />
           <Button variant="outline" size="sm" className="sm:hidden" onClick={() => setPresentationMode(true)} aria-label="Presentation mode">

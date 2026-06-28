@@ -33,7 +33,7 @@ export default function HomePage() {
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link href="/case/new?step=scenarios">Open saved scenarios</Link>
+              <Link href="/cases">My analyses</Link>
             </Button>
           </div>
           <p className="mt-4 text-xs text-muted-foreground">
