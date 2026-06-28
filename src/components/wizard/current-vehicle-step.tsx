@@ -38,7 +38,7 @@ export function CurrentVehicleStep() {
         <FormField label="Model" value={current.model} onChange={(v) => updateCurrent({ model: v })} />
         <FormField label="Year" type="number" value={current.year} onChange={(v) => updateCurrent({ year: int(v) })} />
         <FormField label="Mileage (km)" type="number" value={current.mileage} onChange={(v) => updateCurrent({ mileage: num(v) })} />
-        <FormField label="Current Value" type="number" prefix="R" value={current.currentValue} onChange={(v) => updateCurrent({ currentValue: num(v) })} />
+        <FormField label="Current Value" type="number" prefix="R" value={current.currentValue} onChange={(v) => updateCurrent({ currentValue: num(v), tradeInValue: num(v) })} />
         <FormField label="Outstanding Finance" type="number" prefix="R" value={current.outstandingFinance} onChange={(v) => updateCurrent({ outstandingFinance: num(v) })} />
         <FormField
           label="Monthly Loan Instalment"
@@ -64,7 +64,7 @@ export function CurrentVehicleStep() {
         <FormField label="Tyres (annual)" type="number" prefix="R" value={current.tyres} onChange={(v) => updateCurrent({ tyres: num(v) })} />
         <FormField label="Licence (annual)" type="number" prefix="R" value={current.licence} onChange={(v) => updateCurrent({ licence: num(v) })} />
         <FormField label="Expected Annual Repairs" type="number" prefix="R" value={current.expectedAnnualRepairs} onChange={(v) => updateCurrent({ expectedAnnualRepairs: num(v) })} />
-        <FormField label="Trade-In Value" type="number" prefix="R" value={current.tradeInValue} onChange={(v) => updateCurrent({ tradeInValue: num(v) })} />
+        <FormField label="Trade-In Value" type="number" prefix="R" value={current.tradeInValue} onChange={(v) => updateCurrent({ tradeInValue: num(v), currentValue: num(v) })} />
         <FormField label="Residual Value" type="number" prefix="R" value={current.residualValue} onChange={(v) => updateCurrent({ residualValue: num(v) })} />
         <FormField label="Daily Distance" type="number" suffix="km/day" value={assumptions.dailyDistanceKm} onChange={(v) => updateAssumptions({ dailyDistanceKm: num(v) })} min={10} max={300} />
         <FormField label="Fleet Size" type="number" suffix="vehicles" value={assumptions.fleetVehicleCount} onChange={(v) => updateAssumptions({ fleetVehicleCount: Math.max(1, int(v)) })} min={1} max={100} />

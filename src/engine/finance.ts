@@ -42,11 +42,10 @@ export function buildAmortisationSchedule(
 export function calculateFinanceForVehicle(
   vehicle: ReplacementVehicle,
   tradeIn: TradeInResult,
-  overrides?: { interestRate?: number; deposit?: number }
+  overrides?: { interestRate?: number }
 ): FinanceResult {
   const interestRate = overrides?.interestRate ?? vehicle.interestRate;
-  const totalDeposit =
-    (overrides?.deposit ?? tradeIn.totalDeposit) + vehicle.deposit;
+  const totalDeposit = tradeIn.totalDeposit + vehicle.deposit;
   const amountFinanced = Math.max(0, vehicle.price - totalDeposit);
   const schedule = buildAmortisationSchedule(
     amountFinanced,
@@ -71,7 +70,7 @@ export function calculateFinanceForVehicle(
 export function calculateFinance(
   vehicles: ReplacementVehicle[],
   tradeIn: TradeInResult,
-  overrides?: { interestRate?: number; deposit?: number }
+  overrides?: { interestRate?: number }
 ): FinanceResult[] {
   return vehicles.map((vehicle) =>
     calculateFinanceForVehicle(vehicle, tradeIn, overrides)

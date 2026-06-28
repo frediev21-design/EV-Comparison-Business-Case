@@ -48,7 +48,8 @@ export function TradeInStep() {
   const input = useCaseStore((s) => s.input);
   const result = useCaseStore((s) => s.result);
   const current = input.current;
-  const additionalCash = input.tradeIn.additionalCashDeposit;
+  const fleetCount = input.assumptions.fleetVehicleCount ?? 1;
+  const additionalCashPerVehicle = input.tradeIn?.additionalCashDeposit ?? 0;
   const updateTradeIn = useCaseStore((s) => s.updateTradeIn);
   const updateCurrent = useCaseStore((s) => s.updateCurrent);
   const validationMessages = getCaseValidationMessages(input, result);
@@ -95,11 +96,16 @@ export function TradeInStep() {
           onChange={(v) => updateCurrent({ outstandingFinance: num(v) })}
         />
         <FormField
-          label="Additional Cash Deposit"
+          label={fleetCount > 1 ? "Additional Cash Deposit (per vehicle)" : "Additional Cash Deposit"}
           type="number"
           prefix="R"
-          value={additionalCash}
+          value={additionalCashPerVehicle}
           onChange={(v) => updateTradeIn({ additionalCashDeposit: num(v) })}
+          hint={
+            fleetCount > 1
+              ? `Fleet ×${fleetCount}: ${formatCurrency(additionalCashPerVehicle * fleetCount)} total cash deposit.`
+              : "Extra cash you put in on top of trade equity."
+          }
           className="sm:col-span-2"
         />
       </div>
@@ -126,7 +132,14 @@ export function TradeInStep() {
           <div className="flex justify-center py-1">
             <Plus className="h-4 w-4 text-muted-foreground" />
           </div>
-          <WaterfallRow label="Additional Cash Deposit" value={tradeIn.additionalCash} />
+          <WaterfallRow
+            label={
+              fleetCount > 1
+                ? `Additional Cash Deposit (×${fleetCount} fleet)`
+                : "Additional Cash Deposit"
+            }
+            value={tradeIn.additionalCash}
+          />
           <div className="flex justify-center py-1">
             <Equal className="h-4 w-4 text-muted-foreground" />
           </div>

@@ -20,8 +20,10 @@ const FUEL_OPTIONS = [
 export function ReplacementVehiclesStep() {
   const replacements = useCaseStore((s) => s.input.replacements);
   const selectedId = useCaseStore((s) => s.input.selectedReplacementId);
+  const additionalCashDeposit = useCaseStore((s) => s.input.tradeIn?.additionalCashDeposit ?? 0);
   const addReplacement = useCaseStore((s) => s.addReplacement);
   const updateReplacement = useCaseStore((s) => s.updateReplacement);
+  const updateTradeIn = useCaseStore((s) => s.updateTradeIn);
   const removeReplacement = useCaseStore((s) => s.removeReplacement);
   const selectReplacement = useCaseStore((s) => s.selectReplacement);
 
@@ -84,7 +86,16 @@ export function ReplacementVehiclesStep() {
             <FormSection title="" description="">
               <FormField label="Vehicle Name" value={vehicle.name} onChange={(v) => updateReplacement(vehicle.id, { name: v })} />
               <FormField label="Price" type="number" prefix="R" value={vehicle.price} onChange={(v) => updateReplacement(vehicle.id, { price: num(v) })} />
-              <FormField label="Deposit" type="number" prefix="R" value={vehicle.deposit} onChange={(v) => updateReplacement(vehicle.id, { deposit: num(v) })} />
+              {selectedId === vehicle.id && (
+                <FormField
+                  label="Cash Deposit"
+                  type="number"
+                  prefix="R"
+                  value={additionalCashDeposit}
+                  onChange={(v) => updateTradeIn({ additionalCashDeposit: num(v) })}
+                  hint="Extra cash on top of trade equity — also editable on the Trade-In step."
+                />
+              )}
               <FormField label="Interest Rate" type="number" suffix="%" value={vehicle.interestRate} onChange={(v) => updateReplacement(vehicle.id, { interestRate: num(v) })} min={3} max={18} step={0.1} />
               <FormField label="Finance Term" type="number" suffix="months" value={vehicle.financeTermMonths} onChange={(v) => updateReplacement(vehicle.id, { financeTermMonths: int(v) })} min={12} max={96} />
               <FormSelect label="Fuel Type" value={vehicle.fuelType} options={FUEL_OPTIONS} onChange={(v) => updateReplacement(vehicle.id, { fuelType: v as typeof vehicle.fuelType })} />

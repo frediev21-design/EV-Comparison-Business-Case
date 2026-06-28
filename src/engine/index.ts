@@ -61,7 +61,6 @@ export function runFullBusinessCase(input: BusinessCaseInput): BusinessCaseResul
 
   const finance = calculateFinance(replacements, tradeIn, {
     interestRate: w.interestRate,
-    deposit: w.deposit,
   });
 
   const running = calculateRunningCosts(

@@ -6,7 +6,8 @@ export function calculateTradeIn(
   replacement?: ReplacementVehicle,
   overrides?: { tradeValue?: number; outstandingFinance?: number }
 ): TradeInResult {
-  const currentVehicleValue = overrides?.tradeValue ?? current.currentValue;
+  const currentVehicleValue =
+    overrides?.tradeValue ?? current.tradeInValue ?? current.currentValue;
   const outstandingFinance = overrides?.outstandingFinance ?? current.outstandingFinance;
   const tradeEquity = Math.max(0, currentVehicleValue - outstandingFinance);
   const additionalCash = tradeIn.additionalCashDeposit;

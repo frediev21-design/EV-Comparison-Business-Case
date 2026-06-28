@@ -8,5 +8,22 @@ export function snapshotForSave(input: BusinessCaseInput): BusinessCaseInput {
 }
 
 export function inputForLoad(input: BusinessCaseInput): BusinessCaseInput {
-  return snapshotForSave(input);
+  const cleaned = snapshotForSave(input);
+  const selected = cleaned.replacements.find((v) => v.id === cleaned.selectedReplacementId);
+  const legacyVehicleDeposit = selected?.deposit ?? 0;
+  const additionalCashDeposit =
+    (cleaned.tradeIn?.additionalCashDeposit ?? 0) + legacyVehicleDeposit;
+
+  const replacements =
+    legacyVehicleDeposit > 0
+      ? cleaned.replacements.map((v) =>
+          v.id === cleaned.selectedReplacementId ? { ...v, deposit: 0 } : v
+        )
+      : cleaned.replacements;
+
+  return {
+    ...cleaned,
+    tradeIn: { additionalCashDeposit },
+    replacements,
+  };
 }

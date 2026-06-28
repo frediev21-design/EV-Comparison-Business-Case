@@ -123,7 +123,12 @@ export const useCaseStore = create<CaseStore>((set) => ({
 
   updateTradeIn: (partial) =>
     set((state) => {
-      const input = { ...state.input, tradeIn: { ...state.input.tradeIn, ...partial } };
+      const tradeIn = {
+        ...state.input.tradeIn,
+        additionalCashDeposit: state.input.tradeIn?.additionalCashDeposit ?? 0,
+        ...partial,
+      };
+      const input = { ...state.input, tradeIn };
       return { input, result: computeResult(input) };
     }),
 
@@ -202,6 +207,9 @@ export const useCaseStore = create<CaseStore>((set) => ({
     set({
       input: {
         ...loaded,
+        tradeIn: {
+          additionalCashDeposit: loaded.tradeIn?.additionalCashDeposit ?? 0,
+        },
         assumptions: {
           ...loaded.assumptions,
           fleetVehicleCount: loaded.assumptions.fleetVehicleCount ?? 1,
