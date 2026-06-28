@@ -24,7 +24,7 @@ import { SwotPanel } from "@/components/decision/swot-panel";
 import { DecisionTimeline } from "@/components/decision/decision-timeline";
 import { DecisionAdvisor } from "@/components/decision/decision-advisor";
 import { InfographicPromptPanel } from "./infographic-prompt-panel";
-import { RecommendationSummaryPanel } from "./recommendation-summary-panel";
+import { RecommendationSummaryCopyButton } from "./recommendation-summary-panel";
 
 export function ExecutiveDashboard() {
   const input = useCaseStore((s) => s.input);
@@ -79,6 +79,7 @@ export function ExecutiveDashboard() {
               <FileText className="mr-2 h-4 w-4" />
               Board Pack
             </Button>
+            <RecommendationSummaryCopyButton />
           </div>
         </div>
         <InfographicPromptPanel className="mt-4" />
@@ -91,8 +92,6 @@ export function ExecutiveDashboard() {
         rating={decision.investmentScore.rating}
         trafficLight={decision.trafficLight.status}
       />
-
-      <RecommendationSummaryPanel />
 
       <ExecutiveScoreCard score={decision.investmentScore} />
 
