@@ -2,6 +2,7 @@ import type { BusinessCaseInput, BusinessCaseResult } from "@/engine/types";
 import { formatCurrency } from "./format";
 import { isStepComplete } from "./wizard-validation";
 import { buildCurrentVehicleLabel, buildVehicleComparisonLabel } from "./case-labels";
+import { generateRecommendationSummary } from "./recommendation-summary";
 
 export function isInfographicPromptReady(input: BusinessCaseInput): boolean {
   return (
@@ -26,6 +27,7 @@ export function generateInfographicPrompt(
   const currentLabel = buildCurrentVehicleLabel(current) || "Current vehicle";
   const replacementLabel = selected?.name?.trim() || "Replacement vehicle";
   const comparisonLabel = buildVehicleComparisonLabel(input);
+  const recommendationSummary = generateRecommendationSummary(input, result);
   const fleetNote =
     kpis.fleetVehicleCount > 1 ? `\nFleet size: ${kpis.fleetVehicleCount} identical vehicles` : "";
 
@@ -56,9 +58,11 @@ export function generateInfographicPrompt(
    - Monthly cash flow: current vs replacement bars for 12 months trend
    - Fuel vs electricity cost shift
    - Solar contribution: ${solarResult.solarContributionPercent.toFixed(0)}% of charging from ${solar.systemSizeKw} kW solar
-6. **Recommendation callout box** (quote style):
+6. **Recommendation callout box** — render this exact summary block prominently:
+${recommendationSummary.split("\n").map((line) => `   ${line}`).join("\n")}
+7. **Executive narrative** (smaller text below the callout):
    "${d.executiveRecommendation}"
-7. **SWOT snapshot** (2×2 grid, bullet points only):
+8. **SWOT snapshot** (2×2 grid, bullet points only):
    - Strengths: ${d.swot.strengths.slice(0, 3).join("; ")}
    - Weaknesses: ${d.swot.weaknesses.slice(0, 2).join("; ")}
    - Opportunities: ${d.swot.opportunities.slice(0, 2).join("; ")}

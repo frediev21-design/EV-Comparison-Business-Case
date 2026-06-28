@@ -24,6 +24,7 @@ import { SwotPanel } from "@/components/decision/swot-panel";
 import { DecisionTimeline } from "@/components/decision/decision-timeline";
 import { DecisionAdvisor } from "@/components/decision/decision-advisor";
 import { InfographicPromptPanel } from "./infographic-prompt-panel";
+import { RecommendationSummaryPanel } from "./recommendation-summary-panel";
 
 export function ExecutiveDashboard() {
   const input = useCaseStore((s) => s.input);
@@ -90,6 +91,8 @@ export function ExecutiveDashboard() {
         rating={decision.investmentScore.rating}
         trafficLight={decision.trafficLight.status}
       />
+
+      <RecommendationSummaryPanel />
 
       <ExecutiveScoreCard score={decision.investmentScore} />
 
