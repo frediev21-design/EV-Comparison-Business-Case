@@ -52,6 +52,8 @@ interface CaseStore {
   presentationMode: boolean;
   lastSavedAt: string | null;
   routeCaseMissing: boolean;
+  /** Bumped on reset/load so forms remount and auto-save can ignore stale writes. */
+  inputGeneration: number;
   setCaseId: (id: string | null) => void;
   setCaseName: (name: string) => void;
   setTags: (tags: string[]) => void;
@@ -93,6 +95,7 @@ export const useCaseStore = create<CaseStore>((set) => ({
   presentationMode: false,
   lastSavedAt: null,
   routeCaseMissing: false,
+  inputGeneration: 0,
 
   setCaseId: (id) => set({ caseId: id }),
   setCaseName: (name) => set({ caseName: name }),
@@ -204,7 +207,7 @@ export const useCaseStore = create<CaseStore>((set) => ({
 
   loadCase: (input, meta) => {
     const loaded = inputForLoad(input);
-    set({
+    set((state) => ({
       input: {
         ...loaded,
         tradeIn: {
@@ -227,12 +230,13 @@ export const useCaseStore = create<CaseStore>((set) => ({
       tags: meta?.tags ?? [],
       lastSavedAt: null,
       routeCaseMissing: false,
-    });
+      inputGeneration: state.inputGeneration + 1,
+    }));
   },
 
   resetCase: () => {
     const input = createDefaultBusinessCase();
-    set({
+    set((state) => ({
       caseId: null,
       caseName: "Current Situation",
       tags: ["Business Use"],
@@ -242,7 +246,8 @@ export const useCaseStore = create<CaseStore>((set) => ({
       presentationMode: false,
       lastSavedAt: null,
       routeCaseMissing: false,
-    });
+      inputGeneration: state.inputGeneration + 1,
+    }));
   },
 }));
 

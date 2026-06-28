@@ -12,14 +12,21 @@ export function useIsNewCaseRoute(): boolean {
 }
 
 export function resetNewComparison(options?: { confirm?: boolean }) {
-  const { resetCase } = useCaseStore.getState();
   if (options?.confirm !== false) {
     const ok = window.confirm(
       "Reset all fields to the default starter template? Any unsaved edits on this comparison will be lost."
     );
     if (!ok) return false;
   }
-  resetCase();
+
+  const onNewRoute = window.location.pathname.endsWith("/case/new");
+  if (!onNewRoute) {
+    window.location.assign("/case/new?fresh=1&step=current");
+    return true;
+  }
+
+  useCaseStore.getState().resetCase();
+  window.dispatchEvent(new CustomEvent("fleet-tco:cancel-autosave"));
   showToast("All fields reset to defaults", "success");
   return true;
 }

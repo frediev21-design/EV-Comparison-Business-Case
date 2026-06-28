@@ -39,13 +39,14 @@ const STEP_COMPONENTS: Record<WizardStep, React.ComponentType> = {
 
 export function CaseWorkspace() {
   const activeStep = useCaseStore((s) => s.activeStep);
+  const inputGeneration = useCaseStore((s) => s.inputGeneration);
   const Component = STEP_COMPONENTS[activeStep];
 
   return (
     <WizardStepShell step={activeStep}>
       <AnimatePresence mode="wait">
         <motion.div
-          key={activeStep}
+          key={`${activeStep}-${inputGeneration}`}
           initial={{ opacity: 0, x: 16 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -16 }}

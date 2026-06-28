@@ -28,16 +28,20 @@ function WorkflowSyncInner() {
     if (mapped && VALID_STEPS.has(mapped as WizardStep)) {
       setActiveStep(mapped as WizardStep);
     }
-
-    if (pathname.endsWith("/case/new") && searchParams.get("fresh") === "1") {
-      useCaseStore.getState().resetCase();
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete("fresh");
-      const query = params.toString();
-      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate step from URL once on load
   }, []);
+
+  useEffect(() => {
+    if (!pathname.endsWith("/case/new") || searchParams.get("fresh") !== "1") return;
+
+    useCaseStore.getState().resetCase();
+    window.dispatchEvent(new CustomEvent("fleet-tco:cancel-autosave"));
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("fresh");
+    params.set("step", "current");
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [pathname, searchParams, router]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
