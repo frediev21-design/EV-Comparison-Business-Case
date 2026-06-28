@@ -59,7 +59,7 @@ export function WhatIfPanel() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold">What-If Analysis</h2>
-          <p className="text-sm text-muted-foreground">Adjust assumptions and see instant impact on KPIs.</p>
+          <p className="text-sm text-muted-foreground">Adjust assumptions and see instant impact on KPIs. Edit trade value and outstanding finance on the Current Vehicle and Trade-In steps.</p>
         </div>
         <Button variant="outline" size="sm" onClick={resetWhatIf}>
           Reset All
@@ -105,8 +105,6 @@ export function WhatIfPanel() {
           <WhatIfSlider label="Fuel Price" value={fuelPrice} min={15} max={35} step={0.5} format={(v) => `R${v.toFixed(2)}/L`} onChange={(v) => updateWhatIf({ fuelPricePerLitre: v })} />
           <WhatIfSlider label="Electricity Price" value={electricityTariff} min={1} max={6} step={0.05} format={(v) => `R${v.toFixed(2)}/kWh`} onChange={(v) => updateWhatIf({ electricityTariff: v })} />
           <WhatIfSlider label="Interest Rate" value={interestRate} min={3} max={18} step={0.1} format={(v) => `${v.toFixed(1)}%`} onChange={(v) => updateWhatIf({ interestRate: v })} />
-          <WhatIfSlider label="Trade Value" value={whatIf.tradeValue ?? input.current.currentValue} min={100000} max={1500000} step={10000} format={formatCurrency} onChange={(v) => updateWhatIf({ tradeValue: v })} />
-          <WhatIfSlider label="Outstanding Finance" value={whatIf.outstandingFinance ?? input.current.outstandingFinance} min={0} max={800000} step={5000} format={formatCurrency} onChange={(v) => updateWhatIf({ outstandingFinance: v })} />
           <WhatIfSlider label="Solar %" value={solarPercent} min={0} max={100} step={5} format={(v) => `${v}%`} onChange={(v) => updateWhatIf({ solarPercent: v, gridPercent: 100 - v })} />
           <WhatIfSlider label="Current Maintenance (annual)" value={whatIf.maintenance ?? input.current.maintenance} min={0} max={50000} step={500} format={formatCurrency} onChange={(v) => updateWhatIf({ maintenance: v })} />
         </CardContent>

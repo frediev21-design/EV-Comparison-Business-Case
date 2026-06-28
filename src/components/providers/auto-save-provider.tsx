@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useCaseStore } from "@/store/case-store";
 import { scenarioRepository } from "@/lib/db";
 import type { ScenarioRecord } from "@/engine/types";
+import { snapshotForSave } from "@/lib/snapshot-sanitize";
 
 export function AutoSaveProvider({ children }: { children: React.ReactNode }) {
   const caseId = useCaseStore((s) => s.caseId);
@@ -25,7 +26,7 @@ export function AutoSaveProvider({ children }: { children: React.ReactNode }) {
         tags,
         createdAt: existing?.createdAt ?? now,
         updatedAt: now,
-        snapshot: input,
+        snapshot: snapshotForSave(input),
       };
       await scenarioRepository.save(record);
       setCaseId(id);
@@ -51,7 +52,7 @@ export function AutoSaveProvider({ children }: { children: React.ReactNode }) {
         tags,
         createdAt: now,
         updatedAt: now,
-        snapshot: input,
+        snapshot: snapshotForSave(input),
       };
       const existing = await scenarioRepository.get(caseId);
       if (existing) record.createdAt = existing.createdAt;

@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { useCaseStore } from "@/store/case-store";
 import { scenarioRepository } from "@/lib/db";
 import type { ScenarioRecord } from "@/engine/types";
+import { snapshotForSave } from "@/lib/snapshot-sanitize";
 
 export function useScenarioSave() {
   return useCallback(async () => {
@@ -17,7 +18,7 @@ export function useScenarioSave() {
       tags,
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
-      snapshot: input,
+      snapshot: snapshotForSave(input),
     };
     await scenarioRepository.save(record);
     setCaseId(id);

@@ -48,16 +48,12 @@ export function TradeInStep() {
   const input = useCaseStore((s) => s.input);
   const result = useCaseStore((s) => s.result);
   const current = input.current;
-  const whatIf = input.whatIf;
   const additionalCash = input.tradeIn.additionalCashDeposit;
   const updateTradeIn = useCaseStore((s) => s.updateTradeIn);
   const updateCurrent = useCaseStore((s) => s.updateCurrent);
-  const resetWhatIf = useCaseStore((s) => s.resetWhatIf);
   const validationMessages = getCaseValidationMessages(input, result);
 
   const num = (v: string) => parseFloat(v) || 0;
-  const hasWhatIfOverrides =
-    whatIf?.tradeValue !== undefined || whatIf?.outstandingFinance !== undefined;
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -66,17 +62,8 @@ export function TradeInStep() {
       <div>
         <h2 className="text-lg font-semibold">Trade-In Calculator</h2>
         <p className="text-sm text-muted-foreground">
-          Automatically calculated from current vehicle value and outstanding finance.
+          Calculated from your Current Vehicle entries — trade value and outstanding finance.
         </p>
-        {hasWhatIfOverrides && (
-          <p className="mt-2 text-xs text-warning">
-            What-if overrides are active for trade value or outstanding finance. Edit below or{" "}
-            <button type="button" className="underline" onClick={resetWhatIf}>
-              reset what-if
-            </button>{" "}
-            to use saved vehicle values.
-          </p>
-        )}
         {input.assumptions.fleetVehicleCount > 1 && (
           <p className="mt-2 text-xs text-muted-foreground">
             Fleet mode: totals shown for {input.assumptions.fleetVehicleCount} identical vehicles (per-vehicle values × fleet size).

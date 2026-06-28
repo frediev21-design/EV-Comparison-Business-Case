@@ -24,8 +24,6 @@ function applyWhatIf(input: BusinessCaseInput) {
   const w = input.whatIf ?? {};
   const current = {
     ...input.current,
-    currentValue: w.tradeValue ?? input.current.currentValue,
-    outstandingFinance: w.outstandingFinance ?? input.current.outstandingFinance,
     maintenance: w.maintenance ?? input.current.maintenance,
     insurance: w.insurance ?? input.current.insurance,
   };
@@ -56,11 +54,10 @@ function applyWhatIf(input: BusinessCaseInput) {
 export function runFullBusinessCase(input: BusinessCaseInput): BusinessCaseResult {
   const { current, assumptions, solar, replacements, w } = applyWhatIf(input);
   const selected = replacements.find((v) => v.id === input.selectedReplacementId) ?? replacements[0];
+  const selectedBase =
+    input.replacements.find((v) => v.id === input.selectedReplacementId) ?? input.replacements[0];
 
-  const tradeIn = calculateTradeIn(current, input.tradeIn, selected, {
-    tradeValue: w.tradeValue,
-    outstandingFinance: w.outstandingFinance,
-  });
+  const tradeIn = calculateTradeIn(input.current, input.tradeIn, selectedBase);
 
   const finance = calculateFinance(replacements, tradeIn, {
     interestRate: w.interestRate,

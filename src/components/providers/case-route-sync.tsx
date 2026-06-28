@@ -4,12 +4,30 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useCaseStore } from "@/store/case-store";
 import { scenarioRepository } from "@/lib/db";
+import { runFullBusinessCase } from "@/engine";
+
+function stripLegacyTradeWhatIf() {
+  const state = useCaseStore.getState();
+  const whatIf = state.input.whatIf;
+  if (!whatIf?.outstandingFinance && !whatIf?.tradeValue) return;
+
+  const { outstandingFinance, tradeValue, ...rest } = whatIf;
+  void outstandingFinance;
+  void tradeValue;
+  const nextWhatIf = Object.keys(rest).length > 0 ? rest : undefined;
+  const input = { ...state.input, whatIf: nextWhatIf };
+  useCaseStore.setState({ input, result: runFullBusinessCase(input) });
+}
 
 export function CaseRouteSync() {
   const pathname = usePathname();
   const caseId = useCaseStore((s) => s.caseId);
   const loadCase = useCaseStore((s) => s.loadCase);
   const setLastSavedAt = useCaseStore((s) => s.setLastSavedAt);
+
+  useEffect(() => {
+    stripLegacyTradeWhatIf();
+  }, []);
 
   useEffect(() => {
     const match = pathname.match(/^\/case\/([^/?]+)/);

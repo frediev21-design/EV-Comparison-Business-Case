@@ -3,6 +3,7 @@ import { runFullBusinessCase } from "@/engine";
 import type { BusinessCaseInput, BusinessCaseResult, ReplacementVehicle, WhatIfOverrides } from "@/engine/types";
 import { createDefaultBusinessCase, createId } from "./defaults";
 import type { WorkflowMode } from "@/lib/wizard-steps";
+import { inputForLoad } from "@/lib/snapshot-sanitize";
 
 export type WizardStep =
   | "current"
@@ -192,26 +193,29 @@ export const useCaseStore = create<CaseStore>((set) => ({
       return { input, result: computeResult(input) };
     }),
 
-  loadCase: (input, meta) =>
+  loadCase: (input, meta) => {
+    const loaded = inputForLoad(input);
     set({
       input: {
-        ...input,
+        ...loaded,
         assumptions: {
-          ...input.assumptions,
-          fleetVehicleCount: input.assumptions.fleetVehicleCount ?? 1,
+          ...loaded.assumptions,
+          fleetVehicleCount: loaded.assumptions.fleetVehicleCount ?? 1,
         },
       },
       result: computeResult({
-        ...input,
+        ...loaded,
         assumptions: {
-          ...input.assumptions,
-          fleetVehicleCount: input.assumptions.fleetVehicleCount ?? 1,
+          ...loaded.assumptions,
+          fleetVehicleCount: loaded.assumptions.fleetVehicleCount ?? 1,
         },
       }),
       caseId: meta?.id ?? null,
       caseName: meta?.name ?? "Loaded Scenario",
       tags: meta?.tags ?? [],
-    }),
+      lastSavedAt: null,
+    });
+  },
 
   resetCase: () => {
     const input = createDefaultBusinessCase();
