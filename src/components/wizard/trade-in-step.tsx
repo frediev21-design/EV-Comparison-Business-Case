@@ -71,6 +71,14 @@ export function TradeInStep() {
         )}
       </div>
 
+      {tradeIn.tradeEquity > 0 && (
+        <div className="rounded-lg border border-success/30 bg-success/10 px-4 py-3 text-sm">
+          You have{" "}
+          <span className="font-semibold tabular-nums">{formatCurrency(tradeIn.tradeEquity)}</span>{" "}
+          trade equity toward your replacement (value minus outstanding finance).
+        </div>
+      )}
+
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField
           label="Current Vehicle Value"

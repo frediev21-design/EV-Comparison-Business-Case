@@ -63,6 +63,9 @@ export function OnboardingOverlay() {
             </li>
           ))}
         </ol>
+        <p className="mt-4 text-xs text-muted-foreground">
+          Your analysis saves on this device. Export from Scenarios to back up or switch browsers.
+        </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Button onClick={startQuick}>
             Get started

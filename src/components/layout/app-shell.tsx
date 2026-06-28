@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { Sidebar } from "./sidebar";
 import { AppHeader } from "./app-header";
+import { SiteFooter } from "./site-footer";
+import { DataPersistenceBanner } from "./data-persistence-banner";
+import { CaseNotFoundBanner } from "@/components/case/case-not-found-banner";
 import { PresentationView } from "@/components/decision/presentation-view";
 import { useCaseStore } from "@/store/case-store";
 import { cn } from "@/lib/utils";
@@ -37,7 +40,12 @@ export function AppShell({ children }: AppShellProps) {
       )}
       <div className="flex flex-1 flex-col overflow-hidden">
         <AppHeader onMenuClick={() => setMobileOpen(true)} />
-        <main className={cn("flex-1 overflow-y-auto p-4 lg:p-6")}>{children}</main>
+        <DataPersistenceBanner />
+        <main className={cn("flex-1 overflow-y-auto p-4 lg:p-6")}>
+          <CaseNotFoundBanner />
+          {children}
+        </main>
+        <SiteFooter className="no-print" />
       </div>
     </div>
   );

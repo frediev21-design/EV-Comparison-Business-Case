@@ -24,6 +24,7 @@ export function CaseRouteSync() {
   const caseId = useCaseStore((s) => s.caseId);
   const loadCase = useCaseStore((s) => s.loadCase);
   const setLastSavedAt = useCaseStore((s) => s.setLastSavedAt);
+  const setRouteCaseMissing = useCaseStore((s) => s.setRouteCaseMissing);
 
   useEffect(() => {
     stripLegacyTradeWhatIf();
@@ -31,17 +32,27 @@ export function CaseRouteSync() {
 
   useEffect(() => {
     const match = pathname.match(/^\/case\/([^/?]+)/);
-    if (!match || match[1] === "new") return;
+    if (!match || match[1] === "new") {
+      setRouteCaseMissing(false);
+      return;
+    }
 
     const routeId = match[1];
-    if (caseId === routeId) return;
+    if (caseId === routeId) {
+      setRouteCaseMissing(false);
+      return;
+    }
 
     scenarioRepository.get(routeId).then((record) => {
-      if (!record) return;
+      if (!record) {
+        setRouteCaseMissing(true);
+        return;
+      }
+      setRouteCaseMissing(false);
       loadCase(record.snapshot, { id: record.id, name: record.name, tags: record.tags });
       setLastSavedAt(record.updatedAt);
     });
-  }, [pathname, caseId, loadCase, setLastSavedAt]);
+  }, [pathname, caseId, loadCase, setLastSavedAt, setRouteCaseMissing]);
 
   return null;
 }

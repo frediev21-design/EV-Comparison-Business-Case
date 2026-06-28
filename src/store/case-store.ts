@@ -51,6 +51,7 @@ interface CaseStore {
   ownershipHorizon: 5 | 7 | 10;
   presentationMode: boolean;
   lastSavedAt: string | null;
+  routeCaseMissing: boolean;
   setCaseId: (id: string | null) => void;
   setCaseName: (name: string) => void;
   setTags: (tags: string[]) => void;
@@ -71,6 +72,7 @@ interface CaseStore {
   resetCase: () => void;
   setPresentationMode: (on: boolean) => void;
   setLastSavedAt: (iso: string | null) => void;
+  setRouteCaseMissing: (missing: boolean) => void;
 }
 
 function computeResult(input: BusinessCaseInput): BusinessCaseResult {
@@ -90,6 +92,7 @@ export const useCaseStore = create<CaseStore>((set) => ({
   ownershipHorizon: 10,
   presentationMode: false,
   lastSavedAt: null,
+  routeCaseMissing: false,
 
   setCaseId: (id) => set({ caseId: id }),
   setCaseName: (name) => set({ caseName: name }),
@@ -99,6 +102,7 @@ export const useCaseStore = create<CaseStore>((set) => ({
   setOwnershipHorizon: (years) => set({ ownershipHorizon: years }),
   setPresentationMode: (on) => set({ presentationMode: on }),
   setLastSavedAt: (iso) => set({ lastSavedAt: iso }),
+  setRouteCaseMissing: (missing) => set({ routeCaseMissing: missing }),
 
   updateCurrent: (partial) =>
     set((state) => {
@@ -214,6 +218,7 @@ export const useCaseStore = create<CaseStore>((set) => ({
       caseName: meta?.name ?? "Loaded Scenario",
       tags: meta?.tags ?? [],
       lastSavedAt: null,
+      routeCaseMissing: false,
     });
   },
 
@@ -228,6 +233,7 @@ export const useCaseStore = create<CaseStore>((set) => ({
       activeStep: "current",
       presentationMode: false,
       lastSavedAt: null,
+      routeCaseMissing: false,
     });
   },
 }));

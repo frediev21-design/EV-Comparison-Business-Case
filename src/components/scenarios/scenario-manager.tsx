@@ -16,6 +16,8 @@ import { ScenarioComparisonTable } from "./scenario-comparison-table";
 
 export function ScenarioManager() {
   const [scenarios, setScenarios] = useState<ScenarioRecord[]>([]);
+  const [importError, setImportError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const bundleInputRef = useRef<HTMLInputElement>(null);
   const input = useCaseStore((s) => s.input);
@@ -46,20 +48,32 @@ export function ScenarioManager() {
   }, [saveScenario, refresh]);
 
   const handleSave = async () => {
-    await saveScenario();
-    await refresh();
+    setSaving(true);
+    setImportError(null);
+    try {
+      await saveScenario();
+      await refresh();
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleExport = () => {
+    setImportError(null);
     const data = exportCaseToJson(caseName, tags, input);
     downloadCaseJson(data, `${caseName.replace(/\s+/g, "-")}-export`);
   };
 
   const handleImport = async (file: File) => {
-    const text = await file.text();
-    const data = parseCaseImport(text);
-    loadCase(data.snapshot, { name: data.name, tags: data.tags });
-    await refresh();
+    try {
+      setImportError(null);
+      const text = await file.text();
+      const data = parseCaseImport(text);
+      loadCase(data.snapshot, { name: data.name, tags: data.tags });
+      await refresh();
+    } catch (e) {
+      setImportError(e instanceof Error ? e.message : "Could not import file — check the JSON format.");
+    }
   };
 
   const handleExportBundle = async () => {
@@ -71,26 +85,31 @@ export function ScenarioManager() {
   };
 
   const handleImportBundle = async (file: File) => {
-    const text = await file.text();
-    const bundle = parseScenarioBundle(text);
-    for (const scenario of bundle.scenarios) {
-      const now = new Date().toISOString();
-      await scenarioRepository.save({
-        id: crypto.randomUUID(),
-        name: scenario.name,
-        tags: scenario.tags,
-        createdAt: now,
-        updatedAt: now,
-        snapshot: {
-          ...scenario.snapshot,
-          assumptions: {
-            ...scenario.snapshot.assumptions,
-            fleetVehicleCount: scenario.snapshot.assumptions.fleetVehicleCount ?? 1,
+    try {
+      setImportError(null);
+      const text = await file.text();
+      const bundle = parseScenarioBundle(text);
+      for (const scenario of bundle.scenarios) {
+        const now = new Date().toISOString();
+        await scenarioRepository.save({
+          id: crypto.randomUUID(),
+          name: scenario.name,
+          tags: scenario.tags,
+          createdAt: now,
+          updatedAt: now,
+          snapshot: {
+            ...scenario.snapshot,
+            assumptions: {
+              ...scenario.snapshot.assumptions,
+              fleetVehicleCount: scenario.snapshot.assumptions.fleetVehicleCount ?? 1,
+            },
           },
-        },
-      });
+        });
+      }
+      await refresh();
+    } catch (e) {
+      setImportError(e instanceof Error ? e.message : "Could not import bundle — check the JSON format.");
     }
-    await refresh();
   };
 
   const handleLoad = async (id: string) => {
@@ -107,7 +126,8 @@ export function ScenarioManager() {
     loadCase(duplicate.snapshot, { id: duplicate.id, name: duplicate.name, tags: duplicate.tags });
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, name: string) => {
+    if (!window.confirm(`Delete "${name}"? This cannot be undone.`)) return;
     await scenarioRepository.delete(id);
     if (caseId === id) setCaseId(null);
     await refresh();
@@ -137,9 +157,9 @@ export function ScenarioManager() {
               </button>
             ))}
           </div>
-          <Button onClick={handleSave}>
+          <Button onClick={handleSave} disabled={saving}>
             <Save className="mr-2 h-4 w-4" />
-            Save Scenario
+            {saving ? "Saving…" : "Save Scenario"}
           </Button>
           <Button variant="outline" onClick={handleExport}>
             <Download className="mr-2 h-4 w-4" />
@@ -180,6 +200,11 @@ export function ScenarioManager() {
             }}
           />
           <p className="text-xs text-muted-foreground">Tip: press Ctrl+S to save quickly.</p>
+          {importError && (
+            <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              {importError}
+            </p>
+          )}
         </CardContent>
       </Card>
 
@@ -207,7 +232,12 @@ export function ScenarioManager() {
                 <Button variant="outline" size="sm" onClick={() => handleDuplicate(scenario.id)}>
                   <Copy className="mr-1 h-3 w-3" /> Duplicate
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => handleDelete(scenario.id)}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleDelete(scenario.id, scenario.name)}
+                  aria-label={`Delete ${scenario.name}`}
+                >
                   <Trash2 className="h-3 w-3 text-destructive" />
                 </Button>
               </div>

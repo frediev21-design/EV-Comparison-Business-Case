@@ -46,6 +46,7 @@ export function CurrentVehicleStep() {
           prefix="R"
           value={current.monthlyInstalment}
           onChange={(v) => updateCurrent({ monthlyInstalment: num(v) })}
+          hint="Finance payment only — not fuel, insurance, or maintenance."
         />
         <FormSelect label="Fuel Type" value={current.fuelType} options={FUEL_OPTIONS} onChange={(v) => updateCurrent({ fuelType: v as typeof current.fuelType })} />
         <FormField label="Fuel Consumption" type="number" suffix="L/100km" value={current.fuelConsumption} onChange={(v) => updateCurrent({ fuelConsumption: num(v) })} step={0.1} />

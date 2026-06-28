@@ -10,8 +10,14 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Fleet EV TCO | Business Case Platform",
-  description: "Enterprise-grade fleet EV business case and total cost of ownership analysis",
+  title: "Fleet EV TCO | Compare Your Vehicle vs EV & Hybrid",
+  description:
+    "Free South African vehicle comparison tool. Calculate finance, fuel, trade-in, solar, and total cost of ownership for EV and hybrid replacements.",
+  openGraph: {
+    title: "Fleet EV TCO — Business Case Calculator",
+    description: "Compare your current vehicle with EV and hybrid replacements in minutes.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

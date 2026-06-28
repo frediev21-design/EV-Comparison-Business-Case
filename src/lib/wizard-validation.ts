@@ -117,6 +117,34 @@ export function isStepComplete(step: WizardStep, input: BusinessCaseInput): bool
   }
 }
 
+export function getStepIncompleteHint(step: WizardStep, input: BusinessCaseInput): string {
+  const { current } = input;
+
+  switch (step) {
+    case "current":
+      if (!current.manufacturer.trim() || !current.model.trim()) return "Enter manufacturer and model.";
+      if (current.year <= 1990) return "Enter a valid vehicle year.";
+      if (current.currentValue <= 0) return "Enter current vehicle value.";
+      if (current.fuelConsumption <= 0) return "Enter fuel consumption (L/100km).";
+      if (input.assumptions.dailyDistanceKm <= 0) return "Enter daily distance (km/day).";
+      return "Complete the required fields above.";
+    case "replacement":
+      return "Add at least one replacement vehicle with a name and price.";
+    case "trade-in":
+      return "Enter current value and outstanding finance.";
+    case "finance":
+      return "Set interest rate and finance term for each replacement.";
+    case "running-costs":
+      return "Fuel and electricity prices must be greater than zero.";
+    case "solar":
+      return "Solar and grid charging must total 100%, with system size set.";
+    case "ownership":
+      return "Enter residual value for the current vehicle.";
+    default:
+      return "Complete the required fields above.";
+  }
+}
+
 export function getDataEntryProgress(
   input: BusinessCaseInput,
   mode: WorkflowMode

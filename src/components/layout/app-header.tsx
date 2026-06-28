@@ -53,6 +53,9 @@ export function AppHeader({ onMenuClick }: AppHeaderProps) {
         <div className="flex items-center gap-2">
           <HeaderInvestmentScoreMobile />
           <HeaderInvestmentScore />
+          <Button variant="outline" size="sm" className="sm:hidden" onClick={() => setPresentationMode(true)} aria-label="Presentation mode">
+            <Presentation className="h-4 w-4" />
+          </Button>
           <Button variant="outline" size="sm" className="hidden sm:flex" onClick={() => setPresentationMode(true)}>
             <Presentation className="mr-2 h-4 w-4" />
             Present
