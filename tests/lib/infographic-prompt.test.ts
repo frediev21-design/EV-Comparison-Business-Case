@@ -17,6 +17,7 @@ describe("infographic-prompt", () => {
     const result = runFullBusinessCase(input);
     const prompt = generateInfographicPrompt(input, result, "Ford vs BYD");
 
+    expect(prompt).toContain("Ford Wildtrak Bi-Turbo → BYD Shark 6");
     expect(prompt).toContain("Ford vs BYD");
     expect(prompt).toContain("Monthly saving");
     expect(prompt).toContain("investment score");

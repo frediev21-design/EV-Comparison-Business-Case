@@ -8,11 +8,7 @@ import { isStepComplete } from "@/lib/wizard-validation";
 import { useScenarioSave } from "@/hooks/use-scenario-save";
 import { DATA_ENTRY_STEP_IDS } from "@/lib/wizard-steps";
 import { showToast } from "@/lib/toast";
-
-function defaultCaseNameFromVehicle(manufacturer: string, model: string): string | null {
-  const name = `${manufacturer} ${model}`.trim();
-  return name.length > 0 ? name : null;
-}
+import { autoCaseNameFromCurrent } from "@/lib/case-labels";
 
 export function useWizardStepAdvance() {
   const router = useRouter();
@@ -35,10 +31,7 @@ export function useWizardStepAdvance() {
         try {
           const state = useCaseStore.getState();
           if (step === "current" && state.caseName === "New comparison") {
-            const autoName = defaultCaseNameFromVehicle(
-              input.current.manufacturer,
-              input.current.model
-            );
+            const autoName = autoCaseNameFromCurrent(input.current);
             if (autoName) state.setCaseName(autoName);
           }
 

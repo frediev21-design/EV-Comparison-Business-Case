@@ -1,6 +1,7 @@
 import type { BusinessCaseInput, BusinessCaseResult } from "@/engine/types";
 import { formatCurrency } from "./format";
 import { isStepComplete } from "./wizard-validation";
+import { buildCurrentVehicleLabel, buildVehicleComparisonLabel } from "./case-labels";
 
 export function isInfographicPromptReady(input: BusinessCaseInput): boolean {
   return (
@@ -22,8 +23,9 @@ export function generateInfographicPrompt(
   const { kpis, tradeIn, decision, solar: solarResult } = result;
   const d = decision;
 
-  const currentLabel = `${current.manufacturer} ${current.model}`.trim() || "Current vehicle";
-  const replacementLabel = selected?.name ?? "Replacement vehicle";
+  const currentLabel = buildCurrentVehicleLabel(current) || "Current vehicle";
+  const replacementLabel = selected?.name?.trim() || "Replacement vehicle";
+  const comparisonLabel = buildVehicleComparisonLabel(input);
   const fleetNote =
     kpis.fleetVehicleCount > 1 ? `\nFleet size: ${kpis.fleetVehicleCount} identical vehicles` : "";
 
@@ -31,14 +33,14 @@ export function generateInfographicPrompt(
 
 ## Brand & style
 - Title: "Fleet EV TCO — Business Case Summary"
-- Subtitle: "${caseName}"
+- Subtitle: "${comparisonLabel}"
 - Colour palette: deep teal (#0f766e) as primary accent, white/light grey background, green for savings, amber for review, red only for negative outcomes
 - Include subtle automotive / energy motifs (not clip-art heavy)
 - Use South African Rand (R) formatting throughout
 - Footer disclaimer (small): "Estimates only — not financial advice. Verify with your finance provider."
 
 ## Layout structure (top to bottom)
-1. **Header strip**: "${currentLabel} → ${replacementLabel}" with decision badge "${d.trafficLight.label}" and investment score ${d.investmentScore.total}/100 (${d.investmentScore.rating})
+1. **Header strip**: "${comparisonLabel}" with decision badge "${d.trafficLight.label}" and investment score ${d.investmentScore.total}/100 (${d.investmentScore.rating})
 2. **Hero KPI row** (3 large numbers):
    - Monthly saving: ${formatCurrency(kpis.monthlySaving)}/month
    - Amount to finance: ${formatCurrency(tradeIn.amountFinanced)}
@@ -63,7 +65,7 @@ export function generateInfographicPrompt(
    - Threats: ${d.swot.threats.slice(0, 2).join("; ")}
 
 ## Source data (for accuracy — do not render as a raw table)
-Scenario: ${caseName}
+Scenario: ${caseName} · ${comparisonLabel}
 Current vehicle: ${currentLabel} (${current.year}, ${current.mileage.toLocaleString()} km)
 Replacement: ${replacementLabel} — ${formatCurrency(selected?.price ?? 0)} · ${selected?.financeTermMonths ?? 0} months @ ${selected?.interestRate ?? 0}%
 Daily distance: ${assumptions.dailyDistanceKm} km/day · Fuel R${assumptions.fuelPricePerLitre}/L · Electricity R${assumptions.electricityTariff}/kWh

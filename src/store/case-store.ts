@@ -4,6 +4,10 @@ import type { BusinessCaseInput, BusinessCaseResult, ReplacementVehicle, WhatIfO
 import { createEmptyBusinessCase, createId } from "./defaults";
 import type { WorkflowMode } from "@/lib/wizard-steps";
 import { inputForLoad } from "@/lib/snapshot-sanitize";
+import {
+  autoCaseNameFromCurrent,
+  shouldAutoUpdateCaseName,
+} from "@/lib/case-labels";
 
 export type WizardStep =
   | "current"
@@ -116,12 +120,23 @@ export const useCaseStore = create<CaseStore>((set) => ({
         if (partial.maintenance !== undefined) delete whatIf.maintenance;
         if (partial.insurance !== undefined) delete whatIf.insurance;
       }
+      const updatedCurrent = { ...state.input.current, ...partial };
       const input = {
         ...state.input,
-        current: { ...state.input.current, ...partial },
+        current: updatedCurrent,
         whatIf: whatIf && Object.keys(whatIf).length > 0 ? whatIf : undefined,
       };
-      return { input, result: computeResult(input) };
+
+      let caseName = state.caseName;
+      if (
+        (partial.manufacturer !== undefined || partial.model !== undefined) &&
+        shouldAutoUpdateCaseName(state.caseName, state.input.current, updatedCurrent)
+      ) {
+        const autoName = autoCaseNameFromCurrent(updatedCurrent);
+        if (autoName) caseName = autoName;
+      }
+
+      return { input, result: computeResult(input), caseName };
     }),
 
   updateTradeIn: (partial) =>

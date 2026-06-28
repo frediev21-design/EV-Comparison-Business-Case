@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Menu, Presentation, SlidersHorizontal, X, LayoutGrid } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { hasWhatIfOverrides } from "@/lib/wizard-steps";
+import { buildCurrentVehicleLabel, buildVehicleComparisonLabel } from "@/lib/case-labels";
 import { HeaderInvestmentScore, HeaderInvestmentScoreMobile } from "./header-investment-score";
 
 interface AppHeaderProps {
@@ -15,15 +16,14 @@ interface AppHeaderProps {
 function useVehicleComparisonLabel() {
   const input = useCaseStore((s) => s.input);
   const current = `${input.current.manufacturer} ${input.current.model}`.trim();
-  const replacement =
-    input.replacements.find((v) => v.id === input.selectedReplacementId)?.name?.trim() ?? "";
-  if (!current && !replacement) return "Enter your vehicle details";
-  if (!current) return replacement || "Add your current vehicle";
-  if (!replacement) return `${current} → add replacement`;
-  return `${current} → ${replacement}`;
+  const comparison = buildVehicleComparisonLabel(input);
+
+  if (!current && input.replacements.length === 0) return "Enter your vehicle details";
+  return comparison;
 }
 
 export function AppHeader({ onMenuClick }: AppHeaderProps) {
+  const input = useCaseStore((s) => s.input);
   const caseName = useCaseStore((s) => s.caseName);
   const tags = useCaseStore((s) => s.tags);
   const whatIf = useCaseStore((s) => s.input.whatIf);
@@ -31,6 +31,9 @@ export function AppHeader({ onMenuClick }: AppHeaderProps) {
   const setPresentationMode = useCaseStore((s) => s.setPresentationMode);
   const lastSavedAt = useCaseStore((s) => s.lastSavedAt);
   const vehicleComparison = useVehicleComparisonLabel();
+  const currentLabel = buildCurrentVehicleLabel(input.current);
+  const showScenarioName =
+    caseName !== "New comparison" && caseName !== currentLabel && caseName !== vehicleComparison;
 
   const whatIfActive = hasWhatIfOverrides(whatIf);
 
@@ -54,15 +57,13 @@ export function AppHeader({ onMenuClick }: AppHeaderProps) {
             <Menu className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-sm font-semibold lg:text-base">{caseName}</h1>
+            <h1 className="text-sm font-semibold lg:text-base">{vehicleComparison}</h1>
             <p className="text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-1 font-medium text-foreground/80">
-                {vehicleComparison}
-              </span>
-              {tags.length > 0 && <span className="mx-1.5">·</span>}
-              {tags.join(" · ")}
+              {showScenarioName && <span>{caseName} · </span>}
+              {tags.length > 0 && <span>{tags.join(" · ")}</span>}
+              {tags.length > 0 && lastSavedAt && <span className="mx-1.5">·</span>}
               {lastSavedAt && (
-                <span className="ml-2">· Saved {new Date(lastSavedAt).toLocaleTimeString()}</span>
+                <span>Saved {new Date(lastSavedAt).toLocaleTimeString()}</span>
               )}
             </p>
           </div>
