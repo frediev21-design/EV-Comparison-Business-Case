@@ -42,8 +42,16 @@ function WaterfallRow({
 
 export function TradeInStep() {
   const tradeIn = useCaseStore((s) => s.result.tradeIn);
+  const current = useCaseStore((s) => s.input.current);
+  const whatIf = useCaseStore((s) => s.input.whatIf);
   const additionalCash = useCaseStore((s) => s.input.tradeIn.additionalCashDeposit);
   const updateTradeIn = useCaseStore((s) => s.updateTradeIn);
+  const updateCurrent = useCaseStore((s) => s.updateCurrent);
+  const resetWhatIf = useCaseStore((s) => s.resetWhatIf);
+
+  const num = (v: string) => parseFloat(v) || 0;
+  const hasWhatIfOverrides =
+    whatIf?.tradeValue !== undefined || whatIf?.outstandingFinance !== undefined;
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -52,15 +60,41 @@ export function TradeInStep() {
         <p className="text-sm text-muted-foreground">
           Automatically calculated from current vehicle value and outstanding finance.
         </p>
+        {hasWhatIfOverrides && (
+          <p className="mt-2 text-xs text-warning">
+            What-if overrides are active for trade value or outstanding finance. Edit below or{" "}
+            <button type="button" className="underline" onClick={resetWhatIf}>
+              reset what-if
+            </button>{" "}
+            to use saved vehicle values.
+          </p>
+        )}
       </div>
 
-      <FormField
-        label="Additional Cash Deposit"
-        type="number"
-        prefix="R"
-        value={additionalCash}
-        onChange={(v) => updateTradeIn({ additionalCashDeposit: parseFloat(v) || 0 })}
-      />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <FormField
+          label="Current Vehicle Value"
+          type="number"
+          prefix="R"
+          value={current.currentValue}
+          onChange={(v) => updateCurrent({ currentValue: num(v), tradeInValue: num(v) })}
+        />
+        <FormField
+          label="Outstanding Finance"
+          type="number"
+          prefix="R"
+          value={current.outstandingFinance}
+          onChange={(v) => updateCurrent({ outstandingFinance: num(v) })}
+        />
+        <FormField
+          label="Additional Cash Deposit"
+          type="number"
+          prefix="R"
+          value={additionalCash}
+          onChange={(v) => updateTradeIn({ additionalCashDeposit: num(v) })}
+          className="sm:col-span-2"
+        />
+      </div>
 
       <Card>
         <CardHeader>
@@ -73,7 +107,7 @@ export function TradeInStep() {
           </div>
           <WaterfallRow
             label="Less Outstanding Finance"
-            value={-tradeIn.outstandingFinance}
+            value={tradeIn.outstandingFinance}
             variant="negative"
             icon={<Minus className="h-4 w-4" />}
           />

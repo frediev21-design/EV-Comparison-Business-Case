@@ -119,7 +119,7 @@ export function createDefaultBusinessCase(): BusinessCaseInput {
       year: 2021,
       mileage: 85000,
       currentValue: 620000,
-      outstandingFinance: 280000,
+      outstandingFinance: 272000,
       monthlyInstalment: 10450,
       fuelType: "diesel",
       fuelConsumption: 9.2,

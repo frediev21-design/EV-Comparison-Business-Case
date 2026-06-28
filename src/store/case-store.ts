@@ -84,7 +84,18 @@ export const useCaseStore = create<CaseStore>((set) => ({
 
   updateCurrent: (partial) =>
     set((state) => {
-      const input = { ...state.input, current: { ...state.input.current, ...partial } };
+      const whatIf = state.input.whatIf ? { ...state.input.whatIf } : undefined;
+      if (whatIf) {
+        if (partial.currentValue !== undefined) delete whatIf.tradeValue;
+        if (partial.outstandingFinance !== undefined) delete whatIf.outstandingFinance;
+        if (partial.maintenance !== undefined) delete whatIf.maintenance;
+        if (partial.insurance !== undefined) delete whatIf.insurance;
+      }
+      const input = {
+        ...state.input,
+        current: { ...state.input.current, ...partial },
+        whatIf: whatIf && Object.keys(whatIf).length > 0 ? whatIf : undefined,
+      };
       return { input, result: computeResult(input) };
     }),
 
