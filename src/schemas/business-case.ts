@@ -54,6 +54,7 @@ export const assumptionsSchema = z.object({
   peakTariff: z.number().min(0),
   offPeakTariff: z.number().min(0),
   annualKmGrowth: z.number().min(0).max(20),
+  fleetVehicleCount: z.number().min(1).max(100),
 });
 
 export const solarConfigSchema = z.object({
@@ -78,6 +79,7 @@ export const whatIfSchema = z.object({
   insurance: z.number().min(0).optional(),
   solarPercent: z.number().min(0).max(100).optional(),
   gridPercent: z.number().min(0).max(100).optional(),
+  fleetVehicleCount: z.number().min(1).max(100).optional(),
 });
 
 export const businessCaseInputSchema = z.object({

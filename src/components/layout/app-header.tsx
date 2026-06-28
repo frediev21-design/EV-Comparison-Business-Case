@@ -16,6 +16,7 @@ export function AppHeader({ onMenuClick }: AppHeaderProps) {
   const whatIf = useCaseStore((s) => s.input.whatIf);
   const resetWhatIf = useCaseStore((s) => s.resetWhatIf);
   const setPresentationMode = useCaseStore((s) => s.setPresentationMode);
+  const lastSavedAt = useCaseStore((s) => s.lastSavedAt);
 
   const whatIfActive = hasWhatIfOverrides(whatIf);
 
@@ -40,7 +41,12 @@ export function AppHeader({ onMenuClick }: AppHeaderProps) {
           </Button>
           <div>
             <h1 className="text-sm font-semibold lg:text-base">{caseName}</h1>
-            <p className="text-xs text-muted-foreground">{tags.join(" · ")}</p>
+            <p className="text-xs text-muted-foreground">
+              {tags.join(" · ")}
+              {lastSavedAt && (
+                <span className="ml-2">· Saved {new Date(lastSavedAt).toLocaleTimeString()}</span>
+              )}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-2">

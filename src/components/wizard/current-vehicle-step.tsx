@@ -53,6 +53,7 @@ export function CurrentVehicleStep() {
         <FormField label="Trade-In Value" type="number" prefix="R" value={current.tradeInValue} onChange={(v) => updateCurrent({ tradeInValue: num(v) })} />
         <FormField label="Residual Value" type="number" prefix="R" value={current.residualValue} onChange={(v) => updateCurrent({ residualValue: num(v) })} />
         <FormField label="Daily Distance" type="number" suffix="km/day" value={dailyDistance} onChange={(v) => updateAssumptions({ dailyDistanceKm: num(v) })} min={10} max={300} />
+        <FormField label="Fleet Size" type="number" suffix="vehicles" value={input.assumptions.fleetVehicleCount} onChange={(v) => updateAssumptions({ fleetVehicleCount: Math.max(1, int(v)) })} min={1} max={100} />
       </FormSection>
       <Card>
         <CardHeader>

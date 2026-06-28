@@ -7,6 +7,16 @@ import { calculateOwnership } from "./ownership";
 import { analyzeRisk } from "./risk";
 import { calculateKpis } from "./comparison";
 import { buildChartSeries } from "./charts";
+import {
+  getFleetCount,
+  scaleTradeInForFleet,
+  scaleFinanceForFleet,
+  scaleKpisForFleet,
+  scaleCurrentRunningForFleet,
+  scaleReplacementRunningForFleet,
+  scaleOwnershipForFleet,
+  scaleSolarForFleet,
+} from "./fleet";
 import { runDecisionIntelligence } from "./decision";
 import type { BusinessCaseInput, BusinessCaseResult } from "./types";
 
@@ -24,6 +34,7 @@ function applyWhatIf(input: BusinessCaseInput) {
     dailyDistanceKm: w.dailyDistanceKm ?? input.assumptions.dailyDistanceKm,
     fuelPricePerLitre: w.fuelPricePerLitre ?? input.assumptions.fuelPricePerLitre,
     electricityTariff: w.electricityTariff ?? input.assumptions.electricityTariff,
+    fleetVehicleCount: w.fleetVehicleCount ?? input.assumptions.fleetVehicleCount,
   };
   const solar = {
     ...input.solar,
@@ -86,7 +97,6 @@ export function runFullBusinessCase(input: BusinessCaseInput): BusinessCaseResul
     replacements.map((v) => [v.id, v.expectedResale])
   );
 
-  const selectedFinance = finance.find((f) => f.vehicleId === selected?.id);
   const currentFinance = buildCurrentFinanceResult(current);
 
   const ownership = calculateOwnership(
@@ -100,36 +110,54 @@ export function runFullBusinessCase(input: BusinessCaseInput): BusinessCaseResul
   );
 
   const risk = analyzeRisk(current, replacements);
-  const kpis = calculateKpis(
-    { ...input, current, replacements, assumptions, solar },
-    finance,
-    running,
-    solarResult,
-    ownership
-  );
+  const mergedInput = { ...input, current, replacements, assumptions, solar };
+  let kpis = calculateKpis(mergedInput, finance, running, solarResult, ownership);
+  kpis = { ...kpis, fleetVehicleCount: getFleetCount(assumptions, w) };
+
+  const fleetCount = getFleetCount(assumptions, w);
+  let scaledTradeIn = tradeIn;
+  let scaledFinance = finance;
+  let scaledRunning = running;
+  let scaledSolar = solarResult;
+  let scaledOwnership = ownership;
+
+  if (fleetCount > 1) {
+    scaledTradeIn = scaleTradeInForFleet(tradeIn, fleetCount);
+    scaledFinance = scaleFinanceForFleet(finance, fleetCount);
+    scaledRunning = {
+      current: scaleCurrentRunningForFleet(running.current, fleetCount),
+      replacements: scaleReplacementRunningForFleet(running.replacements, fleetCount),
+      evEnergyKwhAnnual: running.evEnergyKwhAnnual * fleetCount,
+    };
+    scaledSolar = scaleSolarForFleet(solarResult, fleetCount);
+    scaledOwnership = scaleOwnershipForFleet(ownership, fleetCount);
+    kpis = scaleKpisForFleet(kpis, fleetCount);
+    kpis.fleetVehicleCount = fleetCount;
+  }
+
   const decision = runDecisionIntelligence(
-    { ...input, current, replacements, assumptions, solar },
+    mergedInput,
     kpis,
-    tradeIn,
-    running,
-    solarResult,
-    ownership,
+    scaledTradeIn,
+    scaledRunning,
+    scaledSolar,
+    scaledOwnership,
     risk
   );
   const charts = buildChartSeries(
-    finance,
-    running,
-    ownership,
+    scaledFinance,
+    scaledRunning,
+    scaledOwnership,
     selected?.id ?? "",
-    selectedFinance
+    scaledFinance.find((f) => f.vehicleId === selected?.id)
   );
 
   return {
-    tradeIn,
-    finance,
-    running,
-    solar: solarResult,
-    ownership,
+    tradeIn: scaledTradeIn,
+    finance: scaledFinance,
+    running: scaledRunning,
+    solar: scaledSolar,
+    ownership: scaledOwnership,
     risk,
     kpis,
     recommendation: decision.executiveRecommendation,

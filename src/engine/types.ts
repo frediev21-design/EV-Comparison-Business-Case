@@ -55,6 +55,7 @@ export interface Assumptions {
   peakTariff: number;
   offPeakTariff: number;
   annualKmGrowth: number;
+  fleetVehicleCount: number;
 }
 
 export interface SolarConfig {
@@ -79,6 +80,7 @@ export interface WhatIfOverrides {
   insurance?: number;
   solarPercent?: number;
   gridPercent?: number;
+  fleetVehicleCount?: number;
 }
 
 export interface BusinessCaseInput {
@@ -203,6 +205,7 @@ export interface ComparisonKpis {
   roi: number;
   paybackMonths: number;
   batteryWarrantyRemainingYears: number;
+  fleetVehicleCount: number;
 }
 
 export interface ChartDataPoint {

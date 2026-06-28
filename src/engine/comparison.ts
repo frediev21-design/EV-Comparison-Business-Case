@@ -7,6 +7,7 @@ import type {
   SolarResult,
 } from "./types";
 import { resolveCurrentFinanceInstalment } from "./current-finance";
+import { getFleetCount } from "./fleet";
 import { getOwnershipForHorizon } from "./ownership";
 
 export function calculateKpis(
@@ -73,5 +74,6 @@ export function calculateKpis(
     roi,
     paybackMonths,
     batteryWarrantyRemainingYears: selectedVehicle?.batteryWarrantyYears ?? 0,
+    fleetVehicleCount: getFleetCount(input.assumptions, input.whatIf),
   };
 }

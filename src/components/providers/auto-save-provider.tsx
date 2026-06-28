@@ -11,6 +11,7 @@ export function AutoSaveProvider({ children }: { children: React.ReactNode }) {
   const tags = useCaseStore((s) => s.tags);
   const input = useCaseStore((s) => s.input);
   const setCaseId = useCaseStore((s) => s.setCaseId);
+  const setLastSavedAt = useCaseStore((s) => s.setLastSavedAt);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export function AutoSaveProvider({ children }: { children: React.ReactNode }) {
       };
       await scenarioRepository.save(record);
       setCaseId(id);
+      setLastSavedAt(now);
     };
 
     const handler = () => {
@@ -35,7 +37,7 @@ export function AutoSaveProvider({ children }: { children: React.ReactNode }) {
     };
     window.addEventListener("fleet-tco:save", handler);
     return () => window.removeEventListener("fleet-tco:save", handler);
-  }, [caseId, caseName, tags, input, setCaseId]);
+  }, [caseId, caseName, tags, input, setCaseId, setLastSavedAt]);
 
   useEffect(() => {
     if (!caseId) return;
@@ -54,10 +56,11 @@ export function AutoSaveProvider({ children }: { children: React.ReactNode }) {
       const existing = await scenarioRepository.get(caseId);
       if (existing) record.createdAt = existing.createdAt;
       await scenarioRepository.save(record);
+      setLastSavedAt(now);
     }, 2000);
 
     return () => clearTimeout(timerRef.current);
-  }, [caseId, caseName, tags, input]);
+  }, [caseId, caseName, tags, input, setLastSavedAt]);
 
   return <>{children}</>;
 }

@@ -7,32 +7,43 @@ import type {
 } from "@/engine/market/types";
 import { buildMarketExecutiveSummary } from "@/engine/market";
 import { calculateMonthlyPayment } from "@/engine/finance";
+import type { MarketCacheMeta } from "@/lib/market/cache";
+
+export type MarketApiResponse<T> = {
+  result: T;
+  meta: MarketCacheMeta;
+};
+
+async function parseMarketResponse<T>(res: Response): Promise<{ data: T; meta?: MarketCacheMeta }> {
+  const body = await res.json();
+  if (!res.ok) {
+    throw new Error(body.error ?? "Market request failed");
+  }
+  if (body.result !== undefined) {
+    return { data: body.result as T, meta: body.meta as MarketCacheMeta | undefined };
+  }
+  return { data: body as T };
+}
 
 export async function fetchNewVehicleMarket(
   query: string,
   askingPrice?: number
-): Promise<NewVehicleLookupResult> {
+): Promise<MarketApiResponse<NewVehicleLookupResult>> {
   const params = new URLSearchParams({ q: query });
   if (askingPrice) params.set("asking", String(askingPrice));
   const res = await fetch(`/api/market/new-vehicle?${params}`);
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error ?? "Market lookup failed");
-  }
-  return res.json();
+  const { data, meta } = await parseMarketResponse<NewVehicleLookupResult>(res);
+  return { result: data, meta: meta ?? { fetchedAt: new Date().toISOString(), cacheHit: false, expiresAt: new Date().toISOString() } };
 }
 
-export async function fetchTradeInMarket(input: TradeInLookupInput): Promise<TradeInLookupResult> {
+export async function fetchTradeInMarket(input: TradeInLookupInput): Promise<MarketApiResponse<TradeInLookupResult>> {
   const res = await fetch("/api/market/trade-in", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input),
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error ?? "Trade-in valuation failed");
-  }
-  return res.json();
+  const { data, meta } = await parseMarketResponse<TradeInLookupResult>(res);
+  return { result: data, meta: meta ?? { fetchedAt: new Date().toISOString(), cacheHit: false, expiresAt: new Date().toISOString() } };
 }
 
 export function computeExecutiveSummary(

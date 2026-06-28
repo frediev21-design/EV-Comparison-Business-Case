@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { lookupNewVehicle } from "@/engine/market";
+import { withMarketCache } from "@/lib/market/cache";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -10,12 +11,18 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Query required" }, { status: 400 });
   }
 
-  const result = lookupNewVehicle(query, asking ? parseFloat(asking) : undefined);
+  const cacheKey = `new:${query.toLowerCase()}:${asking ?? "default"}`;
+  const { data: result, meta } = withMarketCache(cacheKey, () => {
+    const lookup = lookupNewVehicle(query, asking ? parseFloat(asking) : undefined);
+    if (!lookup) return null;
+    return lookup;
+  });
+
   if (!result) {
     return NextResponse.json({ error: "Vehicle not found in SA market database", query }, { status: 404 });
   }
 
-  return NextResponse.json(result);
+  return NextResponse.json({ result, meta });
 }
 
 export async function POST(request: Request) {
@@ -27,10 +34,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Query required" }, { status: 400 });
   }
 
-  const result = lookupNewVehicle(query, asking);
+  const cacheKey = `new:${query.toLowerCase()}:${asking ?? "default"}`;
+  const { data: result, meta } = withMarketCache(cacheKey, () => {
+    const lookup = lookupNewVehicle(query, asking);
+    if (!lookup) return null;
+    return lookup;
+  });
+
   if (!result) {
     return NextResponse.json({ error: "Vehicle not found in SA market database", query }, { status: 404 });
   }
 
-  return NextResponse.json(result);
+  return NextResponse.json({ result, meta });
 }

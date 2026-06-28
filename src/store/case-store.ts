@@ -49,6 +49,7 @@ interface CaseStore {
   workflowMode: WorkflowMode;
   ownershipHorizon: 5 | 7 | 10;
   presentationMode: boolean;
+  lastSavedAt: string | null;
   setCaseId: (id: string | null) => void;
   setCaseName: (name: string) => void;
   setTags: (tags: string[]) => void;
@@ -68,6 +69,7 @@ interface CaseStore {
   loadCase: (input: BusinessCaseInput, meta?: { id?: string; name?: string; tags?: string[] }) => void;
   resetCase: () => void;
   setPresentationMode: (on: boolean) => void;
+  setLastSavedAt: (iso: string | null) => void;
 }
 
 function computeResult(input: BusinessCaseInput): BusinessCaseResult {
@@ -86,6 +88,7 @@ export const useCaseStore = create<CaseStore>((set) => ({
   workflowMode: "full",
   ownershipHorizon: 10,
   presentationMode: false,
+  lastSavedAt: null,
 
   setCaseId: (id) => set({ caseId: id }),
   setCaseName: (name) => set({ caseName: name }),
@@ -94,6 +97,7 @@ export const useCaseStore = create<CaseStore>((set) => ({
   setWorkflowMode: (mode) => set({ workflowMode: mode }),
   setOwnershipHorizon: (years) => set({ ownershipHorizon: years }),
   setPresentationMode: (on) => set({ presentationMode: on }),
+  setLastSavedAt: (iso) => set({ lastSavedAt: iso }),
 
   updateCurrent: (partial) =>
     set((state) => {
@@ -190,8 +194,20 @@ export const useCaseStore = create<CaseStore>((set) => ({
 
   loadCase: (input, meta) =>
     set({
-      input,
-      result: computeResult(input),
+      input: {
+        ...input,
+        assumptions: {
+          ...input.assumptions,
+          fleetVehicleCount: input.assumptions.fleetVehicleCount ?? 1,
+        },
+      },
+      result: computeResult({
+        ...input,
+        assumptions: {
+          ...input.assumptions,
+          fleetVehicleCount: input.assumptions.fleetVehicleCount ?? 1,
+        },
+      }),
       caseId: meta?.id ?? null,
       caseName: meta?.name ?? "Loaded Scenario",
       tags: meta?.tags ?? [],
@@ -207,6 +223,7 @@ export const useCaseStore = create<CaseStore>((set) => ({
       result: computeResult(input),
       activeStep: "current",
       presentationMode: false,
+      lastSavedAt: null,
     });
   },
 }));

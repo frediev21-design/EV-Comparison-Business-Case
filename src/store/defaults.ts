@@ -150,6 +150,7 @@ export function createDefaultBusinessCase(): BusinessCaseInput {
       peakTariff: 4.2,
       offPeakTariff: 1.8,
       annualKmGrowth: 2,
+      fleetVehicleCount: 1,
     },
     solar: {
       systemSizeKw: 8,

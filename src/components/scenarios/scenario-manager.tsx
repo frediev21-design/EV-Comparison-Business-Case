@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useCaseStore } from "@/store/case-store";
 import { scenarioRepository } from "@/lib/db";
 import type { ScenarioRecord } from "@/engine/types";
-import { exportCaseToJson, downloadCaseJson, parseCaseImport } from "@/lib/scenario-io";
+import { exportCaseToJson, downloadCaseJson, parseCaseImport, exportScenarioBundle, downloadScenarioBundle, parseScenarioBundle } from "@/lib/scenario-io";
 import { useScenarioSave } from "@/hooks/use-scenario-save";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import { ScenarioComparisonTable } from "./scenario-comparison-table";
 export function ScenarioManager() {
   const [scenarios, setScenarios] = useState<ScenarioRecord[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const bundleInputRef = useRef<HTMLInputElement>(null);
   const input = useCaseStore((s) => s.input);
   const caseId = useCaseStore((s) => s.caseId);
   const caseName = useCaseStore((s) => s.caseName);
@@ -58,6 +59,37 @@ export function ScenarioManager() {
     const text = await file.text();
     const data = parseCaseImport(text);
     loadCase(data.snapshot, { name: data.name, tags: data.tags });
+    await refresh();
+  };
+
+  const handleExportBundle = async () => {
+    const saved = await scenarioRepository.list();
+    const bundle = exportScenarioBundle(
+      saved.map((s) => exportCaseToJson(s.name, s.tags, s.snapshot))
+    );
+    downloadScenarioBundle(bundle, "fleet-ev-scenarios-backup");
+  };
+
+  const handleImportBundle = async (file: File) => {
+    const text = await file.text();
+    const bundle = parseScenarioBundle(text);
+    for (const scenario of bundle.scenarios) {
+      const now = new Date().toISOString();
+      await scenarioRepository.save({
+        id: crypto.randomUUID(),
+        name: scenario.name,
+        tags: scenario.tags,
+        createdAt: now,
+        updatedAt: now,
+        snapshot: {
+          ...scenario.snapshot,
+          assumptions: {
+            ...scenario.snapshot.assumptions,
+            fleetVehicleCount: scenario.snapshot.assumptions.fleetVehicleCount ?? 1,
+          },
+        },
+      });
+    }
     await refresh();
   };
 
@@ -117,6 +149,14 @@ export function ScenarioManager() {
             <Upload className="mr-2 h-4 w-4" />
             Import JSON
           </Button>
+          <Button variant="outline" onClick={handleExportBundle} disabled={scenarios.length === 0}>
+            <Download className="mr-2 h-4 w-4" />
+            Export All
+          </Button>
+          <Button variant="outline" onClick={() => bundleInputRef.current?.click()}>
+            <Upload className="mr-2 h-4 w-4" />
+            Import All
+          </Button>
           <input
             ref={fileInputRef}
             type="file"
@@ -125,6 +165,17 @@ export function ScenarioManager() {
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) handleImport(file);
+              e.target.value = "";
+            }}
+          />
+          <input
+            ref={bundleInputRef}
+            type="file"
+            accept="application/json,.json"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleImportBundle(file);
               e.target.value = "";
             }}
           />

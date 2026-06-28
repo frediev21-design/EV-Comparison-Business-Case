@@ -11,6 +11,7 @@ export function useScenarioSave() {
   const caseName = useCaseStore((s) => s.caseName);
   const tags = useCaseStore((s) => s.tags);
   const setCaseId = useCaseStore((s) => s.setCaseId);
+  const setLastSavedAt = useCaseStore((s) => s.setLastSavedAt);
 
   return useCallback(async () => {
     const now = new Date().toISOString();
@@ -26,6 +27,7 @@ export function useScenarioSave() {
     };
     await scenarioRepository.save(record);
     setCaseId(id);
+    setLastSavedAt(now);
     return record;
-  }, [caseId, caseName, tags, input, setCaseId]);
+  }, [caseId, caseName, tags, input, setCaseId, setLastSavedAt]);
 }

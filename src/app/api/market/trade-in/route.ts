@@ -1,6 +1,19 @@
 import { NextResponse } from "next/server";
 import { lookupTradeIn } from "@/engine/market";
 import type { TradeInLookupInput, VehicleCondition } from "@/engine/market/types";
+import { withMarketCache } from "@/lib/market/cache";
+
+function buildCacheKey(input: TradeInLookupInput): string {
+  return [
+    "trade",
+    input.manufacturer.toLowerCase(),
+    input.model.toLowerCase(),
+    input.year,
+    input.mileage,
+    input.condition,
+    input.province ?? "",
+  ].join(":");
+}
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -22,10 +35,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Manufacturer and model required" }, { status: 400 });
   }
 
-  const result = lookupTradeIn(input);
+  const { data: result, meta } = withMarketCache(buildCacheKey(input), () => lookupTradeIn(input));
+
   if (!result) {
     return NextResponse.json({ error: "Unable to value vehicle" }, { status: 404 });
   }
 
-  return NextResponse.json(result);
+  return NextResponse.json({ result, meta });
 }

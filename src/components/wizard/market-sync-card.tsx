@@ -18,6 +18,7 @@ export function MarketSyncCard() {
   const [preview, setPreview] = useState<{ tradeValue?: number; vehiclePrice?: number } | null>(
     null
   );
+  const [marketMeta, setMarketMeta] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleFetchMarketValues = async () => {
@@ -35,7 +36,7 @@ export function MarketSyncCard() {
         province: "Gauteng",
       };
 
-      const [tradeResult, vehicleResult] = await Promise.all([
+      const [tradeRes, vehicleRes] = await Promise.all([
         fetchTradeInMarket(tradeInInput),
         selected?.name
           ? fetchNewVehicleMarket(selected.name, selected.price)
@@ -43,9 +44,14 @@ export function MarketSyncCard() {
       ]);
 
       setPreview({
-        tradeValue: tradeResult.tradeInValue,
-        vehiclePrice: vehicleResult?.recommendedPurchasePrice,
+        tradeValue: tradeRes.result.tradeInValue,
+        vehiclePrice: vehicleRes?.result.recommendedPurchasePrice,
       });
+      setMarketMeta(
+        tradeRes.meta.cacheHit
+          ? `Cached market data · fetched ${new Date(tradeRes.meta.fetchedAt).toLocaleString()}`
+          : `Live market lookup · ${new Date(tradeRes.meta.fetchedAt).toLocaleString()}`
+      );
     } catch (e) {
       setError(e instanceof Error ? e.message : "Market lookup failed");
     } finally {
@@ -88,6 +94,7 @@ export function MarketSyncCard() {
           Fetch market values
         </Button>
         {error && <p className="text-sm text-destructive">{error}</p>}
+        {marketMeta && <p className="text-xs text-muted-foreground">{marketMeta}</p>}
         {preview && (
           <div className="space-y-2 rounded-lg border border-border bg-background p-3 text-sm">
             {preview.tradeValue !== undefined && (

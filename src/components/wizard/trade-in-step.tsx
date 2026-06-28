@@ -77,6 +77,11 @@ export function TradeInStep() {
             to use saved vehicle values.
           </p>
         )}
+        {input.assumptions.fleetVehicleCount > 1 && (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Fleet mode: totals shown for {input.assumptions.fleetVehicleCount} identical vehicles (per-vehicle values × fleet size).
+          </p>
+        )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">

@@ -3,6 +3,7 @@
 import { useEffect, Suspense } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useCaseStore, WIZARD_STEPS, type WizardStep } from "@/store/case-store";
+import { getNextStep, getPrevStep } from "@/lib/wizard-steps";
 
 const VALID_STEPS = new Set<WizardStep>(WIZARD_STEPS.map((s) => s.id));
 
@@ -11,6 +12,7 @@ function WorkflowSyncInner() {
   const router = useRouter();
   const pathname = usePathname();
   const activeStep = useCaseStore((s) => s.activeStep);
+  const workflowMode = useCaseStore((s) => s.workflowMode);
   const setActiveStep = useCaseStore((s) => s.setActiveStep);
 
   useEffect(() => {
@@ -33,11 +35,29 @@ function WorkflowSyncInner() {
       if ((e.ctrlKey || e.metaKey) && e.key === "s") {
         e.preventDefault();
         window.dispatchEvent(new CustomEvent("fleet-tco:save"));
+        return;
+      }
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+      if (e.key === "ArrowRight" || e.key === "]") {
+        const next = getNextStep(activeStep, workflowMode);
+        if (next) {
+          e.preventDefault();
+          setActiveStep(next);
+        }
+      }
+      if (e.key === "ArrowLeft" || e.key === "[") {
+        const prev = getPrevStep(activeStep, workflowMode);
+        if (prev) {
+          e.preventDefault();
+          setActiveStep(prev);
+        }
       }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, []);
+  }, [activeStep, workflowMode, setActiveStep]);
 
   return null;
 }

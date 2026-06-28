@@ -38,6 +38,11 @@ export function ExecutiveDashboard() {
             <h2 className="text-xl font-bold tracking-tight">Executive Dashboard</h2>
             <p className="text-sm text-muted-foreground">
               Investment decision intelligence · {currentName} vs {selected?.name ?? ""}
+              {kpis.fleetVehicleCount > 1 && (
+                <span className="ml-2 rounded-md bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
+                  Fleet ×{kpis.fleetVehicleCount}
+                </span>
+              )}
             </p>
           </div>
           <Button

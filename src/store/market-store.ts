@@ -88,7 +88,7 @@ export const useMarketStore = create<MarketStore>((set, get) => ({
   searchNewVehicle: async (askingPrice) => {
     set({ loading: true, error: null });
     try {
-      const result = await fetchNewVehicleMarket(get().newVehicleQuery, askingPrice);
+      const { result } = await fetchNewVehicleMarket(get().newVehicleQuery, askingPrice);
       const tradeInResult = get().tradeInResult;
       set({
         newVehicleResult: result,
@@ -104,7 +104,7 @@ export const useMarketStore = create<MarketStore>((set, get) => ({
   searchTradeIn: async () => {
     set({ loading: true, error: null });
     try {
-      const result = await fetchTradeInMarket(get().tradeInInput);
+      const { result } = await fetchTradeInMarket(get().tradeInInput);
       const newVehicleResult = get().newVehicleResult;
       set({
         tradeInResult: result,
@@ -126,11 +126,11 @@ export const useMarketStore = create<MarketStore>((set, get) => ({
         fetchTradeInMarket(state.tradeInInput),
       ]);
       set({
-        newVehicleResult: newRes,
-        tradeInResult: tradeRes,
+        newVehicleResult: newRes.result,
+        tradeInResult: tradeRes.result,
         loading: false,
         lastRefresh: new Date().toISOString(),
-        executiveSummary: recomputeSummary(newRes, tradeRes),
+        executiveSummary: recomputeSummary(newRes.result, tradeRes.result),
       });
     } catch (e) {
       set({ loading: false, error: e instanceof Error ? e.message : "Refresh failed" });
