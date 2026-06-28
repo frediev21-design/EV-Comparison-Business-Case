@@ -50,7 +50,7 @@ export function OnboardingOverlay() {
         <ol className="mt-6 space-y-4">
           {[
             { icon: Car, title: "Enter your current vehicle", text: "Loan instalment, fuel use, and trade value." },
-            { icon: BarChart3, title: "Pick a replacement", text: "BYD Shark 6 is pre-loaded — or add your own." },
+            { icon: BarChart3, title: "Pick a replacement", text: "Choose a preset or add your own new vehicle." },
             { icon: ArrowRight, title: "Review the dashboard", text: "Monthly savings, payback, and investment score." },
           ].map(({ icon: Icon, title, text }) => (
             <li key={title} className="flex gap-3">

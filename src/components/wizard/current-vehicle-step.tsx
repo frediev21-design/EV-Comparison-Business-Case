@@ -33,7 +33,7 @@ export function CurrentVehicleStep() {
   return (
     <div className="space-y-8">
       <ValidationAlerts messages={validationMessages} step="current" />
-      <FormSection title="Current Vehicle" description="Capture your existing vehicle details. Current monthly repayment is your loan payment only — fuel and maintenance are calculated separately.">
+      <FormSection title="Current Vehicle" description="Enter your existing vehicle — loan instalment, fuel use, and trade value. Running costs are calculated separately from your repayment.">
         <FormField label="Manufacturer" value={current.manufacturer} onChange={(v) => updateCurrent({ manufacturer: v })} />
         <FormField label="Model" value={current.model} onChange={(v) => updateCurrent({ model: v })} />
         <FormField label="Year" type="number" value={current.year} onChange={(v) => updateCurrent({ year: int(v) })} />

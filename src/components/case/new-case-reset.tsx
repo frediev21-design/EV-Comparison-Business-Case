@@ -14,7 +14,7 @@ export function useIsNewCaseRoute(): boolean {
 export function resetNewComparison(options?: { confirm?: boolean }) {
   if (options?.confirm !== false) {
     const ok = window.confirm(
-      "Reset all fields to the default starter template? Any unsaved edits on this comparison will be lost."
+      "Clear all fields and start over? Any unsaved edits on this comparison will be lost."
     );
     if (!ok) return false;
   }
@@ -27,7 +27,7 @@ export function resetNewComparison(options?: { confirm?: boolean }) {
 
   useCaseStore.getState().resetCase();
   window.dispatchEvent(new CustomEvent("fleet-tco:cancel-autosave"));
-  showToast("All fields reset to defaults", "success");
+  showToast("All fields cleared", "success");
   return true;
 }
 
@@ -45,7 +45,7 @@ export function NewCaseResetButton() {
   return (
     <Button variant="outline" size="sm" onClick={handleReset}>
       <RotateCcw className="mr-2 h-4 w-4" />
-      Reset to defaults
+      Clear all fields
     </Button>
   );
 }
@@ -58,7 +58,7 @@ export function NewCaseResetBar() {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed border-border bg-muted/20 px-4 py-3">
       <p className="text-sm text-muted-foreground">
-        New comparison — fields start from the default template. Reset anytime to clear your edits.
+        New comparison — enter your own vehicle details below. Clear anytime to start over.
       </p>
       <NewCaseResetButton />
     </div>

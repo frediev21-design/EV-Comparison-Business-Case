@@ -1,7 +1,7 @@
 "use client";
 
 import { useCaseStore } from "@/store/case-store";
-import { VEHICLE_PRESETS } from "@/store/defaults";
+import { VEHICLE_PRESETS, createEmptyReplacementVehicle } from "@/store/defaults";
 import { FormField, FormSelect, FormSection } from "./form-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,6 +38,14 @@ export function ReplacementVehiclesStep() {
       </div>
 
       <div className="flex flex-wrap gap-2">
+        <Button
+          variant="default"
+          size="sm"
+          onClick={() => addReplacement(createEmptyReplacementVehicle())}
+        >
+          <Plus className="mr-1 h-3 w-3" />
+          Add custom vehicle
+        </Button>
         {VEHICLE_PRESETS.map((preset) => (
           <Button
             key={preset.name}
@@ -50,6 +58,14 @@ export function ReplacementVehiclesStep() {
           </Button>
         ))}
       </div>
+
+      {replacements.length === 0 && (
+        <Card className="border-dashed">
+          <CardContent className="py-8 text-center text-sm text-muted-foreground">
+            No replacement vehicles yet. Add a custom vehicle or pick a preset above to compare.
+          </CardContent>
+        </Card>
+      )}
 
       <div className="flex flex-wrap gap-2">
         {replacements.map((v) => (

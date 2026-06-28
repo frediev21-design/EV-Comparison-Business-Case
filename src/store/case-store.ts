@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { runFullBusinessCase } from "@/engine";
 import type { BusinessCaseInput, BusinessCaseResult, ReplacementVehicle, WhatIfOverrides } from "@/engine/types";
-import { createDefaultBusinessCase, createId } from "./defaults";
+import { createEmptyBusinessCase, createId } from "./defaults";
 import type { WorkflowMode } from "@/lib/wizard-steps";
 import { inputForLoad } from "@/lib/snapshot-sanitize";
 
@@ -81,11 +81,11 @@ function computeResult(input: BusinessCaseInput): BusinessCaseResult {
   return runFullBusinessCase(input);
 }
 
-const defaultInput = createDefaultBusinessCase();
+const defaultInput = createEmptyBusinessCase();
 
 export const useCaseStore = create<CaseStore>((set) => ({
   caseId: null,
-  caseName: "Current Situation",
+  caseName: "New comparison",
   tags: ["Business Use"],
   input: defaultInput,
   result: computeResult(defaultInput),
@@ -235,10 +235,10 @@ export const useCaseStore = create<CaseStore>((set) => ({
   },
 
   resetCase: () => {
-    const input = createDefaultBusinessCase();
+    const input = createEmptyBusinessCase();
     set((state) => ({
       caseId: null,
-      caseName: "Current Situation",
+      caseName: "New comparison",
       tags: ["Business Use"],
       input,
       result: computeResult(input),

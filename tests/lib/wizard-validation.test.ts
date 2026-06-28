@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { getCaseValidationMessages, isStepComplete, getDataEntryProgress } from "@/lib/wizard-validation";
-import { createDefaultBusinessCase } from "@/store/defaults";
+import { createDefaultBusinessCase, createEmptyBusinessCase } from "@/store/defaults";
 import { runFullBusinessCase } from "@/engine";
 
 describe("wizard validation", () => {
@@ -23,5 +23,14 @@ describe("wizard validation", () => {
     const progress = getDataEntryProgress(input, "quick");
     expect(progress.total).toBe(3);
     expect(progress.completed).toBeGreaterThan(0);
+  });
+
+  it("starts empty for new customers with no completed steps", () => {
+    const input = createEmptyBusinessCase();
+    expect(input.current.manufacturer).toBe("");
+    expect(input.replacements).toHaveLength(0);
+    expect(isStepComplete("current", input)).toBe(false);
+    expect(isStepComplete("replacement", input)).toBe(false);
+    expect(getDataEntryProgress(input, "full").completed).toBe(0);
   });
 });

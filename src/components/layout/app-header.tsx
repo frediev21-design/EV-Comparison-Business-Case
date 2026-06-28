@@ -16,8 +16,10 @@ function useVehicleComparisonLabel() {
   const input = useCaseStore((s) => s.input);
   const current = `${input.current.manufacturer} ${input.current.model}`.trim();
   const replacement =
-    input.replacements.find((v) => v.id === input.selectedReplacementId)?.name ?? "Replacement";
-  if (!current.replace(/\s/g, "")) return replacement;
+    input.replacements.find((v) => v.id === input.selectedReplacementId)?.name?.trim() ?? "";
+  if (!current && !replacement) return "Enter your vehicle details";
+  if (!current) return replacement || "Add your current vehicle";
+  if (!replacement) return `${current} → add replacement`;
   return `${current} → ${replacement}`;
 }
 

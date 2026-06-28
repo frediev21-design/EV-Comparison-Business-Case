@@ -100,18 +100,31 @@ export function isStepComplete(step: WizardStep, input: BusinessCaseInput): bool
     case "trade-in":
       return current.currentValue > 0 && current.outstandingFinance >= 0;
     case "finance":
-      return input.replacements.every((v) => v.interestRate > 0 && v.financeTermMonths >= 12);
+      return (
+        input.replacements.length > 0 &&
+        input.replacements.every((v) => v.interestRate > 0 && v.financeTermMonths >= 12)
+      );
     case "running-costs":
-      return input.assumptions.fuelPricePerLitre > 0 && input.assumptions.electricityTariff > 0;
+      return (
+        input.assumptions.dailyDistanceKm > 0 &&
+        input.assumptions.fuelPricePerLitre > 0 &&
+        input.assumptions.electricityTariff > 0
+      );
     case "solar":
       return (
+        input.replacements.length > 0 &&
         input.solar.solarChargingPercent + input.solar.gridChargingPercent === 100 &&
         input.solar.systemSizeKw > 0
       );
     case "ownership":
-      return current.residualValue >= 0;
+      return current.currentValue > 0 && current.residualValue >= 0;
     case "risk":
-      return true;
+      return (
+        !!current.manufacturer.trim() &&
+        !!current.model.trim() &&
+        input.replacements.length > 0 &&
+        input.replacements.some((v) => v.price > 0 && !!v.name.trim())
+      );
     default:
       return true;
   }

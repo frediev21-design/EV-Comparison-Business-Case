@@ -109,6 +109,7 @@ export const VEHICLE_PRESETS: Omit<ReplacementVehicle, "id">[] = [
   },
 ];
 
+/** Pre-filled demo used in tests and optional examples — not for new customer flows. */
 export function createDefaultBusinessCase(): BusinessCaseInput {
   const sharkId = createId();
   return {
@@ -162,6 +163,77 @@ export function createDefaultBusinessCase(): BusinessCaseInput {
       offPeakTariff: 1.8,
     },
     selectedReplacementId: sharkId,
+  };
+}
+
+export function createEmptyReplacementVehicle(): Omit<ReplacementVehicle, "id"> {
+  return {
+    name: "",
+    manufacturer: "",
+    price: 0,
+    deposit: 0,
+    interestRate: 10,
+    financeTermMonths: 72,
+    fuelType: "electric",
+    batterySizeKwh: 0,
+    fuelConsumption: 0,
+    energyConsumption: 0,
+    warrantyYears: 0,
+    batteryWarrantyYears: 0,
+    maintenance: 0,
+    insurance: 0,
+    expectedResale: 0,
+  };
+}
+
+/** Blank starter for new customers — no demo vehicle data. */
+export function createEmptyBusinessCase(): BusinessCaseInput {
+  return {
+    type: "fleet-ev",
+    current: {
+      manufacturer: "",
+      model: "",
+      year: 0,
+      mileage: 0,
+      currentValue: 0,
+      outstandingFinance: 0,
+      monthlyInstalment: 0,
+      fuelType: "diesel",
+      fuelConsumption: 0,
+      insurance: 0,
+      maintenance: 0,
+      tyres: 0,
+      licence: 0,
+      expectedAnnualRepairs: 0,
+      tradeInValue: 0,
+      residualValue: 0,
+      hasTurbo: false,
+      hasDpf: false,
+      warrantyExpired: false,
+    },
+    replacements: [],
+    tradeIn: {
+      additionalCashDeposit: 0,
+    },
+    assumptions: {
+      dailyDistanceKm: 0,
+      fuelPricePerLitre: 23.5,
+      electricityTariff: 2.85,
+      peakTariff: 4.2,
+      offPeakTariff: 1.8,
+      annualKmGrowth: 2,
+      fleetVehicleCount: 1,
+    },
+    solar: {
+      systemSizeKw: 8,
+      batterySizeKwh: 10,
+      solarChargingPercent: 70,
+      gridChargingPercent: 30,
+      electricityTariff: 2.85,
+      peakTariff: 4.2,
+      offPeakTariff: 1.8,
+    },
+    selectedReplacementId: "",
   };
 }
 
