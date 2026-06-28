@@ -33,7 +33,7 @@ export function CurrentVehicleStep() {
   return (
     <div className="space-y-8">
       <ValidationAlerts messages={validationMessages} step="current" />
-      <FormSection title="Current Vehicle" description="Capture your existing vehicle details. Loan instalment is finance payment only — fuel and maintenance are calculated separately.">
+      <FormSection title="Current Vehicle" description="Capture your existing vehicle details. Current monthly repayment is your loan payment only — fuel and maintenance are calculated separately.">
         <FormField label="Manufacturer" value={current.manufacturer} onChange={(v) => updateCurrent({ manufacturer: v })} />
         <FormField label="Model" value={current.model} onChange={(v) => updateCurrent({ model: v })} />
         <FormField label="Year" type="number" value={current.year} onChange={(v) => updateCurrent({ year: int(v) })} />
@@ -41,12 +41,12 @@ export function CurrentVehicleStep() {
         <FormField label="Current Value" type="number" prefix="R" value={current.currentValue} onChange={(v) => updateCurrent({ currentValue: num(v), tradeInValue: num(v) })} />
         <FormField label="Outstanding Finance" type="number" prefix="R" value={current.outstandingFinance} onChange={(v) => updateCurrent({ outstandingFinance: num(v) })} />
         <FormField
-          label="Monthly Loan Instalment"
+          label="Current monthly repayment"
           type="number"
           prefix="R"
           value={current.monthlyInstalment}
           onChange={(v) => updateCurrent({ monthlyInstalment: num(v) })}
-          hint="Finance payment only — not fuel, insurance, or maintenance."
+          hint="What you pay on your vehicle loan each month — not fuel, insurance, or maintenance."
         />
         <FormSelect label="Fuel Type" value={current.fuelType} options={FUEL_OPTIONS} onChange={(v) => updateCurrent({ fuelType: v as typeof current.fuelType })} />
         <FormField label="Fuel Consumption" type="number" suffix="L/100km" value={current.fuelConsumption} onChange={(v) => updateCurrent({ fuelConsumption: num(v) })} step={0.1} />
@@ -70,13 +70,39 @@ export function CurrentVehicleStep() {
         <FormField label="Fleet Size" type="number" suffix="vehicles" value={assumptions.fleetVehicleCount} onChange={(v) => updateAssumptions({ fleetVehicleCount: Math.max(1, int(v)) })} min={1} max={100} />
       </FormSection>
 
+      <Card className="border-accent/20 bg-accent/5">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">Your current monthly repayment</CardTitle>
+          <p className="text-xs text-muted-foreground">
+            Based on the loan repayment you entered above — finance only.
+          </p>
+        </CardHeader>
+        <CardContent>
+          <p className="text-3xl font-bold tabular-nums tracking-tight">
+            {formatCurrency(monthlyPreview.instalment)}
+            <span className="text-lg font-normal text-muted-foreground">/month</span>
+          </p>
+          {monthlyPreview.instalmentAdjusted && (
+            <p className="mt-2 text-xs text-warning">
+              Adjusted from {formatCurrency(monthlyPreview.enteredInstalment)}/mo — entered amount
+              looks like total vehicle cost, not loan repayment only.
+            </p>
+          )}
+          {current.outstandingFinance > 0 && (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Outstanding finance: {formatCurrency(current.outstandingFinance)}
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Estimated Monthly Cost (from your inputs above)</CardTitle>
+          <CardTitle className="text-base">Full monthly cost (repayment + running costs)</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           <div className="flex justify-between gap-4">
-            <span className="text-muted-foreground">Loan instalment</span>
+            <span className="text-muted-foreground">Current repayment</span>
             <span className="font-medium tabular-nums">{formatCurrency(monthlyPreview.instalment)}</span>
           </div>
           {monthlyPreview.lines.map((line) => (

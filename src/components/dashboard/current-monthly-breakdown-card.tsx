@@ -38,9 +38,9 @@ export function CurrentMonthlyBreakdownCard() {
           <tbody>
             <tr className="border-b border-border/50">
               <td className="py-2.5">
-                <span className="font-medium">Loan instalment</span>
+                <span className="font-medium">Current repayment</span>
                 <p className="text-xs text-muted-foreground">
-                  You entered R{breakdown.enteredInstalment.toLocaleString()}/month
+                  You entered {formatCurrency(breakdown.enteredInstalment)}/month
                   {breakdown.instalmentAdjusted &&
                     ` · adjusted to ${formatCurrency(breakdown.instalment)}/mo (looks like total cost, not loan only)`}
                 </p>
@@ -85,7 +85,7 @@ export function CurrentMonthlyBreakdownCard() {
           </tbody>
         </table>
         <p className="mt-3 text-xs text-muted-foreground">
-          {formatCurrency(breakdown.instalment)} instalment + {formatCurrency(breakdown.operatingMonthly)}{" "}
+          {formatCurrency(breakdown.instalment)} repayment + {formatCurrency(breakdown.operatingMonthly)}{" "}
           operating = {formatCurrency(breakdown.totalMonthly)}/month
         </p>
       </CardContent>

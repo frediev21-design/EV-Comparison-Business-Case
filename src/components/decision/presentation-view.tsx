@@ -7,6 +7,7 @@ import { BoardSummaryPanel } from "@/components/decision/board-summary-panel";
 import { KpiCard } from "@/components/kpi/kpi-card";
 import { ChartSuite } from "@/components/charts/chart-suite";
 import { RecommendationCard } from "@/components/dashboard/recommendation-card";
+import { MonthlyRepaymentComparisonCard } from "@/components/dashboard/monthly-repayment-comparison-card";
 import { formatCurrency } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { X, Presentation } from "lucide-react";
@@ -44,6 +45,8 @@ export function PresentationView() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <KpiCard title="Investment Score" value={`${decision.investmentScore.total}/100`} />
+          <KpiCard title="Current Repayment" value={formatCurrency(kpis.currentFinanceInstalment)} subtitle="/ month" />
+          <KpiCard title="Replacement Repayment" value={formatCurrency(kpis.replacementFinanceInstalment)} subtitle="/ month" />
           <KpiCard title="Monthly Saving" value={formatCurrency(kpis.monthlySaving)} positiveIsGood />
           <KpiCard title="Annual Saving" value={formatCurrency(kpis.annualSaving)} positiveIsGood />
           <KpiCard title="10-Year Saving" value={formatCurrency(kpis.tenYearSaving)} positiveIsGood />
@@ -53,6 +56,7 @@ export function PresentationView() {
           <KpiCard title="Break-even" value={kpis.paybackMonths > 0 ? `${kpis.paybackMonths} mo` : "N/A"} />
         </div>
 
+        <MonthlyRepaymentComparisonCard compact />
         <BoardSummaryPanel summary={decision.boardSummary} />
         <RecommendationCard />
         <div className="print:break-before-page">

@@ -8,6 +8,7 @@ import { formatCurrency } from "@/lib/format";
 import { DashboardHeroStrip } from "./dashboard-hero-strip";
 import { RecommendationCard } from "./recommendation-card";
 import { SavingsBreakdownCard } from "./savings-breakdown-card";
+import { MonthlyRepaymentComparisonCard } from "./monthly-repayment-comparison-card";
 import { CurrentMonthlyBreakdownCard } from "./current-monthly-breakdown-card";
 import { buildCurrentMonthlyFromInputs } from "@/lib/current-monthly-breakdown";
 import { downloadBoardPack } from "@/lib/export-pdf";
@@ -103,9 +104,27 @@ export function ExecutiveDashboard() {
 
       <SavingsBreakdownCard />
 
+      <MonthlyRepaymentComparisonCard />
+
       <CurrentMonthlyBreakdownCard />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 max-sm:flex max-sm:gap-4 max-sm:overflow-x-auto max-sm:pb-2 max-sm:snap-x max-sm:snap-mandatory">
+        <KpiCard
+          title="Current Repayment"
+          value={formatCurrency(kpis.currentFinanceInstalment)}
+          numericValue={kpis.currentFinanceInstalment}
+          formatValue={(n) => formatCurrency(n)}
+          subtitle="your loan payment / month"
+          className="max-sm:min-w-[240px] max-sm:snap-center"
+        />
+        <KpiCard
+          title="Replacement Repayment"
+          value={formatCurrency(kpis.replacementFinanceInstalment)}
+          numericValue={kpis.replacementFinanceInstalment}
+          formatValue={(n) => formatCurrency(n)}
+          subtitle="new vehicle loan / month"
+          className="max-sm:min-w-[240px] max-sm:snap-center"
+        />
         <KpiCard
           title="Monthly Saving"
           value={formatCurrency(kpis.monthlySaving)}

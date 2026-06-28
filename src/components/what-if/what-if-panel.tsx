@@ -117,13 +117,13 @@ export function WhatIfPanel() {
         <CardContent className="grid gap-3 text-sm sm:grid-cols-2">
           <div className="rounded-lg bg-muted/50 p-3">
             <p className="font-medium">Current vehicle</p>
-            <p className="text-muted-foreground">Finance: {formatCurrency(kpis.currentFinanceInstalment)}</p>
+            <p className="text-muted-foreground">Current repayment: {formatCurrency(kpis.currentFinanceInstalment)}</p>
             <p className="text-muted-foreground">Running: {formatCurrency(kpis.currentRunningMonthly)}</p>
             <p className="font-semibold tabular-nums">Total: {formatCurrency(kpis.currentMonthlyCost)}</p>
           </div>
           <div className="rounded-lg bg-muted/50 p-3">
             <p className="font-medium">Replacement vehicle</p>
-            <p className="text-muted-foreground">Finance: {formatCurrency(kpis.replacementFinanceInstalment)}</p>
+            <p className="text-muted-foreground">Replacement repayment: {formatCurrency(kpis.replacementFinanceInstalment)}</p>
             <p className="text-muted-foreground">Running: {formatCurrency(kpis.replacementRunningMonthly)}</p>
             <p className="font-semibold tabular-nums">Total: {formatCurrency(kpis.replacementMonthlyCost)}</p>
           </div>

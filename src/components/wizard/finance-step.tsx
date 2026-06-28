@@ -64,7 +64,7 @@ export function FinanceStep() {
           <CardContent className="grid gap-4 sm:grid-cols-2">
             {[
               { label: "Amount Financed", value: finance.amountFinanced },
-              { label: "Monthly Instalment", value: finance.monthlyInstalment },
+              { label: "Monthly Repayment", value: finance.monthlyInstalment },
               { label: "Total Interest", value: finance.totalInterest },
               { label: "Total Payments", value: finance.totalPayments },
             ].map(({ label, value }) => (
