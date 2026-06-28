@@ -14,6 +14,7 @@ import { SCENARIO_TAGS } from "@/store/defaults";
 import { Copy, Trash2, FolderOpen, Save, Download, Upload } from "lucide-react";
 import { ScenarioComparisonTable } from "./scenario-comparison-table";
 import { showToast } from "@/lib/toast";
+import { useOpenScenario } from "@/hooks/use-open-scenario";
 
 export function ScenarioManager() {
   const [scenarios, setScenarios] = useState<ScenarioRecord[]>([]);
@@ -28,8 +29,8 @@ export function ScenarioManager() {
   const setCaseId = useCaseStore((s) => s.setCaseId);
   const setCaseName = useCaseStore((s) => s.setCaseName);
   const setTags = useCaseStore((s) => s.setTags);
-  const loadCase = useCaseStore((s) => s.loadCase);
   const saveScenario = useScenarioSave();
+  const openScenario = useOpenScenario();
 
   const refresh = useCallback(async () => {
     const list = await scenarioRepository.list();
@@ -71,9 +72,19 @@ export function ScenarioManager() {
       setImportError(null);
       const text = await file.text();
       const data = parseCaseImport(text);
-      loadCase(data.snapshot, { name: data.name, tags: data.tags });
+      const now = new Date().toISOString();
+      const record: ScenarioRecord = {
+        id: crypto.randomUUID(),
+        name: data.name,
+        tags: data.tags,
+        createdAt: now,
+        updatedAt: now,
+        snapshot: data.snapshot,
+        workflowMode: "full",
+      };
+      await scenarioRepository.save(record);
+      openScenario(record);
       await refresh();
-      showToast("Scenario imported", "success");
     } catch (e) {
       setImportError(e instanceof Error ? e.message : "Could not import file — check the JSON format.");
       showToast("Import failed", "error");
@@ -109,6 +120,7 @@ export function ScenarioManager() {
               fleetVehicleCount: scenario.snapshot.assumptions.fleetVehicleCount ?? 1,
             },
           },
+          workflowMode: "full",
         });
       }
       await refresh();
@@ -119,23 +131,18 @@ export function ScenarioManager() {
     }
   };
 
-  const handleLoad = async (id: string) => {
-    const record = await scenarioRepository.get(id);
-    if (record) {
-      loadCase(record.snapshot, {
-        id: record.id,
-        name: record.name,
-        tags: record.tags,
-        workflowMode: record.workflowMode ?? "full",
-      });
-    }
+  const handleLoad = (id: string) => {
+    void (async () => {
+      const record = await scenarioRepository.get(id);
+      if (record) openScenario(record);
+    })();
   };
 
   const handleDuplicate = async (id: string) => {
     const original = scenarios.find((s) => s.id === id);
     const duplicate = await scenarioRepository.duplicate(id, `${original?.name ?? "Scenario"} (Copy)`);
     await refresh();
-    loadCase(duplicate.snapshot, { id: duplicate.id, name: duplicate.name, tags: duplicate.tags });
+    openScenario(duplicate);
   };
 
   const handleDelete = async (id: string, name: string) => {
@@ -153,7 +160,7 @@ export function ScenarioManager() {
     <div className="space-y-6">
       <div>
         <h2 className="text-lg font-semibold">Scenario Comparison</h2>
-        <p className="text-sm text-muted-foreground">Save, duplicate, and manage business case scenarios.</p>
+        <p className="text-sm text-muted-foreground">Save, open, duplicate, and manage business case scenarios.</p>
       </div>
 
       <Card>
@@ -239,7 +246,7 @@ export function ScenarioManager() {
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={() => handleLoad(scenario.id)}>
-                  <FolderOpen className="mr-1 h-3 w-3" /> Load
+                  <FolderOpen className="mr-1 h-3 w-3" /> Open
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => handleDuplicate(scenario.id)}>
                   <Copy className="mr-1 h-3 w-3" /> Duplicate

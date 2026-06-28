@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { hasWhatIfOverrides } from "@/lib/wizard-steps";
 import { buildCurrentVehicleLabel, buildVehicleComparisonLabel } from "@/lib/case-labels";
 import { HeaderInvestmentScore, HeaderInvestmentScoreMobile } from "./header-investment-score";
+import { OpenAnalysisMenu } from "@/components/case/open-analysis-menu";
 
 interface AppHeaderProps {
   onMenuClick?: () => void;
@@ -69,6 +70,7 @@ export function AppHeader({ onMenuClick }: AppHeaderProps) {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <OpenAnalysisMenu />
           <Button variant="ghost" size="sm" className="hidden sm:flex" asChild>
             <Link href="/cases">
               <LayoutGrid className="mr-2 h-4 w-4" />

@@ -8,6 +8,7 @@ export interface ScenarioEntity {
   createdAt: string;
   updatedAt: string;
   snapshot: BusinessCaseInput;
+  workflowMode?: "quick" | "full";
 }
 
 class FinCompDatabase extends Dexie {
@@ -53,6 +54,7 @@ class DexieScenarioRepository implements IScenarioRepository {
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
       snapshot: record.snapshot,
+      workflowMode: record.workflowMode,
     });
   }
 
@@ -85,6 +87,7 @@ function toRecord(entity: ScenarioEntity): ScenarioRecord {
     createdAt: entity.createdAt,
     updatedAt: entity.updatedAt,
     snapshot: entity.snapshot,
+    workflowMode: entity.workflowMode,
   };
 }
 

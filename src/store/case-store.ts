@@ -76,7 +76,14 @@ interface CaseStore {
   selectReplacement: (id: string) => void;
   loadCase: (
     input: BusinessCaseInput,
-    meta?: { id?: string; name?: string; tags?: string[]; workflowMode?: WorkflowMode }
+    meta?: {
+      id?: string;
+      name?: string;
+      tags?: string[];
+      workflowMode?: WorkflowMode;
+      activeStep?: WizardStep;
+      lastSavedAt?: string | null;
+    }
   ) => void;
   resetCase: () => void;
   setPresentationMode: (on: boolean) => void;
@@ -247,7 +254,8 @@ export const useCaseStore = create<CaseStore>((set) => ({
       caseName: meta?.name ?? "Loaded Scenario",
       tags: meta?.tags ?? [],
       workflowMode: meta?.workflowMode ?? state.workflowMode,
-      lastSavedAt: null,
+      activeStep: meta?.activeStep ?? state.activeStep,
+      lastSavedAt: meta?.lastSavedAt ?? null,
       routeCaseMissing: false,
       inputGeneration: state.inputGeneration + 1,
     }));

@@ -23,7 +23,6 @@ export function CaseRouteSync() {
   const pathname = usePathname();
   const caseId = useCaseStore((s) => s.caseId);
   const loadCase = useCaseStore((s) => s.loadCase);
-  const setLastSavedAt = useCaseStore((s) => s.setLastSavedAt);
   const setRouteCaseMissing = useCaseStore((s) => s.setRouteCaseMissing);
 
   useEffect(() => {
@@ -54,10 +53,10 @@ export function CaseRouteSync() {
         name: record.name,
         tags: record.tags,
         workflowMode: record.workflowMode ?? "full",
+        lastSavedAt: record.updatedAt,
       });
-      setLastSavedAt(record.updatedAt);
     });
-  }, [pathname, caseId, loadCase, setLastSavedAt, setRouteCaseMissing]);
+  }, [pathname, caseId, loadCase, setRouteCaseMissing]);
 
   return null;
 }
