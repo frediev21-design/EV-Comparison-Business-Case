@@ -1,5 +1,55 @@
 import type { MarketSource } from "./types";
 
+export function normalizeMarketQuery(raw: string): string {
+  return raw
+    .toLowerCase()
+    .replace(/bi-turbo|biturbo|bi turbo|4x4|4×4|gd-6|gd6|phev|premium|luxury|extended range/gi, " ")
+    .replace(/[^\w\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function scoreNewVehicleMatch(query: string, vehicle: CuratedNewVehicle): number {
+  const q = normalizeMarketQuery(query);
+  if (!q) return 0;
+
+  const label = normalizeMarketQuery(`${vehicle.manufacturer} ${vehicle.model}`);
+  let score = 0;
+  if (q === label) score += 25;
+  if (label.includes(q) || q.includes(label)) score += 12;
+  for (const key of vehicle.keys) {
+    const nk = normalizeMarketQuery(key);
+    if (q === nk) score += 20;
+    if (q.includes(nk) || nk.includes(q)) score += 8;
+  }
+  const mfr = normalizeMarketQuery(vehicle.manufacturer);
+  const mdl = normalizeMarketQuery(vehicle.model);
+  if (mfr && q.includes(mfr)) score += 4;
+  if (mdl && q.includes(mdl)) score += 6;
+  return score;
+}
+
+function scoreUsedVehicleMatch(query: string, vehicle: CuratedUsedVehicle): number {
+  const q = normalizeMarketQuery(query);
+  if (!q) return 0;
+
+  const label = normalizeMarketQuery(`${vehicle.manufacturer} ${vehicle.model}`);
+  let score = 0;
+  if (q === label) score += 25;
+  if (label.includes(q) || q.includes(label)) score += 12;
+  for (const key of vehicle.keys) {
+    const nk = normalizeMarketQuery(key);
+    if (q === nk) score += 20;
+    if (q.includes(nk) || nk.includes(q)) score += 10;
+  }
+  const mfr = normalizeMarketQuery(vehicle.manufacturer);
+  if (mfr && q.includes(mfr)) score += 3;
+  for (const token of normalizeMarketQuery(vehicle.model).split(" ")) {
+    if (token.length > 2 && q.includes(token)) score += 4;
+  }
+  return score;
+}
+
 export interface CuratedNewVehicle {
   keys: string[];
   manufacturer: string;
@@ -337,43 +387,93 @@ export const CURATED_USED_VEHICLES: CuratedUsedVehicle[] = [
     priceReductions: 8,
     depreciationRateAnnual: 0.1,
   },
+  {
+    keys: ["ford ranger", "ranger xlt", "ranger 2.0"],
+    manufacturer: "Ford",
+    model: "Ranger",
+    baseYear: 2020,
+    baseMileage: 90000,
+    tradeInBase: 310000,
+    privateSaleBase: 350000,
+    dealerRetailBase: 389000,
+    auctionBase: 285000,
+    sources: [
+      { id: "autotrader", name: "AutoTrader", price: 359000 },
+      { id: "cars", name: "Cars.co.za", price: 352000 },
+      { id: "webuycars", name: "WeBuyCars", price: 340000 },
+    ],
+    listingsCount: 98,
+    avgDaysOnMarket: 26,
+    priceReductions: 9,
+    depreciationRateAnnual: 0.11,
+  },
+  {
+    keys: ["toyota hilux gr-s", "hilux gr-s", "hilux grs"],
+    manufacturer: "Toyota",
+    model: "Hilux GR-S",
+    baseYear: 2021,
+    baseMileage: 75000,
+    tradeInBase: 420000,
+    privateSaleBase: 465000,
+    dealerRetailBase: 515000,
+    auctionBase: 390000,
+    sources: [
+      { id: "autotrader", name: "AutoTrader", price: 475000 },
+      { id: "cars", name: "Cars.co.za", price: 469000 },
+      { id: "motus", name: "Motus Used", price: 485000 },
+    ],
+    listingsCount: 34,
+    avgDaysOnMarket: 24,
+    priceReductions: 5,
+    depreciationRateAnnual: 0.1,
+  },
+  {
+    keys: ["byd shark", "shark 6 used"],
+    manufacturer: "BYD",
+    model: "Shark 6",
+    baseYear: 2025,
+    baseMileage: 15000,
+    tradeInBase: 720000,
+    privateSaleBase: 780000,
+    dealerRetailBase: 840000,
+    auctionBase: 680000,
+    sources: [
+      { id: "autotrader", name: "AutoTrader", price: 795000 },
+      { id: "cars", name: "Cars.co.za", price: 785000 },
+    ],
+    listingsCount: 8,
+    avgDaysOnMarket: 14,
+    priceReductions: 0,
+    depreciationRateAnnual: 0.14,
+  },
 ];
 
 export function findNewVehicle(query: string): CuratedNewVehicle | undefined {
-  const q = query.toLowerCase().trim();
+  const q = query.trim();
   if (!q) return undefined;
 
-  const exact = CURATED_NEW_VEHICLES.find((v) =>
-    v.keys.some((k) => q === k || q === `${v.manufacturer} ${v.model}`.toLowerCase())
-  );
-  if (exact) return exact;
+  const ranked = CURATED_NEW_VEHICLES.map((vehicle) => ({
+    vehicle,
+    score: scoreNewVehicleMatch(q, vehicle),
+  }))
+    .filter((entry) => entry.score >= 8)
+    .sort((a, b) => b.score - a.score);
 
-  return CURATED_NEW_VEHICLES.find((v) =>
-    v.keys.some((k) => q.includes(k) || k.includes(q)) ||
-    q.includes(v.manufacturer.toLowerCase()) ||
-    q.includes(v.model.toLowerCase())
-  );
+  return ranked[0]?.vehicle;
 }
 
 export function searchNewVehicles(query: string, limit = 6): CuratedNewVehicle[] {
-  const q = query.toLowerCase().trim();
+  const q = query.trim();
   if (!q) return CURATED_NEW_VEHICLES.slice(0, limit);
 
-  const scored = CURATED_NEW_VEHICLES.map((vehicle) => {
-    const label = `${vehicle.manufacturer} ${vehicle.model}`.toLowerCase();
-    let score = 0;
-    if (label.includes(q) || q.includes(label)) score += 10;
-    if (vehicle.manufacturer.toLowerCase().includes(q)) score += 8;
-    if (vehicle.model.toLowerCase().includes(q)) score += 6;
-    for (const key of vehicle.keys) {
-      if (key.includes(q) || q.includes(key)) score += 5;
-    }
-    return { vehicle, score };
-  })
+  return CURATED_NEW_VEHICLES.map((vehicle) => ({
+    vehicle,
+    score: scoreNewVehicleMatch(q, vehicle),
+  }))
     .filter((entry) => entry.score > 0)
-    .sort((a, b) => b.score - a.score);
-
-  return scored.slice(0, limit).map((entry) => entry.vehicle);
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map((entry) => entry.vehicle);
 }
 
 export function listNewVehicleLabels(): string[] {
@@ -381,11 +481,15 @@ export function listNewVehicleLabels(): string[] {
 }
 
 export function findUsedVehicle(manufacturer: string, model: string): CuratedUsedVehicle | undefined {
-  const q = `${manufacturer} ${model}`.toLowerCase();
-  return CURATED_USED_VEHICLES.find(
-    (v) =>
-      v.keys.some((k) => q.includes(k)) ||
-      q.includes(v.manufacturer.toLowerCase()) ||
-      q.includes(v.model.toLowerCase())
-  );
+  const q = `${manufacturer} ${model}`.trim();
+  if (!q) return undefined;
+
+  const ranked = CURATED_USED_VEHICLES.map((vehicle) => ({
+    vehicle,
+    score: scoreUsedVehicleMatch(q, vehicle),
+  }))
+    .filter((entry) => entry.score >= 8)
+    .sort((a, b) => b.score - a.score);
+
+  return ranked[0]?.vehicle;
 }

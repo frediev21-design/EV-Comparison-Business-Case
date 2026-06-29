@@ -6,7 +6,10 @@ import type {
   TradeInLookupResult,
   MarketExecutiveSummary,
 } from "@/engine/market/types";
-import { findNewVehicle } from "@/engine/market/curated-data";
+import { findNewVehicle, findUsedVehicle } from "@/engine/market/curated-data";
+import {
+  buildReplacementMarketQuery,
+} from "@/lib/market/query-from-case";
 import {
   fetchNewVehicleMarket,
   fetchTradeInMarket,
@@ -91,9 +94,13 @@ function recomputeSummary(
 function newVehicleQueryFromCase(): string {
   const input = useCaseStore.getState().input;
   const selected = input.replacements.find((v) => v.id === input.selectedReplacementId);
-  if (selected?.name?.trim()) return selected.name.trim();
-  if (selected?.manufacturer?.trim()) return selected.manufacturer.trim();
-  return "";
+  if (!selected) return "";
+  return buildReplacementMarketQuery(selected);
+}
+
+function canValueCurrentTradeIn(): boolean {
+  const current = useCaseStore.getState().input.current;
+  return Boolean(current.manufacturer.trim() && current.model.trim());
 }
 
 export const useMarketStore = create<MarketStore>((set, get) => ({
@@ -283,5 +290,23 @@ export const useMarketStore = create<MarketStore>((set, get) => ({
 
 export function canAutoSearchMarket(): boolean {
   const query = newVehicleQueryFromCase();
+  const hasReplacement = Boolean(query && findNewVehicle(query));
+  const hasTradeIn = canValueCurrentTradeIn();
+  return hasReplacement || hasTradeIn;
+}
+
+export function getReplacementMarketQuery(): string {
+  return newVehicleQueryFromCase();
+}
+
+export function isReplacementInMarketDatabase(): boolean {
+  const query = newVehicleQueryFromCase();
   return Boolean(query && findNewVehicle(query));
+}
+
+export function isCurrentVehicleInMarketDatabase(): boolean {
+  const current = useCaseStore.getState().input.current;
+  return Boolean(
+    findUsedVehicle(current.manufacturer, current.model)
+  );
 }

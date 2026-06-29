@@ -62,4 +62,23 @@ describe("SA market intelligence", () => {
     });
     expect(good!.tradeInValue).toBeGreaterThan(poor!.tradeInValue);
   });
+
+  it("matches Wildtrak from split manufacturer and model fields", () => {
+    const result = lookupTradeIn({
+      manufacturer: "Ford",
+      model: "Wildtrak Bi-Turbo",
+      year: 2023,
+      mileage: 36000,
+      condition: "good",
+      serviceHistory: true,
+      accidentHistory: false,
+    });
+    expect(result).not.toBeNull();
+    expect(result!.confidenceScore).toBeGreaterThan(50);
+  });
+
+  it("looks up replacement from short model name", () => {
+    const result = lookupNewVehicle("Shark 6");
+    expect(result?.model).toBe("Shark 6");
+  });
 });

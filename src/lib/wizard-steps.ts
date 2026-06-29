@@ -15,6 +15,7 @@ export const QUICK_WORKFLOW_STEPS: WizardStep[] = [
   "current",
   "replacement",
   "trade-in",
+  "market",
   "dashboard",
   "what-if",
   "scenarios",

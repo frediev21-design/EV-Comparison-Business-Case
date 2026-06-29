@@ -130,7 +130,7 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
         </div>
         <p className="mt-2 text-[11px] leading-snug text-muted-foreground">
           {workflowMode === "quick"
-            ? "3 setup steps → dashboard"
+            ? "4 setup steps → dashboard"
             : "8 setup steps + full analysis"}
         </p>
       </div>
