@@ -68,15 +68,15 @@ export function WhatIfPanel() {
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-xs text-muted-foreground">Monthly Saving</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-xs text-muted-foreground">Indicative Monthly Cash Flow</CardTitle></CardHeader>
           <CardContent><p className="text-2xl font-bold tabular-nums text-accent">{formatCurrency(kpis.monthlySaving)}</p></CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-xs text-muted-foreground">10-Year Saving</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-xs text-muted-foreground">10-Year Net TCO Delta</CardTitle></CardHeader>
           <CardContent><p className="text-2xl font-bold tabular-nums">{formatCurrency(kpis.tenYearSaving)}</p></CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-xs text-muted-foreground">Payback</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-xs text-muted-foreground">Indicative Payback</CardTitle></CardHeader>
           <CardContent><p className="text-2xl font-bold tabular-nums">{kpis.paybackMonths > 0 ? `${kpis.paybackMonths} mo` : "N/A"}</p></CardContent>
         </Card>
       </div>

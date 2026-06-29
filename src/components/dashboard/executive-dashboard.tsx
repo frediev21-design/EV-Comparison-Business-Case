@@ -28,6 +28,7 @@ import { RecommendationSummaryCopyButton } from "./recommendation-summary-panel"
 import { ReplacementComparisonTable } from "./replacement-comparison-table";
 import { DashboardSetupHint } from "./dashboard-setup-hint";
 import { QuickModeDefaultsBanner } from "./quick-mode-defaults-banner";
+import { ModelDisclaimer } from "./model-disclaimer";
 
 export function ExecutiveDashboard() {
   const input = useCaseStore((s) => s.input);
@@ -109,6 +110,8 @@ export function ExecutiveDashboard() {
         paybackMonths={kpis.paybackMonths}
       />
 
+      <ModelDisclaimer className="rounded-lg border border-border/60 bg-muted/20 px-4 py-3" />
+
       <ReplacementComparisonTable />
 
       <SavingsBreakdownCard />
@@ -135,26 +138,29 @@ export function ExecutiveDashboard() {
           className="max-sm:min-w-[240px] max-sm:snap-center"
         />
         <KpiCard
-          title="Monthly Saving"
+          title="Indicative Monthly Cash Flow"
           value={formatCurrency(kpis.monthlySaving)}
           numericValue={kpis.monthlySaving}
           formatValue={(n) => formatCurrency(n)}
+          subtitle="finance + running delta / month"
           positiveIsGood
           className="max-sm:min-w-[240px] max-sm:snap-center"
         />
         <KpiCard
-          title="Annual Saving"
+          title="Annual Cash Flow Delta"
           value={formatCurrency(kpis.annualSaving)}
           numericValue={kpis.annualSaving}
           formatValue={(n) => formatCurrency(n)}
+          subtitle="monthly × 12 · not TCO"
           positiveIsGood
           className="max-sm:min-w-[240px] max-sm:snap-center"
         />
         <KpiCard
-          title="10-Year Saving"
+          title="10-Year Net TCO Delta"
           value={formatCurrency(kpis.tenYearSaving)}
           numericValue={kpis.tenYearSaving}
           formatValue={(n) => formatCurrency(n)}
+          subtitle="incl. finance, running & resale"
           positiveIsGood
         />
         <KpiCard
@@ -171,7 +177,7 @@ export function ExecutiveDashboard() {
         />
         <KpiCard title="Solar Contribution" value={`${solar.solarContributionPercent.toFixed(0)}%`} subtitle="of charging" />
         <KpiCard title="Fuel Saving" value={formatCurrency(kpis.fuelSaving)} subtitle="annual" positiveIsGood />
-        <KpiCard title="Break-even Point" value={kpis.paybackMonths > 0 ? `${kpis.paybackMonths} months` : "N/A"} />
+        <KpiCard title="Indicative Payback" value={kpis.paybackMonths > 0 ? `${kpis.paybackMonths} months` : "N/A"} subtitle="on net finance vs monthly delta" />
         <KpiCard title="Net Cost per km" value={`R${kpis.costPerKmReplacement.toFixed(2)}`} subtitle="replacement" />
         <KpiCard title="Warranty Remaining" value={`${kpis.batteryWarrantyRemainingYears} years`} subtitle="battery" />
         <KpiCard title="Estimated Resale" value={formatCurrency(selected?.expectedResale ?? 0)} />

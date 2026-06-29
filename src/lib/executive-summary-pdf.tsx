@@ -12,6 +12,7 @@ import type { BusinessCaseInput, BusinessCaseResult } from "@/engine/types";
 import type { TrafficLightStatus } from "@/engine/decision/types";
 import { formatCurrency } from "./format";
 import { downloadBlob } from "./export-excel";
+import { MODEL_DISCLAIMER } from "./model-disclaimer";
 
 const TRAFFIC_LIGHT_COLOR: Record<TrafficLightStatus, string> = {
   go: "#10b981",
@@ -173,7 +174,7 @@ function ExecutiveSummaryDocument({ input, result, caseName }: ExecutiveSummaryD
 
         <View style={styles.kpiRow}>
           <View style={styles.kpi}>
-            <Text style={styles.kpiLabel}>Monthly saving</Text>
+            <Text style={styles.kpiLabel}>Indicative monthly cash flow</Text>
             <Text style={styles.kpiValue}>{formatCurrency(result.kpis.monthlySaving)}</Text>
           </View>
           <View style={styles.kpi}>
@@ -181,7 +182,7 @@ function ExecutiveSummaryDocument({ input, result, caseName }: ExecutiveSummaryD
             <Text style={styles.kpiValue}>{formatCurrency(result.tradeIn.amountFinanced)}</Text>
           </View>
           <View style={styles.kpi}>
-            <Text style={styles.kpiLabel}>10-year saving</Text>
+            <Text style={styles.kpiLabel}>10-year net TCO delta</Text>
             <Text style={styles.kpiValue}>{formatCurrency(result.kpis.tenYearSaving)}</Text>
           </View>
         </View>
@@ -204,10 +205,7 @@ function ExecutiveSummaryDocument({ input, result, caseName }: ExecutiveSummaryD
         <Text style={styles.sectionTitle}>Recommendation</Text>
         <Text style={styles.recommendation}>{d.executiveRecommendation}</Text>
 
-        <Text style={styles.disclaimer}>
-          Estimates only — not financial advice. Based on user inputs and platform assumptions.
-          Verify figures with your finance provider before making investment decisions.
-        </Text>
+        <Text style={styles.disclaimer}>{MODEL_DISCLAIMER}</Text>
       </Page>
     </Document>
   );

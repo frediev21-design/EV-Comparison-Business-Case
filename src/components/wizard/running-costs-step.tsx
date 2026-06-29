@@ -51,6 +51,7 @@ export function RunningCostsStep() {
     s.input.replacements.find((v) => v.id === selectedId)?.name ?? "Replacement"
   );
   const selectedRunning = running.replacements[selectedId];
+  const hasPhev = useCaseStore((s) => s.input.replacements.some((v) => v.fuelType === "phev"));
 
   const num = (v: string) => parseFloat(v) || 0;
 
@@ -94,6 +95,18 @@ export function RunningCostsStep() {
           onChange={(v) => updateAssumptions({ electricityTariff: num(v) })}
           step={0.01}
         />
+        {hasPhev && (
+          <FormField
+            label="PHEV distance on battery"
+            type="number"
+            suffix="%"
+            value={assumptions.phevElectricPercent ?? 50}
+            onChange={(v) => updateAssumptions({ phevElectricPercent: num(v) })}
+            min={0}
+            max={100}
+            step={5}
+          />
+        )}
       </FormSection>
 
       <div className="grid gap-6 lg:grid-cols-2">

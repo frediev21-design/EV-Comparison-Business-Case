@@ -8,6 +8,7 @@ import { BoardSummaryPanel } from "@/components/decision/board-summary-panel";
 import { ChartSuite } from "@/components/charts/chart-suite";
 import { RecommendationCard } from "@/components/dashboard/recommendation-card";
 import { MonthlyRepaymentComparisonCard } from "@/components/dashboard/monthly-repayment-comparison-card";
+import { ModelDisclaimer } from "@/components/dashboard/model-disclaimer";
 import { Button } from "@/components/ui/button";
 import { X, Presentation } from "lucide-react";
 
@@ -56,6 +57,7 @@ export function PresentationView() {
         <div className="print:break-before-page">
           <ChartSuite compact />
         </div>
+        <ModelDisclaimer variant="short" className="text-center" />
         <p className="text-center text-xs text-muted-foreground">
           {selected?.name} · Executive Investment Analysis · Confidential
         </p>

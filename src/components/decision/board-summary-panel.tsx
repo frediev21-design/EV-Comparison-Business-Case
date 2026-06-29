@@ -15,7 +15,7 @@ export function BoardSummaryPanel({ summary }: { summary: BoardSummary }) {
     { label: "Maintenance Savings (annual)", value: summary.maintenanceSavings, format: true },
     { label: "Solar Savings (annual)", value: summary.solarSavings, format: true },
     { label: "10-Year Ownership Cost", value: summary.tenYearOwnershipCost, format: true },
-    { label: "10-Year Savings", value: summary.tenYearSavings, format: true },
+    { label: "10-Year Net TCO Delta", value: summary.tenYearSavings, format: true },
   ];
 
   return (

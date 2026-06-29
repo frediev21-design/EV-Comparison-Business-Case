@@ -34,7 +34,8 @@ export function calculateKpis(
   const operatingMonthlySaving = currentRunningMonthly - replacementRunningMonthly;
   const financeMonthlyDelta = currentFinanceInstalment - replacementFinanceInstalment;
   const annualSaving = monthlySaving * 12;
-  const tenYearSaving = annualSaving * 10;
+  const tenYearSaving =
+    (currentHorizon?.netOwnershipCost ?? 0) - (replacementHorizon?.netOwnershipCost ?? 0);
 
   const financeBalance =
     selectedFinance?.schedule[selectedFinance.schedule.length - 1]?.balance ?? 0;

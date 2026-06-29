@@ -40,6 +40,7 @@ export const replacementVehicleSchema = z.object({
   batteryWarrantyYears: z.number().min(0),
   maintenance: z.number().min(0),
   insurance: z.number().min(0),
+  expectedAnnualRepairs: z.number().min(0),
   expectedResale: z.number().min(0),
 });
 
@@ -53,6 +54,7 @@ export const assumptionsSchema = z.object({
   electricityTariff: z.number().min(0),
   peakTariff: z.number().min(0),
   offPeakTariff: z.number().min(0),
+  phevElectricPercent: z.number().min(0).max(100),
   annualKmGrowth: z.number().min(0).max(20),
   fleetVehicleCount: z.number().min(1).max(100),
 });

@@ -20,6 +20,7 @@ export const VEHICLE_PRESETS: Omit<ReplacementVehicle, "id">[] = [
     batteryWarrantyYears: 8,
     maintenance: 8000,
     insurance: 18000,
+    expectedAnnualRepairs: 5000,
     expectedResale: 450000,
   },
   {
@@ -37,6 +38,7 @@ export const VEHICLE_PRESETS: Omit<ReplacementVehicle, "id">[] = [
     batteryWarrantyYears: 8,
     maintenance: 5000,
     insurance: 14000,
+    expectedAnnualRepairs: 4000,
     expectedResale: 280000,
   },
   {
@@ -54,6 +56,7 @@ export const VEHICLE_PRESETS: Omit<ReplacementVehicle, "id">[] = [
     batteryWarrantyYears: 8,
     maintenance: 6000,
     insurance: 16000,
+    expectedAnnualRepairs: 4000,
     expectedResale: 350000,
   },
   {
@@ -71,6 +74,7 @@ export const VEHICLE_PRESETS: Omit<ReplacementVehicle, "id">[] = [
     batteryWarrantyYears: 8,
     maintenance: 4000,
     insurance: 20000,
+    expectedAnnualRepairs: 4000,
     expectedResale: 420000,
   },
   {
@@ -88,6 +92,7 @@ export const VEHICLE_PRESETS: Omit<ReplacementVehicle, "id">[] = [
     batteryWarrantyYears: 0,
     maintenance: 15000,
     insurance: 22000,
+    expectedAnnualRepairs: 8000,
     expectedResale: 550000,
   },
   {
@@ -105,6 +110,7 @@ export const VEHICLE_PRESETS: Omit<ReplacementVehicle, "id">[] = [
     batteryWarrantyYears: 0,
     maintenance: 14000,
     insurance: 21000,
+    expectedAnnualRepairs: 8000,
     expectedResale: 520000,
   },
 ];
@@ -150,6 +156,7 @@ export function createDefaultBusinessCase(): BusinessCaseInput {
       electricityTariff: 2.85,
       peakTariff: 4.2,
       offPeakTariff: 1.8,
+      phevElectricPercent: 50,
       annualKmGrowth: 2,
       fleetVehicleCount: 1,
     },
@@ -182,6 +189,7 @@ export function createEmptyReplacementVehicle(): Omit<ReplacementVehicle, "id"> 
     batteryWarrantyYears: 0,
     maintenance: 0,
     insurance: 0,
+    expectedAnnualRepairs: 0,
     expectedResale: 0,
   };
 }
@@ -221,6 +229,7 @@ export function createEmptyBusinessCase(): BusinessCaseInput {
       electricityTariff: 2.85,
       peakTariff: 4.2,
       offPeakTariff: 1.8,
+      phevElectricPercent: 50,
       annualKmGrowth: 2,
       fleetVehicleCount: 1,
     },

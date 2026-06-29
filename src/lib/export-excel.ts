@@ -19,9 +19,9 @@ export async function exportToExcel(
   summary.addRow(["Decision", result.decision.trafficLight.label]);
   summary.addRow(["Current Monthly Cost", result.kpis.currentMonthlyCost]);
   summary.addRow(["Replacement Monthly Cost", result.kpis.replacementMonthlyCost]);
-  summary.addRow(["Monthly Saving", result.kpis.monthlySaving]);
-  summary.addRow(["Annual Saving", result.kpis.annualSaving]);
-  summary.addRow(["10-Year Saving", result.kpis.tenYearSaving]);
+  summary.addRow(["Indicative Monthly Cash Flow", result.kpis.monthlySaving]);
+  summary.addRow(["Annual Cash Flow Delta", result.kpis.annualSaving]);
+  summary.addRow(["10-Year Net TCO Delta", result.kpis.tenYearSaving]);
   summary.addRow(["ROI %", result.kpis.roi]);
   summary.addRow(["Payback Months", result.kpis.paybackMonths]);
 

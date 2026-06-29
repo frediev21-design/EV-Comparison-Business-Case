@@ -81,10 +81,10 @@ export function ScenarioComparisonTable() {
           <thead>
             <tr className="border-b border-border text-left text-muted-foreground">
               <th className="pb-2 pr-4 font-medium">Scenario</th>
-              <th className="pb-2 pr-4 font-medium">Monthly Saving</th>
+              <th className="pb-2 pr-4 font-medium">Monthly cash flow</th>
               <th className="pb-2 pr-4 font-medium">Finance Required</th>
               <th className="pb-2 pr-4 font-medium">Payback</th>
-              <th className="pb-2 font-medium">10-Year Saving</th>
+              <th className="pb-2 font-medium">10-yr TCO delta</th>
             </tr>
           </thead>
           <tbody>

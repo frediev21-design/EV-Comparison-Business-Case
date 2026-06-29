@@ -41,6 +41,7 @@ export interface ReplacementVehicle {
   batteryWarrantyYears: number;
   maintenance: number;
   insurance: number;
+  expectedAnnualRepairs: number;
   expectedResale: number;
 }
 
@@ -54,6 +55,8 @@ export interface Assumptions {
   electricityTariff: number;
   peakTariff: number;
   offPeakTariff: number;
+  /** Share of PHEV distance on battery (0–100). Remainder uses ICE fuel consumption. */
+  phevElectricPercent: number;
   annualKmGrowth: number;
   fleetVehicleCount: number;
 }

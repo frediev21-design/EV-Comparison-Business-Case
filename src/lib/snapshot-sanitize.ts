@@ -24,6 +24,13 @@ export function inputForLoad(input: BusinessCaseInput): BusinessCaseInput {
   return {
     ...cleaned,
     tradeIn: { additionalCashDeposit },
-    replacements,
+    replacements: replacements.map((v) => ({
+      ...v,
+      expectedAnnualRepairs: v.expectedAnnualRepairs ?? 0,
+    })),
+    assumptions: {
+      ...cleaned.assumptions,
+      phevElectricPercent: cleaned.assumptions.phevElectricPercent ?? 50,
+    },
   };
 }

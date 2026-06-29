@@ -36,7 +36,7 @@ export function DashboardKpiStrip({
         )}
       >
         <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Monthly saving
+          Indicative monthly cash flow
         </p>
         <p className={cn("mt-1 text-2xl font-bold tabular-nums", savingPositive ? "text-success" : "text-destructive")}>
           <AnimatedNumber value={monthlySaving} format={(n) => formatCurrency(n)} />
@@ -52,7 +52,7 @@ export function DashboardKpiStrip({
       </div>
       <div className="rounded-xl border border-border bg-card px-4 py-3 shadow-sm">
         <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-          10-year saving
+          10-year net TCO delta
         </p>
         <p className={cn("mt-1 text-2xl font-bold tabular-nums", tenYearSaving >= 0 ? "text-success" : "text-destructive")}>
           <AnimatedNumber value={tenYearSaving} format={(n) => formatCurrency(n)} />
@@ -60,7 +60,7 @@ export function DashboardKpiStrip({
       </div>
       <div className="rounded-xl border border-border bg-card px-4 py-3 shadow-sm">
         <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Payback period
+          Indicative payback
         </p>
         <p className="mt-1 text-2xl font-bold tabular-nums">
           {paybackMonths > 0 ? `${paybackMonths} mo` : "N/A"}

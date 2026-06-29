@@ -22,6 +22,7 @@ describe("replacement comparison", () => {
       batteryWarrantyYears: 8,
       maintenance: 5000,
       insurance: 14000,
+      expectedAnnualRepairs: 4000,
       expectedResale: 280000,
     });
 

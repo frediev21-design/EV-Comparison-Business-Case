@@ -35,7 +35,7 @@ export function ReplacementComparisonTable() {
               <th className="pb-2 pr-4 font-medium">Finance</th>
               <th className="pb-2 pr-4 font-medium">Score</th>
               <th className="pb-2 pr-4 font-medium">Payback</th>
-              <th className="pb-2 font-medium">10-yr saving</th>
+              <th className="pb-2 font-medium">10-yr TCO delta</th>
             </tr>
           </thead>
           <tbody>

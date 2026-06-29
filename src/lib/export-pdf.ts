@@ -1,5 +1,6 @@
 import type { BusinessCaseResult, BusinessCaseInput } from "@/engine/types";
 import { formatCurrency } from "./format";
+import { MODEL_DISCLAIMER } from "./model-disclaimer";
 
 export function generatePrintHtml(
   input: BusinessCaseInput,
@@ -37,9 +38,9 @@ export function generatePrintHtml(
   <div class="kpi-grid">
     <div class="kpi"><div class="kpi-label">Investment Score</div><div class="kpi-value">${result.decision.investmentScore.total}/100</div></div>
     <div class="kpi"><div class="kpi-label">${result.decision.trafficLight.label}</div><div class="kpi-value">${result.decision.investmentScore.rating}</div></div>
-    <div class="kpi"><div class="kpi-label">Monthly Saving</div><div class="kpi-value">${formatCurrency(result.kpis.monthlySaving)}</div></div>
-    <div class="kpi"><div class="kpi-label">Annual Saving</div><div class="kpi-value">${formatCurrency(result.kpis.annualSaving)}</div></div>
-    <div class="kpi"><div class="kpi-label">10-Year Saving</div><div class="kpi-value">${formatCurrency(result.kpis.tenYearSaving)}</div></div>
+    <div class="kpi"><div class="kpi-label">Indicative Monthly Cash Flow</div><div class="kpi-value">${formatCurrency(result.kpis.monthlySaving)}</div></div>
+    <div class="kpi"><div class="kpi-label">Annual Cash Flow Delta</div><div class="kpi-value">${formatCurrency(result.kpis.annualSaving)}</div></div>
+    <div class="kpi"><div class="kpi-label">10-Year Net TCO Delta</div><div class="kpi-value">${formatCurrency(result.kpis.tenYearSaving)}</div></div>
     <div class="kpi"><div class="kpi-label">Amount Financed</div><div class="kpi-value">${formatCurrency(result.tradeIn.amountFinanced)}</div></div>
   </div>
 
@@ -82,6 +83,8 @@ export function generatePrintHtml(
       `<tr><td>${row.month}</td><td>${formatCurrency(row.payment)}</td><td>${formatCurrency(row.interest)}</td><td>${formatCurrency(row.capital)}</td><td>${formatCurrency(row.balance)}</td></tr>`
     ).join("") ?? ""}
   </table>` : ""}
+
+  <p class="meta" style="margin-top: 48px; border-top: 1px solid #e2e8f0; padding-top: 16px;">${MODEL_DISCLAIMER}</p>
 </body>
 </html>`;
 }
@@ -128,7 +131,7 @@ export function generateBoardPackSections(input: BusinessCaseInput, result: Busi
     <tr><td>Proposed Investment</td><td>${d.boardSummary.proposedInvestment}</td></tr>
     <tr><td>Amount Financed</td><td>${formatCurrency(d.boardSummary.amountFinanced)}</td></tr>
     <tr><td>Monthly Cash Flow Impact</td><td>${formatCurrency(d.boardSummary.monthlyCashFlow)}</td></tr>
-    <tr><td>10-Year Savings</td><td>${formatCurrency(d.boardSummary.tenYearSavings)}</td></tr>
+    <tr><td>10-Year Net TCO Delta</td><td>${formatCurrency(d.boardSummary.tenYearSavings)}</td></tr>
     <tr><td>Recommendation</td><td>${d.boardSummary.overallRecommendation}</td></tr>
   </table>
 

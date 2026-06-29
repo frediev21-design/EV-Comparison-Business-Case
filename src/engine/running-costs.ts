@@ -6,8 +6,15 @@ import type {
   RunningCostResult,
 } from "./types";
 
+const DEFAULT_PHEV_ELECTRIC_PERCENT = 50;
+
 function annualKm(dailyKm: number): number {
   return dailyKm * 365;
+}
+
+function phevElectricShare(assumptions: Assumptions): number {
+  const raw = assumptions.phevElectricPercent ?? DEFAULT_PHEV_ELECTRIC_PERCENT;
+  return Math.min(100, Math.max(0, raw));
 }
 
 function buildBreakdown(
@@ -73,6 +80,7 @@ export function calculateReplacementRunningCosts(
   assumptions: Assumptions,
   solarPercent: number,
   gridPercent: number,
+  current: CurrentVehicle,
   overrides?: Partial<Assumptions & { maintenance?: number; insurance?: number }>
 ): { breakdown: RunningCostBreakdown; evEnergyKwh: number } {
   const dailyKm = overrides?.dailyDistanceKm ?? assumptions.dailyDistanceKm;
@@ -87,12 +95,20 @@ export function calculateReplacementRunningCosts(
   let grid = 0;
   let evEnergyKwh = 0;
 
-  if (vehicle.fuelType === "electric" || vehicle.fuelType === "phev") {
+  if (vehicle.fuelType === "electric") {
     evEnergyKwh = (km / 100) * vehicle.energyConsumption;
-    const gridKwh = evEnergyKwh * (gridPercent / 100);
-    solar = 0;
-    grid = gridKwh * electricityTariff;
+    grid = evEnergyKwh * (gridPercent / 100) * electricityTariff;
     electricity = grid;
+  } else if (vehicle.fuelType === "phev") {
+    const electricPercent = phevElectricShare(assumptions);
+    const electricKm = km * (electricPercent / 100);
+    const iceKm = km - electricKm;
+    evEnergyKwh = (electricKm / 100) * vehicle.energyConsumption;
+    grid = evEnergyKwh * (gridPercent / 100) * electricityTariff;
+    electricity = grid;
+    if (vehicle.fuelConsumption > 0 && iceKm > 0) {
+      fuel = (iceKm / 100) * vehicle.fuelConsumption * fuelPrice;
+    }
   } else if (vehicle.fuelType === "hybrid") {
     const iceKm = km * 0.4;
     const evKm = km * 0.6;
@@ -104,6 +120,11 @@ export function calculateReplacementRunningCosts(
     fuel = (km / 100) * vehicle.fuelConsumption * fuelPrice;
   }
 
+  const tyres =
+    current.tyres > 0 ? current.tyres : Math.round(vehicle.price * 0.008);
+  const licence = current.licence > 0 ? current.licence : 1200;
+  const repairs = vehicle.expectedAnnualRepairs ?? 0;
+
   const breakdown = buildBreakdown(
     fuel,
     electricity,
@@ -111,9 +132,9 @@ export function calculateReplacementRunningCosts(
     grid,
     overrides?.maintenance ?? vehicle.maintenance,
     overrides?.insurance ?? vehicle.insurance,
-    Math.round(vehicle.price * 0.008),
-    1200,
-    0,
+    tyres,
+    licence,
+    repairs,
     0
   );
 
@@ -140,6 +161,7 @@ export function calculateRunningCosts(
       assumptions,
       solarPercent,
       gridPercent,
+      current,
       overrides
     );
     replacementMap[vehicle.id] = breakdown;
