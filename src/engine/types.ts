@@ -57,6 +57,8 @@ export interface Assumptions {
   offPeakTariff: number;
   /** Share of PHEV distance on battery (0–100). Remainder uses ICE fuel consumption. */
   phevElectricPercent: number;
+  /** Annual discount rate for NPV (e.g. 10.5 = 10.5%). */
+  discountRate: number;
   annualKmGrowth: number;
   fleetVehicleCount: number;
 }
@@ -64,6 +66,11 @@ export interface Assumptions {
 export interface SolarConfig {
   systemSizeKw: number;
   batterySizeKwh: number;
+  /** Total installed cost; 0 = estimate from system size. */
+  systemCost: number;
+  amortisationYears: number;
+  /** Share of grid kWh charged at peak tariff (remainder at off-peak). */
+  gridPeakPercent: number;
   solarChargingPercent: number;
   gridChargingPercent: number;
   electricityTariff: number;
@@ -150,6 +157,7 @@ export interface SolarResult {
   solarContributionKwh: number;
   solarContributionPercent: number;
   annualChargingCost: number;
+  annualSolarAmortisation: number;
   tenYearChargingCost: number;
   fuelSavingsVsBaseline: number;
   visual: {
@@ -205,7 +213,9 @@ export interface ComparisonKpis {
   fuelSaving: number;
   costPerKmCurrent: number;
   costPerKmReplacement: number;
+  /** @deprecated Use npv10Year — kept for legacy exports */
   roi: number;
+  npv10Year: number;
   paybackMonths: number;
   batteryWarrantyRemainingYears: number;
   fleetVehicleCount: number;

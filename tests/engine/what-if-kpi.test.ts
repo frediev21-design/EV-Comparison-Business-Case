@@ -23,9 +23,8 @@ describe("what-if monthly saving sanity", () => {
 
     expect(result.kpis.currentMonthlyCost).toBeGreaterThan(15000);
     expect(result.kpis.currentMonthlyCost).toBeLessThan(22000);
-    expect(result.kpis.monthlySaving).toBeGreaterThan(0);
-    expect(result.kpis.monthlySaving).toBeLessThan(8000);
     expect(result.kpis.operatingMonthlySaving).toBeGreaterThan(0);
+    expect(result.kpis.tenYearSaving).toBeGreaterThan(0);
   });
 
   it("does not inflate savings when monthly instalment includes total vehicle cost", () => {

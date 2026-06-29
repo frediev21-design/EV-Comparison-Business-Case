@@ -4,7 +4,9 @@ import type {
   ReplacementVehicle,
   RunningCostBreakdown,
   RunningCostResult,
+  SolarConfig,
 } from "./types";
+import { splitEvChargingCost } from "./charging-cost";
 
 const DEFAULT_PHEV_ELECTRIC_PERCENT = 50;
 
@@ -78,34 +80,52 @@ export function calculateCurrentRunningCosts(
 export function calculateReplacementRunningCosts(
   vehicle: ReplacementVehicle,
   assumptions: Assumptions,
-  solarPercent: number,
-  gridPercent: number,
+  solar: SolarConfig,
   current: CurrentVehicle,
   overrides?: Partial<Assumptions & { maintenance?: number; insurance?: number }>
 ): { breakdown: RunningCostBreakdown; evEnergyKwh: number } {
   const dailyKm = overrides?.dailyDistanceKm ?? assumptions.dailyDistanceKm;
   const fuelPrice = overrides?.fuelPricePerLitre ?? assumptions.fuelPricePerLitre;
-  const electricityTariff =
-    overrides?.electricityTariff ?? assumptions.electricityTariff;
+  const electricityOverride = overrides?.electricityTariff;
   const km = annualKm(dailyKm);
+  const solarPercent = solar.solarChargingPercent;
+  const gridPercent = solar.gridChargingPercent;
 
   let fuel = 0;
   let electricity = 0;
-  let solar = 0;
-  let grid = 0;
+  let solarCost = 0;
+  let gridCost = 0;
   let evEnergyKwh = 0;
 
   if (vehicle.fuelType === "electric") {
     evEnergyKwh = (km / 100) * vehicle.energyConsumption;
-    grid = evEnergyKwh * (gridPercent / 100) * electricityTariff;
-    electricity = grid;
+    const charging = splitEvChargingCost(
+      evEnergyKwh,
+      solarPercent,
+      gridPercent,
+      solar,
+      assumptions,
+      electricityOverride
+    );
+    gridCost = charging.grid;
+    solarCost = charging.solar;
+    electricity = charging.electricity;
   } else if (vehicle.fuelType === "phev") {
     const electricPercent = phevElectricShare(assumptions);
     const electricKm = km * (electricPercent / 100);
     const iceKm = km - electricKm;
     evEnergyKwh = (electricKm / 100) * vehicle.energyConsumption;
-    grid = evEnergyKwh * (gridPercent / 100) * electricityTariff;
-    electricity = grid;
+    const charging = splitEvChargingCost(
+      evEnergyKwh,
+      solarPercent,
+      gridPercent,
+      solar,
+      assumptions,
+      electricityOverride
+    );
+    gridCost = charging.grid;
+    solarCost = charging.solar;
+    electricity = charging.electricity;
     if (vehicle.fuelConsumption > 0 && iceKm > 0) {
       fuel = (iceKm / 100) * vehicle.fuelConsumption * fuelPrice;
     }
@@ -114,8 +134,17 @@ export function calculateReplacementRunningCosts(
     const evKm = km * 0.6;
     fuel = (iceKm / 100) * vehicle.fuelConsumption * fuelPrice;
     evEnergyKwh = (evKm / 100) * vehicle.energyConsumption;
-    grid = evEnergyKwh * (gridPercent / 100) * electricityTariff;
-    electricity = grid;
+    const charging = splitEvChargingCost(
+      evEnergyKwh,
+      solarPercent,
+      gridPercent,
+      solar,
+      assumptions,
+      electricityOverride
+    );
+    gridCost = charging.grid;
+    solarCost = charging.solar;
+    electricity = charging.electricity;
   } else {
     fuel = (km / 100) * vehicle.fuelConsumption * fuelPrice;
   }
@@ -128,8 +157,8 @@ export function calculateReplacementRunningCosts(
   const breakdown = buildBreakdown(
     fuel,
     electricity,
-    solar,
-    grid,
+    solarCost,
+    gridCost,
     overrides?.maintenance ?? vehicle.maintenance,
     overrides?.insurance ?? vehicle.insurance,
     tyres,
@@ -145,8 +174,7 @@ export function calculateRunningCosts(
   current: CurrentVehicle,
   replacements: ReplacementVehicle[],
   assumptions: Assumptions,
-  solarPercent: number,
-  gridPercent: number,
+  solar: SolarConfig,
   overrides?: Partial<
     Assumptions & { currentMaintenance?: number; maintenance?: number; insurance?: number }
   >
@@ -159,8 +187,7 @@ export function calculateRunningCosts(
     const { breakdown, evEnergyKwh } = calculateReplacementRunningCosts(
       vehicle,
       assumptions,
-      solarPercent,
-      gridPercent,
+      solar,
       current,
       overrides
     );

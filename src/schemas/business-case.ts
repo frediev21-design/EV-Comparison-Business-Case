@@ -55,6 +55,7 @@ export const assumptionsSchema = z.object({
   peakTariff: z.number().min(0),
   offPeakTariff: z.number().min(0),
   phevElectricPercent: z.number().min(0).max(100),
+  discountRate: z.number().min(0).max(25),
   annualKmGrowth: z.number().min(0).max(20),
   fleetVehicleCount: z.number().min(1).max(100),
 });
@@ -62,6 +63,9 @@ export const assumptionsSchema = z.object({
 export const solarConfigSchema = z.object({
   systemSizeKw: z.number().min(0),
   batterySizeKwh: z.number().min(0),
+  systemCost: z.number().min(0),
+  amortisationYears: z.number().min(1).max(25),
+  gridPeakPercent: z.number().min(0).max(100),
   solarChargingPercent: z.number().min(0).max(100),
   gridChargingPercent: z.number().min(0).max(100),
   electricityTariff: z.number().min(0),

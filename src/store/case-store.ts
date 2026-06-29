@@ -242,6 +242,8 @@ export const useCaseStore = create<CaseStore>((set) => ({
           ...loaded.assumptions,
           fleetVehicleCount: loaded.assumptions.fleetVehicleCount ?? 1,
           phevElectricPercent: loaded.assumptions.phevElectricPercent ?? 50,
+          discountRate: loaded.assumptions.discountRate ?? 10.5,
+          annualKmGrowth: loaded.assumptions.annualKmGrowth ?? 0,
         },
       },
       result: computeResult({
@@ -250,6 +252,8 @@ export const useCaseStore = create<CaseStore>((set) => ({
           ...loaded.assumptions,
           fleetVehicleCount: loaded.assumptions.fleetVehicleCount ?? 1,
           phevElectricPercent: loaded.assumptions.phevElectricPercent ?? 50,
+          discountRate: loaded.assumptions.discountRate ?? 10.5,
+          annualKmGrowth: loaded.assumptions.annualKmGrowth ?? 0,
         },
       }),
       caseId: meta?.id ?? null,

@@ -31,6 +31,14 @@ export function inputForLoad(input: BusinessCaseInput): BusinessCaseInput {
     assumptions: {
       ...cleaned.assumptions,
       phevElectricPercent: cleaned.assumptions.phevElectricPercent ?? 50,
+      discountRate: cleaned.assumptions.discountRate ?? 10.5,
+      annualKmGrowth: cleaned.assumptions.annualKmGrowth ?? 0,
+    },
+    solar: {
+      ...cleaned.solar,
+      systemCost: cleaned.solar.systemCost ?? 0,
+      amortisationYears: cleaned.solar.amortisationYears ?? 10,
+      gridPeakPercent: cleaned.solar.gridPeakPercent ?? 30,
     },
   };
 }

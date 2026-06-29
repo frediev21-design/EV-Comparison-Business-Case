@@ -49,7 +49,10 @@ export function HeaderInvestmentScore() {
           Investment score
         </span>
         <span className="mt-0.5 text-xl font-bold tabular-nums">
-          <AnimatedNumber value={score.total} format={(n) => `${Math.round(n)}`} />
+          <AnimatedNumber
+            value={score.total}
+            format={(n) => n.toFixed(1)}
+          />
           <span className="text-xs font-normal opacity-70">/100</span>
         </span>
       </div>
@@ -77,7 +80,7 @@ export function HeaderInvestmentScoreMobile() {
     >
       <span className={cn("h-2 w-2 rounded-full", STATUS_DOT[trafficLight.status])} />
       <span className="text-sm font-bold tabular-nums">
-        <AnimatedNumber value={score.total} format={(n) => `${Math.round(n)}`} durationMs={350} />
+        <AnimatedNumber value={score.total} format={(n) => n.toFixed(1)} durationMs={350} />
       </span>
     </button>
   );

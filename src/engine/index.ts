@@ -67,8 +67,7 @@ export function runFullBusinessCase(input: BusinessCaseInput): BusinessCaseResul
     current,
     replacements,
     assumptions,
-    solar.solarChargingPercent,
-    solar.gridChargingPercent,
+    solar,
     {
       dailyDistanceKm: w.dailyDistanceKm,
       fuelPricePerLitre: w.fuelPricePerLitre,
@@ -80,6 +79,7 @@ export function runFullBusinessCase(input: BusinessCaseInput): BusinessCaseResul
 
   const solarResult = calculateSolar(
     solar,
+    assumptions,
     running.evEnergyKwhAnnual,
     running.current.fuel,
     {
@@ -102,12 +102,20 @@ export function runFullBusinessCase(input: BusinessCaseInput): BusinessCaseResul
     current.residualValue,
     replacementResales,
     assumptions.dailyDistanceKm,
-    currentFinance
+    currentFinance,
+    assumptions.annualKmGrowth ?? 0
   );
 
   const risk = analyzeRisk(current, replacements);
   const mergedInput = { ...input, current, replacements, assumptions, solar };
-  let kpis = calculateKpis(mergedInput, finance, running, solarResult, ownership);
+  let kpis = calculateKpis(
+    mergedInput,
+    finance,
+    running,
+    solarResult,
+    ownership,
+    currentFinance
+  );
   kpis = { ...kpis, fleetVehicleCount: getFleetCount(assumptions, w) };
 
   const fleetCount = getFleetCount(assumptions, w);

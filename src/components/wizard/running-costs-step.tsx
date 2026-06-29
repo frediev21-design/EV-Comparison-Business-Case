@@ -2,7 +2,7 @@
 
 import { useCaseStore } from "@/store/case-store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FormField, FormSection } from "./form-field";
+import { FormSection, FormSliderField } from "./form-field";
 import { formatCurrency } from "@/lib/format";
 import type { RunningCostBreakdown } from "@/engine/types";
 
@@ -53,8 +53,6 @@ export function RunningCostsStep() {
   const selectedRunning = running.replacements[selectedId];
   const hasPhev = useCaseStore((s) => s.input.replacements.some((v) => v.fuelType === "phev"));
 
-  const num = (v: string) => parseFloat(v) || 0;
-
   return (
     <div className="space-y-6">
       <div>
@@ -68,43 +66,67 @@ export function RunningCostsStep() {
         title="Cost assumptions"
         description="These drive fuel, electricity, and distance-based calculations."
       >
-        <FormField
+        <FormSliderField
           label="Daily distance"
-          type="number"
-          suffix="km/day"
           value={assumptions.dailyDistanceKm}
-          onChange={(v) => updateAssumptions({ dailyDistanceKm: num(v) })}
-          min={1}
+          onChange={(v) => updateAssumptions({ dailyDistanceKm: v })}
+          min={10}
           max={300}
+          step={5}
+          suffix="km/day"
         />
-        <FormField
+        <FormSliderField
           label="Fuel price"
-          type="number"
+          value={assumptions.fuelPricePerLitre}
+          onChange={(v) => updateAssumptions({ fuelPricePerLitre: v })}
+          min={15}
+          max={35}
+          step={0.5}
           prefix="R"
           suffix="/L"
-          value={assumptions.fuelPricePerLitre}
-          onChange={(v) => updateAssumptions({ fuelPricePerLitre: num(v) })}
-          step={0.1}
+          displayDecimals={2}
         />
-        <FormField
+        <FormSliderField
           label="Electricity tariff"
-          type="number"
+          value={assumptions.electricityTariff}
+          onChange={(v) => updateAssumptions({ electricityTariff: v })}
+          min={1}
+          max={6}
+          step={0.05}
           prefix="R"
           suffix="/kWh"
-          value={assumptions.electricityTariff}
-          onChange={(v) => updateAssumptions({ electricityTariff: num(v) })}
-          step={0.01}
+          displayDecimals={2}
+        />
+        <FormSliderField
+          label="Annual km growth"
+          value={assumptions.annualKmGrowth ?? 0}
+          onChange={(v) => updateAssumptions({ annualKmGrowth: v })}
+          min={0}
+          max={20}
+          step={0.5}
+          suffix="%/yr"
+          displayDecimals={1}
+          hint="Compounds distance-sensitive costs over ownership horizons."
+        />
+        <FormSliderField
+          label="NPV discount rate"
+          value={assumptions.discountRate ?? 10.5}
+          onChange={(v) => updateAssumptions({ discountRate: v })}
+          min={0}
+          max={25}
+          step={0.5}
+          suffix="%"
+          displayDecimals={1}
         />
         {hasPhev && (
-          <FormField
+          <FormSliderField
             label="PHEV distance on battery"
-            type="number"
-            suffix="%"
             value={assumptions.phevElectricPercent ?? 50}
-            onChange={(v) => updateAssumptions({ phevElectricPercent: num(v) })}
+            onChange={(v) => updateAssumptions({ phevElectricPercent: v })}
             min={0}
             max={100}
             step={5}
+            suffix="%"
           />
         )}
       </FormSection>

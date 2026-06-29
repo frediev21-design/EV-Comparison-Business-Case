@@ -2,41 +2,12 @@
 
 import { useCaseStore } from "@/store/case-store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/format";
+import { FormSliderField } from "@/components/wizard/form-field";
 import { SavingsBreakdownCard } from "@/components/dashboard/savings-breakdown-card";
 import { WHAT_IF_PRESETS } from "@/lib/what-if-presets";
 import { Badge } from "@/components/ui/badge";
-
-function WhatIfSlider({
-  label,
-  value,
-  min,
-  max,
-  step,
-  format,
-  onChange,
-}: {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  step: number;
-  format: (v: number) => string;
-  onChange: (v: number) => void;
-}) {
-  return (
-    <div className="space-y-3">
-      <div className="flex justify-between">
-        <Label>{label}</Label>
-        <span className="text-sm font-medium tabular-nums">{format(value)}</span>
-      </div>
-      <Slider value={[value]} min={min} max={max} step={step} onValueChange={([v]) => onChange(v)} />
-    </div>
-  );
-}
 
 export function WhatIfPanel() {
   const input = useCaseStore((s) => s.input);
@@ -101,12 +72,65 @@ export function WhatIfPanel() {
 
       <Card>
         <CardContent className="grid gap-6 pt-6 sm:grid-cols-2">
-          <WhatIfSlider label="Daily Distance" value={dailyDistance} min={10} max={300} step={5} format={(v) => `${v} km/day`} onChange={(v) => updateWhatIf({ dailyDistanceKm: v })} />
-          <WhatIfSlider label="Fuel Price" value={fuelPrice} min={15} max={35} step={0.5} format={(v) => `R${v.toFixed(2)}/L`} onChange={(v) => updateWhatIf({ fuelPricePerLitre: v })} />
-          <WhatIfSlider label="Electricity Price" value={electricityTariff} min={1} max={6} step={0.05} format={(v) => `R${v.toFixed(2)}/kWh`} onChange={(v) => updateWhatIf({ electricityTariff: v })} />
-          <WhatIfSlider label="Interest Rate" value={interestRate} min={3} max={18} step={0.1} format={(v) => `${v.toFixed(1)}%`} onChange={(v) => updateWhatIf({ interestRate: v })} />
-          <WhatIfSlider label="Solar %" value={solarPercent} min={0} max={100} step={5} format={(v) => `${v}%`} onChange={(v) => updateWhatIf({ solarPercent: v, gridPercent: 100 - v })} />
-          <WhatIfSlider label="Current Maintenance (annual)" value={whatIf.maintenance ?? input.current.maintenance} min={0} max={50000} step={500} format={formatCurrency} onChange={(v) => updateWhatIf({ maintenance: v })} />
+          <FormSliderField
+            label="Daily distance"
+            value={dailyDistance}
+            onChange={(v) => updateWhatIf({ dailyDistanceKm: v })}
+            min={10}
+            max={300}
+            step={5}
+            suffix="km/day"
+          />
+          <FormSliderField
+            label="Fuel price"
+            value={fuelPrice}
+            onChange={(v) => updateWhatIf({ fuelPricePerLitre: v })}
+            min={15}
+            max={35}
+            step={0.5}
+            prefix="R"
+            suffix="/L"
+            displayDecimals={2}
+          />
+          <FormSliderField
+            label="Electricity price"
+            value={electricityTariff}
+            onChange={(v) => updateWhatIf({ electricityTariff: v })}
+            min={1}
+            max={6}
+            step={0.05}
+            prefix="R"
+            suffix="/kWh"
+            displayDecimals={2}
+          />
+          <FormSliderField
+            label="Interest rate"
+            value={interestRate}
+            onChange={(v) => updateWhatIf({ interestRate: v })}
+            min={3}
+            max={18}
+            step={0.1}
+            suffix="%"
+            displayDecimals={1}
+          />
+          <FormSliderField
+            label="Solar charging"
+            value={solarPercent}
+            onChange={(v) => updateWhatIf({ solarPercent: v, gridPercent: 100 - v })}
+            min={0}
+            max={100}
+            step={5}
+            suffix="%"
+          />
+          <FormSliderField
+            label="Current maintenance (annual)"
+            value={whatIf.maintenance ?? input.current.maintenance}
+            onChange={(v) => updateWhatIf({ maintenance: v })}
+            min={0}
+            max={50000}
+            step={500}
+            prefix="R"
+          />
         </CardContent>
       </Card>
 

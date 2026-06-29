@@ -49,7 +49,7 @@ function InvestmentScoreRing({ score, className }: { score: number; className?: 
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
         <span className="text-3xl font-bold tabular-nums tracking-tight text-primary">
-          <AnimatedNumber value={score} format={(n) => `${Math.round(n)}`} durationMs={600} />
+          <AnimatedNumber value={score} format={(n) => n.toFixed(1)} durationMs={600} />
         </span>
         <span className="text-sm font-medium text-muted-foreground">/ 100</span>
       </div>

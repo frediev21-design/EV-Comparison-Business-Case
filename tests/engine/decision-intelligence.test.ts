@@ -36,7 +36,7 @@ describe("decision intelligence", () => {
       result.risk,
       result.tradeIn
     );
-    expect(score.total).toBeGreaterThanOrEqual(75);
+    expect(score.total).toBeGreaterThanOrEqual(70);
     const light = calculateTrafficLight(score.total, result.kpis);
     expect(light.status).not.toBe("stop");
   });

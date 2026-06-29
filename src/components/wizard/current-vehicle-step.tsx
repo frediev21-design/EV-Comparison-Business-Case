@@ -5,7 +5,8 @@ import { useCaseStore } from "@/store/case-store";
 import { getCaseValidationMessages } from "@/lib/wizard-validation";
 import { buildCurrentMonthlyFromInputs } from "@/lib/current-monthly-breakdown";
 import { ValidationAlerts } from "./validation-alerts";
-import { FormField, FormSelect, FormSection } from "./form-field";
+import { FormField, FormSelect, FormSection, FormSliderField } from "./form-field";
+import { parseLocaleNumber } from "@/lib/parse-number";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/format";
 
@@ -27,7 +28,7 @@ export function CurrentVehicleStep() {
   const validationMessages = getCaseValidationMessages(input, result);
   const monthlyPreview = useMemo(() => buildCurrentMonthlyFromInputs(input), [input]);
 
-  const num = (v: string) => parseFloat(v) || 0;
+  const num = (v: string) => parseLocaleNumber(v);
   const int = (v: string) => parseInt(v, 10) || 0;
 
   return (
@@ -51,20 +52,48 @@ export function CurrentVehicleStep() {
           hint="What you pay on your vehicle loan each month — not fuel, insurance, or maintenance."
         />
         <FormSelect label="Fuel Type" value={current.fuelType} options={FUEL_OPTIONS} onChange={(v) => updateCurrent({ fuelType: v as typeof current.fuelType })} />
-        <FormField label="Fuel Consumption" type="number" suffix="L/100km" value={current.fuelConsumption} onChange={(v) => updateCurrent({ fuelConsumption: num(v) })} step={0.1} />
-        <FormField label="Daily Distance" type="number" suffix="km/day" value={assumptions.dailyDistanceKm} onChange={(v) => updateAssumptions({ dailyDistanceKm: num(v) })} min={1} max={300} />
+        <FormSliderField
+          label="Fuel consumption"
+          value={current.fuelConsumption}
+          onChange={(v) => updateCurrent({ fuelConsumption: v })}
+          min={4}
+          max={20}
+          step={0.5}
+          suffix="L/100km"
+          displayDecimals={1}
+        />
+        <FormSliderField
+          label="Daily distance"
+          value={assumptions.dailyDistanceKm}
+          onChange={(v) => updateAssumptions({ dailyDistanceKm: v })}
+          min={10}
+          max={300}
+          step={5}
+          suffix="km/day"
+        />
       </FormSection>
 
       <FormSection title="Additional details" description="Optional — improves accuracy of running costs and trade-in.">
         <FormField label="Mileage (km)" type="number" value={current.mileage} onChange={(v) => updateCurrent({ mileage: num(v) })} />
-        <FormField
-          label="Fuel Price"
-          type="number"
+        <FormSliderField
+          label="Fuel price"
+          value={assumptions.fuelPricePerLitre}
+          onChange={(v) => updateAssumptions({ fuelPricePerLitre: v })}
+          min={15}
+          max={35}
+          step={0.5}
           prefix="R"
           suffix="/L"
-          value={assumptions.fuelPricePerLitre}
-          onChange={(v) => updateAssumptions({ fuelPricePerLitre: num(v) })}
-          step={0.1}
+          displayDecimals={2}
+        />
+        <FormSliderField
+          label="Fleet size"
+          value={assumptions.fleetVehicleCount}
+          onChange={(v) => updateAssumptions({ fleetVehicleCount: Math.max(1, Math.round(v)) })}
+          min={1}
+          max={20}
+          step={1}
+          suffix="vehicles"
         />
         <FormField label="Insurance (annual)" type="number" prefix="R" value={current.insurance} onChange={(v) => updateCurrent({ insurance: num(v) })} />
         <FormField label="Maintenance (annual)" type="number" prefix="R" value={current.maintenance} onChange={(v) => updateCurrent({ maintenance: num(v) })} />
@@ -72,7 +101,6 @@ export function CurrentVehicleStep() {
         <FormField label="Licence (annual)" type="number" prefix="R" value={current.licence} onChange={(v) => updateCurrent({ licence: num(v) })} />
         <FormField label="Expected Annual Repairs" type="number" prefix="R" value={current.expectedAnnualRepairs} onChange={(v) => updateCurrent({ expectedAnnualRepairs: num(v) })} />
         <FormField label="Residual Value" type="number" prefix="R" value={current.residualValue} onChange={(v) => updateCurrent({ residualValue: num(v) })} />
-        <FormField label="Fleet Size" type="number" suffix="vehicles" value={assumptions.fleetVehicleCount} onChange={(v) => updateAssumptions({ fleetVehicleCount: Math.max(1, int(v)) })} min={1} max={100} />
       </FormSection>
 
       <Card className="border-accent/20 bg-accent/5">

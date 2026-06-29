@@ -22,9 +22,9 @@ const WEIGHTS = {
 } as const;
 
 function scoreFinancialImpact(kpis: ComparisonKpis, amountFinanced: number): number {
-  const roiScore = clampScore(kpis.roi);
+  const npvScore = clampScore(50 + (kpis.npv10Year / Math.max(amountFinanced, 1)) * 50);
   const savingScore = clampScore(50 + (kpis.tenYearSaving / Math.max(amountFinanced, 1)) * 50);
-  return clampScore(roiScore * 0.4 + savingScore * 0.6);
+  return clampScore(npvScore * 0.5 + savingScore * 0.5);
 }
 
 function scoreMonthlyCashFlow(kpis: ComparisonKpis): number {
@@ -68,7 +68,15 @@ function scoreMaintenanceRisk(running: RunningCostResult, selectedId: string): n
 function scoreEnvironmental(selected: BusinessCaseInput["replacements"][0] | undefined): number {
   if (!selected) return 50;
   const map = { electric: 100, phev: 85, hybrid: 65, petrol: 35, diesel: 25 };
-  return map[selected.fuelType] ?? 50;
+  let score = map[selected.fuelType] ?? 50;
+  if (
+    (selected.fuelType === "phev" || selected.fuelType === "hybrid") &&
+    selected.fuelConsumption > 0
+  ) {
+    const fuelScore = clampScore(110 - selected.fuelConsumption * 10);
+    score = clampScore(score * 0.55 + fuelScore * 0.45);
+  }
+  return score;
 }
 
 function scoreResale(selected: BusinessCaseInput["replacements"][0] | undefined): number {
@@ -142,7 +150,8 @@ export function calculateInvestmentScore(
     weightedScore: c.score * c.weight,
   }));
 
-  const total = Math.round(criteria.reduce((sum, c) => sum + c.weightedScore, 0));
+  const totalRaw = criteria.reduce((sum, c) => sum + c.weightedScore, 0);
+  const total = Math.round(totalRaw * 10) / 10;
   const safeTotal = Number.isFinite(total) ? total : 0;
   const { stars, rating, subtitle } = getScoreRating(safeTotal);
 

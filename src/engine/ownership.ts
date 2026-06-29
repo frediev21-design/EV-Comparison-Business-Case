@@ -4,22 +4,54 @@ import type {
   OwnershipResult,
   RunningCostBreakdown,
 } from "./types";
+import { kmMultiplierForYear } from "./ownership-utils";
 
 const HORIZONS = [5, 7, 10];
+
+function totalKmOverHorizon(dailyKm: number, years: number, annualKmGrowth: number): number {
+  let total = 0;
+  for (let year = 1; year <= years; year++) {
+    total += dailyKm * 365 * kmMultiplierForYear(year, annualKmGrowth);
+  }
+  return total;
+}
+
+/** Splits running costs into distance-sensitive (fuel, electricity) and fixed annual lines. */
+export function runningTotalForYear(
+  running: RunningCostBreakdown,
+  kmMultiplier: number
+): number {
+  const variable = running.fuel + running.electricity;
+  const fixed = running.total - variable;
+  return fixed + variable * kmMultiplier;
+}
+
+export function runningTotalOverHorizon(
+  running: RunningCostBreakdown,
+  years: number,
+  annualKmGrowth: number
+): number {
+  let total = 0;
+  for (let year = 1; year <= years; year++) {
+    total += runningTotalForYear(running, kmMultiplierForYear(year, annualKmGrowth));
+  }
+  return total;
+}
 
 function computeHorizon(
   years: number,
   finance: FinanceResult | undefined,
   running: RunningCostBreakdown,
   resale: number,
-  dailyKm: number
+  dailyKm: number,
+  annualKmGrowth: number
 ): OwnershipHorizon {
   const months = years * 12;
   const financePayments =
     finance?.schedule.slice(0, months).reduce((sum, row) => sum + row.payment, 0) ?? 0;
-  const runningTotal = running.total * years;
+  const runningTotal = runningTotalOverHorizon(running, years, annualKmGrowth);
   const totalCost = financePayments + runningTotal;
-  const totalKm = dailyKm * 365 * years;
+  const totalKm = totalKmOverHorizon(dailyKm, years, annualKmGrowth);
   const netOwnershipCost = totalCost - resale;
 
   return {
@@ -41,10 +73,18 @@ export function calculateOwnership(
   currentResale: number,
   replacementResales: Record<string, number>,
   dailyKm: number,
-  currentFinance?: FinanceResult
+  currentFinance?: FinanceResult,
+  annualKmGrowth = 0
 ): OwnershipResult {
   const current = HORIZONS.map((years) =>
-    computeHorizon(years, currentFinance, currentRunning, currentResale, dailyKm)
+    computeHorizon(
+      years,
+      currentFinance,
+      currentRunning,
+      currentResale,
+      dailyKm,
+      annualKmGrowth
+    )
   );
 
   const replacements: Record<string, OwnershipHorizon[]> = {};
@@ -52,7 +92,7 @@ export function calculateOwnership(
     const running = replacementRunning[finance.vehicleId];
     const resale = replacementResales[finance.vehicleId] ?? 0;
     replacements[finance.vehicleId] = HORIZONS.map((years) =>
-      computeHorizon(years, finance, running, resale, dailyKm)
+      computeHorizon(years, finance, running, resale, dailyKm, annualKmGrowth)
     );
   }
 

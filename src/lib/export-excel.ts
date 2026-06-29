@@ -22,7 +22,8 @@ export async function exportToExcel(
   summary.addRow(["Indicative Monthly Cash Flow", result.kpis.monthlySaving]);
   summary.addRow(["Annual Cash Flow Delta", result.kpis.annualSaving]);
   summary.addRow(["10-Year Net TCO Delta", result.kpis.tenYearSaving]);
-  summary.addRow(["ROI %", result.kpis.roi]);
+  summary.addRow(["10-Year NPV", result.kpis.npv10Year]);
+  summary.addRow(["Discount Rate %", input.assumptions.discountRate ?? 10.5]);
   summary.addRow(["Payback Months", result.kpis.paybackMonths]);
 
   const inputs = workbook.addWorksheet("Inputs");

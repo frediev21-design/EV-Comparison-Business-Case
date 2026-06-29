@@ -2,8 +2,7 @@
 
 import { useCaseStore, useSelectedFinance } from "@/store/case-store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
-import { Label } from "@/components/ui/label";
+import { FormSliderField } from "./form-field";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/format";
 import { ArrowRight, Car } from "lucide-react";
@@ -57,32 +56,25 @@ export function FinanceStep() {
             <CardTitle className="text-base">Finance Parameters</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <Label>Interest Rate</Label>
-                <span className="text-sm font-medium tabular-nums">{vehicle.interestRate}%</span>
-              </div>
-              <Slider
-                value={[vehicle.interestRate]}
-                min={3}
-                max={18}
-                step={0.1}
-                onValueChange={([v]) => updateReplacement(selectedId, { interestRate: v })}
-              />
-            </div>
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <Label>Finance Term</Label>
-                <span className="text-sm font-medium tabular-nums">{vehicle.financeTermMonths} months</span>
-              </div>
-              <Slider
-                value={[vehicle.financeTermMonths]}
-                min={12}
-                max={96}
-                step={6}
-                onValueChange={([v]) => updateReplacement(selectedId, { financeTermMonths: v })}
-              />
-            </div>
+            <FormSliderField
+              label="Interest rate"
+              value={vehicle.interestRate}
+              onChange={(v) => updateReplacement(selectedId, { interestRate: v })}
+              min={3}
+              max={18}
+              step={0.1}
+              suffix="%"
+              displayDecimals={1}
+            />
+            <FormSliderField
+              label="Finance term"
+              value={vehicle.financeTermMonths}
+              onChange={(v) => updateReplacement(selectedId, { financeTermMonths: Math.round(v) })}
+              min={12}
+              max={96}
+              step={6}
+              suffix="months"
+            />
           </CardContent>
         </Card>
 

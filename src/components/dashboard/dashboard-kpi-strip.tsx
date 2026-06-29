@@ -38,6 +38,7 @@ export function DashboardKpiStrip({
         <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
           Indicative monthly cash flow
         </p>
+        <p className="mt-0.5 text-[10px] text-muted-foreground/80">10-yr avg · post-loan aware</p>
         <p className={cn("mt-1 text-2xl font-bold tabular-nums", savingPositive ? "text-success" : "text-destructive")}>
           <AnimatedNumber value={monthlySaving} format={(n) => formatCurrency(n)} />
         </p>

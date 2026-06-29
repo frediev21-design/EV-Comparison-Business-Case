@@ -142,7 +142,7 @@ export function ExecutiveDashboard() {
           value={formatCurrency(kpis.monthlySaving)}
           numericValue={kpis.monthlySaving}
           formatValue={(n) => formatCurrency(n)}
-          subtitle="finance + running delta / month"
+          subtitle="10-yr avg incl. post-loan finance"
           positiveIsGood
           className="max-sm:min-w-[240px] max-sm:snap-center"
         />
@@ -177,6 +177,14 @@ export function ExecutiveDashboard() {
         />
         <KpiCard title="Solar Contribution" value={`${solar.solarContributionPercent.toFixed(0)}%`} subtitle="of charging" />
         <KpiCard title="Fuel Saving" value={formatCurrency(kpis.fuelSaving)} subtitle="annual" positiveIsGood />
+        <KpiCard
+          title="10-Year NPV"
+          value={formatCurrency(kpis.npv10Year)}
+          numericValue={kpis.npv10Year}
+          formatValue={(n) => formatCurrency(n)}
+          subtitle={`at ${input.assumptions.discountRate ?? 10.5}% discount`}
+          positiveIsGood
+        />
         <KpiCard title="Indicative Payback" value={kpis.paybackMonths > 0 ? `${kpis.paybackMonths} months` : "N/A"} subtitle="on net finance vs monthly delta" />
         <KpiCard title="Net Cost per km" value={`R${kpis.costPerKmReplacement.toFixed(2)}`} subtitle="replacement" />
         <KpiCard title="Warranty Remaining" value={`${kpis.batteryWarrantyRemainingYears} years`} subtitle="battery" />

@@ -2,12 +2,14 @@
 
 import { useCaseStore } from "@/store/case-store";
 import { VEHICLE_PRESETS, createEmptyReplacementVehicle } from "@/store/defaults";
-import { FormField, FormSelect, FormSection } from "./form-field";
+import { FormField, FormSelect, FormSection, FormSliderField } from "./form-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { parseLocaleNumber } from "@/lib/parse-number";
+import { ReplacementModelImpact } from "./replacement-model-impact";
 
 const FUEL_OPTIONS = [
   { value: "diesel", label: "Diesel" },
@@ -27,8 +29,7 @@ export function ReplacementVehiclesStep() {
   const removeReplacement = useCaseStore((s) => s.removeReplacement);
   const selectReplacement = useCaseStore((s) => s.selectReplacement);
 
-  const num = (v: string) => parseFloat(v) || 0;
-  const int = (v: string) => parseInt(v, 10) || 0;
+  const num = (v: string) => parseLocaleNumber(v);
 
   return (
     <div className="space-y-6">
@@ -112,18 +113,79 @@ export function ReplacementVehiclesStep() {
                   hint="Extra cash on top of trade equity — also editable on the Trade-In step."
                 />
               )}
-              <FormField label="Interest Rate" type="number" suffix="%" value={vehicle.interestRate} onChange={(v) => updateReplacement(vehicle.id, { interestRate: num(v) })} min={3} max={18} step={0.1} />
-              <FormField label="Finance Term" type="number" suffix="months" value={vehicle.financeTermMonths} onChange={(v) => updateReplacement(vehicle.id, { financeTermMonths: int(v) })} min={12} max={96} />
+              <FormSliderField
+                label="Interest rate"
+                value={vehicle.interestRate}
+                onChange={(v) => updateReplacement(vehicle.id, { interestRate: v })}
+                min={3}
+                max={18}
+                step={0.1}
+                suffix="%"
+                displayDecimals={1}
+              />
+              <FormSliderField
+                label="Finance term"
+                value={vehicle.financeTermMonths}
+                onChange={(v) => updateReplacement(vehicle.id, { financeTermMonths: Math.round(v) })}
+                min={12}
+                max={96}
+                step={6}
+                suffix="months"
+              />
               <FormSelect label="Fuel Type" value={vehicle.fuelType} options={FUEL_OPTIONS} onChange={(v) => updateReplacement(vehicle.id, { fuelType: v as typeof vehicle.fuelType })} />
-              <FormField label="Battery Size" type="number" suffix="kWh" value={vehicle.batterySizeKwh} onChange={(v) => updateReplacement(vehicle.id, { batterySizeKwh: num(v) })} />
-              <FormField label="Fuel Consumption" type="number" suffix="L/100km" value={vehicle.fuelConsumption} onChange={(v) => updateReplacement(vehicle.id, { fuelConsumption: num(v) })} step={0.1} />
-              <FormField label="Energy Consumption" type="number" suffix="kWh/100km" value={vehicle.energyConsumption} onChange={(v) => updateReplacement(vehicle.id, { energyConsumption: num(v) })} step={0.1} />
-              <FormField label="Warranty" type="number" suffix="years" value={vehicle.warrantyYears} onChange={(v) => updateReplacement(vehicle.id, { warrantyYears: int(v) })} />
-              <FormField label="Battery Warranty" type="number" suffix="years" value={vehicle.batteryWarrantyYears} onChange={(v) => updateReplacement(vehicle.id, { batteryWarrantyYears: int(v) })} />
+              <FormSliderField
+                label="Battery size"
+                value={vehicle.batterySizeKwh}
+                onChange={(v) => updateReplacement(vehicle.id, { batterySizeKwh: v })}
+                min={0}
+                max={120}
+                step={0.1}
+                suffix="kWh"
+                displayDecimals={1}
+              />
+              <FormSliderField
+                label="Fuel consumption"
+                value={vehicle.fuelConsumption}
+                onChange={(v) => updateReplacement(vehicle.id, { fuelConsumption: v })}
+                min={0}
+                max={20}
+                step={0.5}
+                suffix="L/100km"
+                displayDecimals={1}
+              />
+              <FormSliderField
+                label="Energy consumption"
+                value={vehicle.energyConsumption}
+                onChange={(v) => updateReplacement(vehicle.id, { energyConsumption: v })}
+                min={0}
+                max={40}
+                step={0.5}
+                suffix="kWh/100km"
+                displayDecimals={1}
+              />
+              <FormSliderField
+                label="Warranty"
+                value={vehicle.warrantyYears}
+                onChange={(v) => updateReplacement(vehicle.id, { warrantyYears: Math.round(v) })}
+                min={0}
+                max={10}
+                step={1}
+                suffix="years"
+              />
+              <FormSliderField
+                label="Battery warranty"
+                value={vehicle.batteryWarrantyYears}
+                onChange={(v) => updateReplacement(vehicle.id, { batteryWarrantyYears: Math.round(v) })}
+                min={0}
+                max={10}
+                step={1}
+                suffix="years"
+              />
               <FormField label="Maintenance (annual)" type="number" prefix="R" value={vehicle.maintenance} onChange={(v) => updateReplacement(vehicle.id, { maintenance: num(v) })} />
               <FormField label="Insurance (annual)" type="number" prefix="R" value={vehicle.insurance} onChange={(v) => updateReplacement(vehicle.id, { insurance: num(v) })} />
               <FormField label="Expected Resale" type="number" prefix="R" value={vehicle.expectedResale} onChange={(v) => updateReplacement(vehicle.id, { expectedResale: num(v) })} />
             </FormSection>
+            <ReplacementModelImpact vehicle={vehicle} />
           </CardContent>
         </Card>
       ))}

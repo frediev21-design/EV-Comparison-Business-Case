@@ -71,6 +71,7 @@ export function scaleKpisForFleet(kpis: ComparisonKpis, count: number): Comparis
     monthlySaving: s(kpis.monthlySaving),
     annualSaving: s(kpis.annualSaving),
     tenYearSaving: s(kpis.tenYearSaving),
+    npv10Year: s(kpis.npv10Year),
     financeBalance: s(kpis.financeBalance),
     solarSaving: s(kpis.solarSaving),
     fuelSaving: s(kpis.fuelSaving),

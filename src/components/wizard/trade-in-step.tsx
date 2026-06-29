@@ -4,7 +4,8 @@ import { useCaseStore } from "@/store/case-store";
 import { getCaseValidationMessages } from "@/lib/wizard-validation";
 import { ValidationAlerts } from "./validation-alerts";
 import { MarketSyncCard } from "./market-sync-card";
-import { FormField } from "./form-field";
+import { FormField, FormSliderField } from "./form-field";
+import { parseLocaleNumber } from "@/lib/parse-number";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/format";
 import { ArrowDown, Minus, Plus, Equal } from "lucide-react";
@@ -54,7 +55,7 @@ export function TradeInStep() {
   const updateCurrent = useCaseStore((s) => s.updateCurrent);
   const validationMessages = getCaseValidationMessages(input, result);
 
-  const num = (v: string) => parseFloat(v) || 0;
+  const num = (v: string) => parseLocaleNumber(v);
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -103,18 +104,20 @@ export function TradeInStep() {
           value={current.outstandingFinance}
           onChange={(v) => updateCurrent({ outstandingFinance: num(v) })}
         />
-        <FormField
-          label={fleetCount > 1 ? "Additional Cash Deposit (per vehicle)" : "Additional Cash Deposit"}
-          type="number"
-          prefix="R"
+        <FormSliderField
+          label={fleetCount > 1 ? "Additional cash deposit (per vehicle)" : "Additional cash deposit"}
           value={additionalCashPerVehicle}
-          onChange={(v) => updateTradeIn({ additionalCashDeposit: num(v) })}
+          onChange={(v) => updateTradeIn({ additionalCashDeposit: v })}
+          min={0}
+          max={500000}
+          step={5000}
+          prefix="R"
+          className="sm:col-span-2"
           hint={
             fleetCount > 1
               ? `Fleet ×${fleetCount}: ${formatCurrency(additionalCashPerVehicle * fleetCount)} total cash deposit.`
               : "Extra cash you put in on top of trade equity."
           }
-          className="sm:col-span-2"
         />
       </div>
 

@@ -8,20 +8,25 @@ import type {
 } from "./types";
 import { resolveCurrentFinanceInstalment } from "./current-finance";
 import { getFleetCount } from "./fleet";
-import { getOwnershipForHorizon } from "./ownership";
+import { getOwnershipForHorizon, runningTotalForYear } from "./ownership";
+import { calculateComparisonNpv } from "./npv";
+import { kmMultiplierForYear } from "./ownership-utils";
 
 export function calculateKpis(
   input: BusinessCaseInput,
   financeResults: FinanceResult[],
   running: RunningCostResult,
   solar: SolarResult,
-  ownership: OwnershipResult
+  ownership: OwnershipResult,
+  currentFinance?: FinanceResult
 ): ComparisonKpis {
   const selectedId = input.selectedReplacementId;
   const selectedFinance = financeResults.find((f) => f.vehicleId === selectedId);
   const selectedRunning = running.replacements[selectedId];
   const currentHorizon = getOwnershipForHorizon(ownership, "current", 10);
   const replacementHorizon = getOwnershipForHorizon(ownership, selectedId, 10);
+  const growth = input.assumptions.annualKmGrowth ?? 0;
+  const discountRate = input.assumptions.discountRate ?? 10.5;
 
   const currentFinanceInstalment = resolveCurrentFinanceInstalment(input.current);
   const currentRunningMonthly = running.current.total / 12;
@@ -30,7 +35,10 @@ export function calculateKpis(
 
   const currentMonthlyCost = currentFinanceInstalment + currentRunningMonthly;
   const replacementMonthlyCost = replacementFinanceInstalment + replacementRunningMonthly;
-  const monthlySaving = currentMonthlyCost - replacementMonthlyCost;
+
+  const monthlySaving =
+    (currentHorizon?.monthlyCost ?? currentMonthlyCost) -
+    (replacementHorizon?.monthlyCost ?? replacementMonthlyCost);
   const operatingMonthlySaving = currentRunningMonthly - replacementRunningMonthly;
   const financeMonthlyDelta = currentFinanceInstalment - replacementFinanceInstalment;
   const annualSaving = monthlySaving * 12;
@@ -44,6 +52,20 @@ export function calculateKpis(
   const costPerKmReplacement = replacementHorizon?.costPerKm ?? 0;
 
   const upgradeCost = (selectedFinance?.amountFinanced ?? 0) - input.current.outstandingFinance;
+  const npv10Year = calculateComparisonNpv(
+    10,
+    currentFinance,
+    selectedFinance,
+    (year) => runningTotalForYear(running.current, kmMultiplierForYear(year, growth)),
+    (year) =>
+      runningTotalForYear(
+        selectedRunning ?? running.current,
+        kmMultiplierForYear(year, growth)
+      ),
+    input.current.residualValue,
+    input.replacements.find((v) => v.id === selectedId)?.expectedResale ?? 0,
+    discountRate
+  );
   const roi = upgradeCost > 0 ? (tenYearSaving / upgradeCost) * 100 : 0;
   const paybackMonths =
     monthlySaving > 0
@@ -73,6 +95,7 @@ export function calculateKpis(
     costPerKmCurrent,
     costPerKmReplacement,
     roi,
+    npv10Year,
     paybackMonths,
     batteryWarrantyRemainingYears: selectedVehicle?.batteryWarrantyYears ?? 0,
     fleetVehicleCount: getFleetCount(input.assumptions, input.whatIf),
