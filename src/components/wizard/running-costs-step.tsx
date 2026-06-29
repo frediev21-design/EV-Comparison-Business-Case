@@ -4,6 +4,7 @@ import { useCaseStore } from "@/store/case-store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormSection, FormSliderField } from "./form-field";
 import { formatCurrency } from "@/lib/format";
+import { NPV_DISCOUNT_RATE_HINT, NPV_DISCOUNT_RATE_LABEL } from "@/lib/npv-explainer";
 import type { RunningCostBreakdown } from "@/engine/types";
 
 function CostTable({ title, costs }: { title: string; costs: RunningCostBreakdown }) {
@@ -109,7 +110,7 @@ export function RunningCostsStep() {
           hint="Compounds distance-sensitive costs over ownership horizons."
         />
         <FormSliderField
-          label="NPV discount rate"
+          label={NPV_DISCOUNT_RATE_LABEL}
           value={assumptions.discountRate ?? 10.5}
           onChange={(v) => updateAssumptions({ discountRate: v })}
           min={0}
@@ -117,6 +118,7 @@ export function RunningCostsStep() {
           step={0.5}
           suffix="%"
           displayDecimals={1}
+          hint={NPV_DISCOUNT_RATE_HINT}
         />
         {hasPhev && (
           <FormSliderField

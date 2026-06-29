@@ -23,6 +23,7 @@ import { RiskMatrixDashboard } from "@/components/decision/risk-matrix-dashboard
 import { SwotPanel } from "@/components/decision/swot-panel";
 import { DecisionTimeline } from "@/components/decision/decision-timeline";
 import { DecisionAdvisor } from "@/components/decision/decision-advisor";
+import { NPV_KPI_HELP, NPV_KPI_TITLE, npvKpiSubtitle } from "@/lib/npv-explainer";
 import { InfographicPromptPanel } from "./infographic-prompt-panel";
 import { RecommendationSummaryCopyButton } from "./recommendation-summary-panel";
 import { ReplacementComparisonTable } from "./replacement-comparison-table";
@@ -178,11 +179,12 @@ export function ExecutiveDashboard() {
         <KpiCard title="Solar Contribution" value={`${solar.solarContributionPercent.toFixed(0)}%`} subtitle="of charging" />
         <KpiCard title="Fuel Saving" value={formatCurrency(kpis.fuelSaving)} subtitle="annual" positiveIsGood />
         <KpiCard
-          title="10-Year NPV"
+          title={NPV_KPI_TITLE}
           value={formatCurrency(kpis.npv10Year)}
           numericValue={kpis.npv10Year}
           formatValue={(n) => formatCurrency(n)}
-          subtitle={`at ${input.assumptions.discountRate ?? 10.5}% discount`}
+          subtitle={npvKpiSubtitle(input.assumptions.discountRate ?? 10.5)}
+          helpText={NPV_KPI_HELP}
           positiveIsGood
         />
         <KpiCard title="Indicative Payback" value={kpis.paybackMonths > 0 ? `${kpis.paybackMonths} months` : "N/A"} subtitle="on net finance vs monthly delta" />

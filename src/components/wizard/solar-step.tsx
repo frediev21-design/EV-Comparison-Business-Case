@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency, formatNumber } from "@/lib/format";
 import { estimateSolarSystemCost } from "@/engine/solar";
 import { parseLocaleNumber } from "@/lib/parse-number";
+import { NPV_SOLAR_SUMMARY_LABEL } from "@/lib/npv-explainer";
 import { Sun, Battery, Car, PiggyBank } from "lucide-react";
 
 export function SolarStep() {
@@ -147,7 +148,7 @@ export function SolarStep() {
           { label: "Annual charging cost", value: formatCurrency(solarResult.annualChargingCost) },
           { label: "Solar amortisation / yr", value: formatCurrency(solarResult.annualSolarAmortisation) },
           { label: "10-year charging cost", value: formatCurrency(solarResult.tenYearChargingCost) },
-          { label: "Discount rate (NPV)", value: `${assumptions.discountRate ?? 10.5}%` },
+          { label: NPV_SOLAR_SUMMARY_LABEL, value: `${assumptions.discountRate ?? 10.5}%` },
         ].map(({ label, value }) => (
           <Card key={label}>
             <CardHeader className="pb-2">

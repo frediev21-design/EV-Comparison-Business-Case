@@ -12,6 +12,8 @@ interface KpiCardProps {
   numericValue?: number;
   formatValue?: (value: number) => string;
   subtitle?: string;
+  /** Plain-language explainer shown below subtitle (e.g. for NPV). */
+  helpText?: string;
   delta?: number;
   deltaLabel?: string;
   positiveIsGood?: boolean;
@@ -24,6 +26,7 @@ export function KpiCard({
   numericValue,
   formatValue,
   subtitle,
+  helpText,
   delta,
   deltaLabel,
   positiveIsGood = true,
@@ -52,6 +55,7 @@ export function KpiCard({
         )}
       </p>
       {subtitle && <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>}
+      {helpText && <p className="mt-2 text-xs leading-relaxed text-muted-foreground/90">{helpText}</p>}
       {delta !== undefined && (
         <div
           className={cn(
