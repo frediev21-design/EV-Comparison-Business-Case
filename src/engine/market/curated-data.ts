@@ -3,29 +3,72 @@ import type { MarketSource } from "./types";
 export function normalizeMarketQuery(raw: string): string {
   return raw
     .toLowerCase()
+    .replace(/\bi[\s-]*dm\b/gi, " idm ")
     .replace(/bi-turbo|biturbo|bi turbo|4x4|4×4|gd-6|gd6|phev|premium|luxury|extended range/gi, " ")
     .replace(/[^\w\s]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
 
+const BRAND_ONLY_KEYS = new Set([
+  "jetour",
+  "byd",
+  "ford",
+  "toyota",
+  "gwm",
+  "chery",
+  "tesla",
+  "icaur",
+  "mahindra",
+]);
+
+const QUERY_STOP_WORDS = new Set(["new", "used", "demo", "car", "vehicle", "price", "sa"]);
+
+function significantQueryTokens(query: string): string[] {
+  return normalizeMarketQuery(query)
+    .split(" ")
+    .filter((t) => t.length >= 2 && !QUERY_STOP_WORDS.has(t));
+}
+
 function scoreNewVehicleMatch(query: string, vehicle: CuratedNewVehicle): number {
   const q = normalizeMarketQuery(query);
   if (!q) return 0;
 
+  const tokens = significantQueryTokens(query);
+  const mfr = normalizeMarketQuery(vehicle.manufacturer);
+  const modelTokens = tokens.filter((t) => t !== mfr);
+  const modelHaystack = normalizeMarketQuery(
+    `${vehicle.model} ${vehicle.variant} ${vehicle.keys.join(" ")}`
+  );
+
+  // User typed a model (e.g. T1) — require a model-specific token match, not brand alone.
+  if (modelTokens.length > 0) {
+    const hasModelToken = modelTokens.some(
+      (t) =>
+        modelHaystack.includes(t) ||
+        vehicle.keys.some((k) => {
+          const nk = normalizeMarketQuery(k);
+          return nk.includes(t) || t.includes(nk);
+        })
+    );
+    if (!hasModelToken) return 0;
+  }
+
   const label = normalizeMarketQuery(`${vehicle.manufacturer} ${vehicle.model}`);
   let score = 0;
-  if (q === label) score += 25;
-  if (label.includes(q) || q.includes(label)) score += 12;
+  if (q === label) score += 30;
+  if (label.includes(q) || q.includes(label)) score += 15;
   for (const key of vehicle.keys) {
     const nk = normalizeMarketQuery(key);
-    if (q === nk) score += 20;
-    if (q.includes(nk) || nk.includes(q)) score += 8;
+    if (BRAND_ONLY_KEYS.has(nk) && modelTokens.length > 0) continue;
+    if (q === nk) score += 25;
+    if (nk.length >= 3 && (q.includes(nk) || nk.includes(q))) score += 10;
   }
-  const mfr = normalizeMarketQuery(vehicle.manufacturer);
-  const mdl = normalizeMarketQuery(vehicle.model);
-  if (mfr && q.includes(mfr)) score += 4;
-  if (mdl && q.includes(mdl)) score += 6;
+  for (const t of modelTokens) {
+    if (normalizeMarketQuery(vehicle.model).split(" ").includes(t)) score += 8;
+    else if (modelHaystack.includes(t)) score += 6;
+  }
+  if (mfr && tokens.includes(mfr)) score += 3;
   return score;
 }
 
@@ -186,7 +229,7 @@ export const CURATED_NEW_VEHICLES: CuratedNewVehicle[] = [
     priceReductions: 5,
   },
   {
-    keys: ["jetour", "jetour dashing", "dashing"],
+    keys: ["jetour dashing", "dashing"],
     manufacturer: "Jetour",
     model: "Dashing",
     variant: "1.5T Premium",
@@ -206,7 +249,7 @@ export const CURATED_NEW_VEHICLES: CuratedNewVehicle[] = [
     priceReductions: 2,
   },
   {
-    keys: ["jetour t2", "t2"],
+    keys: ["jetour t2", "t2 2.0t", "jetour t2 2.0"],
     manufacturer: "Jetour",
     model: "T2",
     variant: "2.0T Luxury",
@@ -223,6 +266,45 @@ export const CURATED_NEW_VEHICLES: CuratedNewVehicle[] = [
     listingsCount: 22,
     avgDaysOnMarket: 24,
     priceReductions: 1,
+  },
+  {
+    keys: ["jetour t1 idm", "jetour t1", "t1 idm", "t1 i dm", "t1 idm phev"],
+    manufacturer: "Jetour",
+    model: "T1 i-DM",
+    variant: "1.5T PHEV",
+    retailPrice: 689900,
+    sources: [
+      { id: "cars", name: "Cars.co.za", price: 689900 },
+      { id: "jetour", name: "Jetour SA", price: 689900 },
+      { id: "topauto", name: "TopAuto", price: 689900 },
+      { id: "autotrader", name: "AutoTrader", price: 699000 },
+    ],
+    promotions: ["7-year / 200,000 km warranty", "7-year / 75,000 km service plan"],
+    financeOffers: ["72 months @ 11%"],
+    deliveryCharges: 3500,
+    dealerAvailability: "Available — 55+ Jetour dealers nationwide",
+    listingsCount: 31,
+    avgDaysOnMarket: 16,
+    priceReductions: 1,
+  },
+  {
+    keys: ["jetour t2 idm", "t2 idm", "t2 i dm", "t2 idm phev"],
+    manufacturer: "Jetour",
+    model: "T2 i-DM",
+    variant: "1.5T PHEV",
+    retailPrice: 779900,
+    sources: [
+      { id: "cars", name: "Cars.co.za", price: 779900 },
+      { id: "jetour", name: "Jetour SA", price: 779900 },
+      { id: "topauto", name: "TopAuto", price: 779900 },
+    ],
+    promotions: ["8-year / 160,000 km battery warranty"],
+    financeOffers: ["72 months @ 11%"],
+    deliveryCharges: 3500,
+    dealerAvailability: "Available — major metros",
+    listingsCount: 24,
+    avgDaysOnMarket: 18,
+    priceReductions: 0,
   },
   {
     keys: ["toyota hilux gr-s", "hilux gr-s", "hilux grs"],

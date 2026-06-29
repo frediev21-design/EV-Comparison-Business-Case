@@ -18,6 +18,18 @@ describe("SA market intelligence", () => {
     expect(result!.averageDealerPrice).toBeGreaterThan(400000);
   });
 
+  it("finds Jetour T1 i-DM instead of Dashing when model is specified", () => {
+    const result = lookupNewVehicle("Jetour T1 i-DM new");
+    expect(result).not.toBeNull();
+    expect(result!.model).toBe("T1 i-DM");
+    expect(result!.retailPrice).toBe(689900);
+  });
+
+  it("does not match Dashing for T1 i-DM query", () => {
+    const result = lookupNewVehicle("Jetour T1 i-DM");
+    expect(result?.model).not.toBe("Dashing");
+  });
+
   it("provides negotiation advice when above market", () => {
     const result = lookupNewVehicle("BYD Shark 6", 1010000);
     expect(result!.negotiationAdvice).toContain("above market");
