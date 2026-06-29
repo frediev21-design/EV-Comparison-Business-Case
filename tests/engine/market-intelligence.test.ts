@@ -11,6 +11,13 @@ describe("SA market intelligence", () => {
     expect(result!.confidenceScore).toBeGreaterThan(50);
   });
 
+  it("looks up Jetour by partial brand name", () => {
+    const result = lookupNewVehicle("jetour");
+    expect(result).not.toBeNull();
+    expect(result!.manufacturer).toBe("Jetour");
+    expect(result!.averageDealerPrice).toBeGreaterThan(400000);
+  });
+
   it("provides negotiation advice when above market", () => {
     const result = lookupNewVehicle("BYD Shark 6", 1010000);
     expect(result!.negotiationAdvice).toContain("above market");

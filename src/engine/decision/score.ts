@@ -35,6 +35,7 @@ function scoreMonthlyCashFlow(kpis: ComparisonKpis): number {
 function scoreRunningCosts(running: RunningCostResult, selectedId: string): number {
   const current = running.current.total;
   const replacement = running.replacements[selectedId]?.total ?? current;
+  if (current <= 0) return replacement > 0 ? 45 : 50;
   if (replacement >= current) return clampScore(40 - ((replacement - current) / current) * 40);
   return clampScore(60 + ((current - replacement) / current) * 40);
 }
@@ -142,9 +143,10 @@ export function calculateInvestmentScore(
   }));
 
   const total = Math.round(criteria.reduce((sum, c) => sum + c.weightedScore, 0));
-  const { stars, rating, subtitle } = getScoreRating(total);
+  const safeTotal = Number.isFinite(total) ? total : 0;
+  const { stars, rating, subtitle } = getScoreRating(safeTotal);
 
-  return { total, stars, rating, subtitle, criteria };
+  return { total: safeTotal, stars, rating, subtitle, criteria };
 }
 
 export function calculateTrafficLight(score: number, kpis: ComparisonKpis): TrafficLight {

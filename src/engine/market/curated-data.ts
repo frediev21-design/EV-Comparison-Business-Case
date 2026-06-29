@@ -135,6 +135,45 @@ export const CURATED_NEW_VEHICLES: CuratedNewVehicle[] = [
     avgDaysOnMarket: 15,
     priceReductions: 5,
   },
+  {
+    keys: ["jetour", "jetour dashing", "dashing"],
+    manufacturer: "Jetour",
+    model: "Dashing",
+    variant: "1.5T Premium",
+    retailPrice: 499900,
+    sources: [
+      { id: "autotrader", name: "AutoTrader", price: 509000 },
+      { id: "cars", name: "Cars.co.za", price: 499900 },
+      { id: "jetour", name: "Jetour SA", price: 499900 },
+      { id: "motus", name: "Motus Jetour", price: 505000 },
+    ],
+    promotions: ["5-year / 150,000 km warranty (selected dealers)"],
+    financeOffers: ["72 months @ 11%"],
+    deliveryCharges: 3500,
+    dealerAvailability: "Available — Gauteng, KZN, WC",
+    listingsCount: 38,
+    avgDaysOnMarket: 20,
+    priceReductions: 2,
+  },
+  {
+    keys: ["jetour t2", "t2"],
+    manufacturer: "Jetour",
+    model: "T2",
+    variant: "2.0T Luxury",
+    retailPrice: 649900,
+    sources: [
+      { id: "autotrader", name: "AutoTrader", price: 659000 },
+      { id: "cars", name: "Cars.co.za", price: 649900 },
+      { id: "jetour", name: "Jetour SA", price: 649900 },
+    ],
+    promotions: [],
+    financeOffers: ["72 months @ 11%"],
+    deliveryCharges: 3500,
+    dealerAvailability: "Limited stock — major metros",
+    listingsCount: 22,
+    avgDaysOnMarket: 24,
+    priceReductions: 1,
+  },
 ];
 
 export const CURATED_USED_VEHICLES: CuratedUsedVehicle[] = [
@@ -184,7 +223,43 @@ export const CURATED_USED_VEHICLES: CuratedUsedVehicle[] = [
 
 export function findNewVehicle(query: string): CuratedNewVehicle | undefined {
   const q = query.toLowerCase().trim();
-  return CURATED_NEW_VEHICLES.find((v) => v.keys.some((k) => q.includes(k) || k.includes(q)));
+  if (!q) return undefined;
+
+  const exact = CURATED_NEW_VEHICLES.find((v) =>
+    v.keys.some((k) => q === k || q === `${v.manufacturer} ${v.model}`.toLowerCase())
+  );
+  if (exact) return exact;
+
+  return CURATED_NEW_VEHICLES.find((v) =>
+    v.keys.some((k) => q.includes(k) || k.includes(q)) ||
+    q.includes(v.manufacturer.toLowerCase()) ||
+    q.includes(v.model.toLowerCase())
+  );
+}
+
+export function searchNewVehicles(query: string, limit = 6): CuratedNewVehicle[] {
+  const q = query.toLowerCase().trim();
+  if (!q) return CURATED_NEW_VEHICLES.slice(0, limit);
+
+  const scored = CURATED_NEW_VEHICLES.map((vehicle) => {
+    const label = `${vehicle.manufacturer} ${vehicle.model}`.toLowerCase();
+    let score = 0;
+    if (label.includes(q) || q.includes(label)) score += 10;
+    if (vehicle.manufacturer.toLowerCase().includes(q)) score += 8;
+    if (vehicle.model.toLowerCase().includes(q)) score += 6;
+    for (const key of vehicle.keys) {
+      if (key.includes(q) || q.includes(key)) score += 5;
+    }
+    return { vehicle, score };
+  })
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  return scored.slice(0, limit).map((entry) => entry.vehicle);
+}
+
+export function listNewVehicleLabels(): string[] {
+  return CURATED_NEW_VEHICLES.map((v) => `${v.manufacturer} ${v.model}`);
 }
 
 export function findUsedVehicle(manufacturer: string, model: string): CuratedUsedVehicle | undefined {

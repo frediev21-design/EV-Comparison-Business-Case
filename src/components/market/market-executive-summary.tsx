@@ -14,8 +14,10 @@ export function MarketExecutiveSummaryPanel() {
   const refreshAll = useMarketStore((s) => s.refreshAll);
   const newVehicle = useMarketStore((s) => s.newVehicleResult);
   const tradeIn = useMarketStore((s) => s.tradeInResult);
+  const newVehicleError = useMarketStore((s) => s.newVehicleError);
+  const tradeInError = useMarketStore((s) => s.tradeInError);
 
-  if (!summary && !newVehicle && !tradeIn) {
+  if (!summary && !newVehicle && !tradeIn && !newVehicleError && !tradeInError) {
     return (
       <Card>
         <CardContent className="py-8 text-center text-sm text-muted-foreground">

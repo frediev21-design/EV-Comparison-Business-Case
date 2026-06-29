@@ -5,7 +5,9 @@ import { getCaseValidationMessages } from "@/lib/wizard-validation";
 import { ValidationAlerts } from "@/components/wizard/validation-alerts";
 import { KpiCard } from "@/components/kpi/kpi-card";
 import { formatCurrency } from "@/lib/format";
-import { DashboardHeroStrip } from "./dashboard-hero-strip";
+import { buildVehicleComparisonLabel } from "@/lib/case-labels";
+import { ExecutiveDashboardHero } from "./executive-dashboard-hero";
+import { DashboardKpiStrip } from "./dashboard-kpi-strip";
 import { RecommendationCard } from "./recommendation-card";
 import { SavingsBreakdownCard } from "./savings-breakdown-card";
 import { MonthlyRepaymentComparisonCard } from "./monthly-repayment-comparison-card";
@@ -16,8 +18,6 @@ import { downloadExecutiveSummary } from "@/lib/executive-summary-pdf";
 import { Button } from "@/components/ui/button";
 import { FileDown, FileText } from "lucide-react";
 import { showToast } from "@/lib/toast";
-import { ExecutiveScoreCard } from "@/components/decision/executive-score-card";
-import { DecisionTrafficLight } from "@/components/decision/decision-traffic-light";
 import { BoardSummaryPanel } from "@/components/decision/board-summary-panel";
 import { RiskMatrixDashboard } from "@/components/decision/risk-matrix-dashboard";
 import { SwotPanel } from "@/components/decision/swot-panel";
@@ -38,7 +38,7 @@ export function ExecutiveDashboard() {
   const validationMessages = getCaseValidationMessages(input, result);
   const currentMonthlyFromInputs = buildCurrentMonthlyFromInputs(input);
   const selected = input.replacements.find((v) => v.id === input.selectedReplacementId);
-  const currentName = `${input.current.manufacturer} ${input.current.model}`;
+  const comparisonLabel = buildVehicleComparisonLabel(input).replace(" → ", " vs ");
 
   return (
     <div className="space-y-8">
@@ -49,7 +49,7 @@ export function ExecutiveDashboard() {
           <div>
             <h2 className="text-xl font-bold tracking-tight">Executive Dashboard</h2>
             <p className="text-sm text-muted-foreground">
-              Investment decision intelligence · {currentName} vs {selected?.name ?? ""}
+              Total Cost of Ownership — {comparisonLabel}
               {kpis.fleetVehicleCount > 1 && (
                 <span className="ml-2 rounded-md bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
                   Fleet ×{kpis.fleetVehicleCount}
@@ -57,7 +57,14 @@ export function ExecutiveDashboard() {
               )}
             </p>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-success/30 bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-60" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+              </span>
+              Live
+            </span>
             <Button
               variant="default"
               size="sm"
@@ -71,7 +78,7 @@ export function ExecutiveDashboard() {
               }}
             >
               <FileDown className="mr-2 h-4 w-4" />
-              Executive summary
+              Export Report
             </Button>
             <Button
               variant="outline"
@@ -87,26 +94,17 @@ export function ExecutiveDashboard() {
         <InfographicPromptPanel className="mt-4" />
       </div>
 
-      <DashboardHeroStrip
-        monthlySaving={kpis.monthlySaving}
-        amountFinanced={tradeIn.amountFinanced}
-        investmentScore={decision.investmentScore.total}
-        rating={decision.investmentScore.rating}
-        trafficLight={decision.trafficLight.status}
+      <ExecutiveDashboardHero
+        score={decision.investmentScore}
+        trafficLight={decision.trafficLight}
       />
 
-      <ExecutiveScoreCard score={decision.investmentScore} />
-
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <DecisionTrafficLight trafficLight={decision.trafficLight} />
-        </div>
-        <KpiCard
-          title="Investment Score"
-          value={`${decision.investmentScore.total}/100`}
-          subtitle={decision.investmentScore.rating}
-        />
-      </div>
+      <DashboardKpiStrip
+        monthlySaving={kpis.monthlySaving}
+        amountFinanced={tradeIn.amountFinanced}
+        tenYearSaving={kpis.tenYearSaving}
+        paybackMonths={kpis.paybackMonths}
+      />
 
       <SavingsBreakdownCard />
 

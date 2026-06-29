@@ -9,6 +9,8 @@ import { CONDITION_MULTIPLIERS, MARKET_RATING_LABELS } from "./types";
 import {
   findNewVehicle,
   findUsedVehicle,
+  searchNewVehicles,
+  listNewVehicleLabels,
   type CuratedNewVehicle,
   type CuratedUsedVehicle,
 } from "./curated-data";
@@ -99,7 +101,8 @@ export function lookupNewVehicle(
   query: string,
   askingPrice?: number
 ): NewVehicleLookupResult | null {
-  const vehicle = findNewVehicle(query);
+  const matches = searchNewVehicles(query, 1);
+  const vehicle = matches[0] ?? findNewVehicle(query);
   if (!vehicle) return null;
   return buildNewVehicleResult(vehicle, askingPrice);
 }
@@ -290,4 +293,4 @@ export function buildMarketExecutiveSummary(
   };
 }
 
-export { MARKET_RATING_LABELS };
+export { MARKET_RATING_LABELS, searchNewVehicles, listNewVehicleLabels };

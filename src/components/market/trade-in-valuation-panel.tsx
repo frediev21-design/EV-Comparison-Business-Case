@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/format";
 import { SA_PROVINCES, type VehicleCondition } from "@/engine/market/types";
-import { Search, Check } from "lucide-react";
+import { Search, Check, Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import { useCaseStore } from "@/store/case-store";
 import { PriceHistoryChart } from "./price-history-chart";
 
 const CONDITIONS: { value: VehicleCondition; label: string }[] = [
@@ -22,15 +23,30 @@ const CONDITIONS: { value: VehicleCondition; label: string }[] = [
 export function TradeInValuationPanel() {
   const input = useMarketStore((s) => s.tradeInInput);
   const result = useMarketStore((s) => s.tradeInResult);
+  const error = useMarketStore((s) => s.tradeInError);
   const loading = useMarketStore((s) => s.loading);
   const setField = useMarketStore((s) => s.setTradeInField);
   const search = useMarketStore((s) => s.searchTradeIn);
   const apply = useMarketStore((s) => s.applyTradeInValue);
+  const syncFromCase = useMarketStore((s) => s.syncTradeInFromCase);
+  const caseCurrent = useCaseStore((s) => s.input.current);
+  const hasCaseVehicle = Boolean(caseCurrent.manufacturer.trim() && caseCurrent.model.trim());
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-base">Trade-In Valuation</CardTitle>
+      <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
+        <div>
+          <CardTitle className="text-base">Trade-In Valuation</CardTitle>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Uses your current vehicle details — sync from the business case or edit below.
+          </p>
+        </div>
+        {hasCaseVehicle && (
+          <Button type="button" variant="outline" size="sm" onClick={() => syncFromCase()}>
+            <RefreshCw className="mr-1 h-3 w-3" />
+            Use current vehicle
+          </Button>
+        )}
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -87,10 +103,27 @@ export function TradeInValuationPanel() {
           </label>
         </div>
 
-        <Button onClick={() => search()} disabled={loading}>
-          <Search className="mr-2 h-4 w-4" />
+        <Button onClick={() => search()} disabled={loading || !input.manufacturer.trim() || !input.model.trim()}>
+          {loading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Search className="mr-2 h-4 w-4" />
+          )}
           Value Trade-In
         </Button>
+
+        {error && !result && (
+          <div className="flex gap-3 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            <p>{error}</p>
+          </div>
+        )}
+
+        {!input.manufacturer.trim() || !input.model.trim() ? (
+          <p className="text-xs text-muted-foreground">
+            Complete the Current Vehicle step or click &quot;Use current vehicle&quot; to pre-fill these fields.
+          </p>
+        ) : null}
 
         {result && (
           <div className="space-y-4">
