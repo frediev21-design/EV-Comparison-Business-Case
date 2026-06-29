@@ -9,6 +9,7 @@ import {
   type WorkflowMode,
 } from "@/lib/wizard-steps";
 import { isStepComplete } from "@/lib/wizard-validation";
+import { getNextIncompleteStep } from "@/lib/workflow-guidance";
 import {
   BarChart3,
   Calculator,
@@ -60,6 +61,7 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
   const workflowMode = useCaseStore((s) => s.workflowMode);
   const setWorkflowMode = useCaseStore((s) => s.setWorkflowMode);
   const input = useCaseStore((s) => s.input);
+  const nextIncompleteStep = getNextIncompleteStep(workflowMode, input);
 
   const visibleSteps = getWorkflowSteps(workflowMode);
   const groups = [
@@ -139,6 +141,7 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
               {group.steps.map((step) => {
                 const Icon = STEP_ICONS[step.id];
                 const isActive = activeStep === step.id;
+                const isNext = step.id === nextIncompleteStep;
                 const complete =
                   step.step >= 1 && step.step <= 8 && isStepComplete(step.id, input);
                 return (
@@ -153,15 +156,22 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
                         "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
                         isActive
                           ? "bg-accent/10 text-accent font-medium"
-                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                          : isNext
+                            ? "bg-primary/5 text-foreground ring-1 ring-primary/25 hover:bg-primary/10"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       )}
                     >
                       <Icon className="h-4 w-4 shrink-0" />
                       <span className="truncate">{step.label}</span>
-                      {complete && !isActive && (
+                      {isNext && !isActive && (
+                        <span className="ml-auto rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+                          Next
+                        </span>
+                      )}
+                      {complete && !isActive && !isNext && (
                         <Check className="ml-auto h-3.5 w-3.5 text-success" />
                       )}
-                      {step.step <= 8 && !complete && (
+                      {step.step <= 8 && !complete && !isNext && (
                         <span className="ml-auto text-xs opacity-60">{step.step}</span>
                       )}
                     </button>

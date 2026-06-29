@@ -26,6 +26,7 @@ import { DecisionAdvisor } from "@/components/decision/decision-advisor";
 import { InfographicPromptPanel } from "./infographic-prompt-panel";
 import { RecommendationSummaryCopyButton } from "./recommendation-summary-panel";
 import { ReplacementComparisonTable } from "./replacement-comparison-table";
+import { DashboardSetupHint } from "./dashboard-setup-hint";
 import { QuickModeDefaultsBanner } from "./quick-mode-defaults-banner";
 
 export function ExecutiveDashboard() {
@@ -44,6 +45,7 @@ export function ExecutiveDashboard() {
   return (
     <div className="space-y-8">
       <ValidationAlerts messages={validationMessages} />
+      <DashboardSetupHint />
       <QuickModeDefaultsBanner />
       <div>
         <div className="flex flex-wrap items-start justify-between gap-4">

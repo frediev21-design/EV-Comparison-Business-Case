@@ -1,12 +1,12 @@
 "use client";
 
-import { useCaseStore } from "@/store/case-store";
+import { useCaseStore, type WizardStep } from "@/store/case-store";
 import { getNextStep, getPrevStep, getStepLabel } from "@/lib/wizard-steps";
 import { getStepIncompleteHint } from "@/lib/wizard-validation";
 import { useWizardStepAdvance } from "@/hooks/use-wizard-step-advance";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
-import type { WizardStep } from "@/store/case-store";
+import { StepNextHint } from "@/components/wizard/step-next-hint";
 
 interface WizardNavProps {
   step: WizardStep;
@@ -36,6 +36,7 @@ export function WizardNav({ step }: WizardNavProps) {
 
   return (
     <div className="space-y-3 border-t border-border pt-4">
+      <StepNextHint step={step} stepReady={stepReady} />
       {!stepReady && (
         <p className="text-xs text-muted-foreground" role="status" aria-live="polite">
           {getStepIncompleteHint(step, input)}

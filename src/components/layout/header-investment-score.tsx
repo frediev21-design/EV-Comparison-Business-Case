@@ -4,6 +4,7 @@ import { useCaseStore } from "@/store/case-store";
 import { getDataEntryProgress } from "@/lib/wizard-validation";
 import { AnimatedNumber } from "@/components/ui/animated-number";
 import { cn } from "@/lib/utils";
+import { HeaderNextStepLink } from "@/components/wizard/step-next-hint";
 import type { TrafficLightStatus } from "@/engine/decision/types";
 
 const STATUS_RING: Record<TrafficLightStatus, string> = {
@@ -58,6 +59,7 @@ export function HeaderInvestmentScore() {
         <p className="text-[10px] opacity-80">
           {setupComplete ? "Inputs complete" : `${completed}/${total} setup steps`}
         </p>
+        {!setupComplete && <HeaderNextStepLink />}
       </div>
     </button>
   );

@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useCaseStore, type WizardStep } from "@/store/case-store";
-import { getNextStep, type WorkflowMode } from "@/lib/wizard-steps";
+import { getNextStep, type WorkflowMode, getStepLabel } from "@/lib/wizard-steps";
 import { isStepComplete } from "@/lib/wizard-validation";
 import { useScenarioSave } from "@/hooks/use-scenario-save";
 import { DATA_ENTRY_STEP_IDS } from "@/lib/wizard-steps";
@@ -36,7 +36,7 @@ export function useWizardStepAdvance() {
           }
 
           const record = await saveScenario({ toast: false });
-          showToast("Progress saved", "success");
+          showToast(`Saved · Next: ${getStepLabel(next)}`, "success");
           const isNewRoute = pathname.endsWith("/case/new");
 
           if (isNewRoute && record.id) {
@@ -48,6 +48,9 @@ export function useWizardStepAdvance() {
       }
 
       setActiveStep(next);
+      if (!shouldPersist && next) {
+        showToast(`Next: ${getStepLabel(next)}`, "info");
+      }
       return true;
     },
     [input, workflowMode, saveScenario, pathname, router, setActiveStep]
