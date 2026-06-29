@@ -9,6 +9,7 @@ import { useScenarioSave } from "@/hooks/use-scenario-save";
 import { DATA_ENTRY_STEP_IDS } from "@/lib/wizard-steps";
 import { showToast } from "@/lib/toast";
 import { autoCaseNameFromCurrent } from "@/lib/case-labels";
+import { embedCasePath, isEmbedPath } from "@/lib/embed";
 
 export function useWizardStepAdvance() {
   const router = useRouter();
@@ -37,10 +38,12 @@ export function useWizardStepAdvance() {
 
           const record = await saveScenario({ toast: false });
           showToast(`Saved · Next: ${getStepLabel(next)}`, "success");
-          const isNewRoute = pathname.endsWith("/case/new");
+          const isNewRoute =
+            pathname.endsWith("/case/new") || pathname.endsWith("/embed/case/new");
 
           if (isNewRoute && record.id) {
-            router.replace(`/case/${record.id}?step=${next}`, { scroll: false });
+            const base = isEmbedPath(pathname) ? embedCasePath(record.id) : `/case/${record.id}`;
+            router.replace(`${base}?step=${next}`, { scroll: false });
           }
         } finally {
           setSaving(false);

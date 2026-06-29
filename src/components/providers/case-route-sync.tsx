@@ -30,7 +30,7 @@ export function CaseRouteSync() {
   }, []);
 
   useEffect(() => {
-    const match = pathname.match(/^\/case\/([^/?]+)/);
+    const match = pathname.match(/^\/(?:embed\/)?case\/([^/?]+)/);
     if (!match || match[1] === "new") {
       setRouteCaseMissing(false);
       return;

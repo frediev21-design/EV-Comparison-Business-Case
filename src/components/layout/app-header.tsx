@@ -12,6 +12,7 @@ import { OpenAnalysisMenu } from "@/components/case/open-analysis-menu";
 
 interface AppHeaderProps {
   onMenuClick?: () => void;
+  embed?: boolean;
 }
 
 function useVehicleComparisonLabel() {
@@ -23,7 +24,7 @@ function useVehicleComparisonLabel() {
   return comparison;
 }
 
-export function AppHeader({ onMenuClick }: AppHeaderProps) {
+export function AppHeader({ onMenuClick, embed = false }: AppHeaderProps) {
   const input = useCaseStore((s) => s.input);
   const caseName = useCaseStore((s) => s.caseName);
   const tags = useCaseStore((s) => s.tags);
@@ -70,13 +71,15 @@ export function AppHeader({ onMenuClick }: AppHeaderProps) {
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-          <OpenAnalysisMenu />
-          <Button variant="ghost" size="sm" className="hidden md:flex" asChild>
-            <Link href="/cases">
-              <LayoutGrid className="mr-2 h-4 w-4" />
-              My analyses
-            </Link>
-          </Button>
+          {!embed && <OpenAnalysisMenu />}
+          {!embed && (
+            <Button variant="ghost" size="sm" className="hidden md:flex" asChild>
+              <Link href="/cases">
+                <LayoutGrid className="mr-2 h-4 w-4" />
+                My analyses
+              </Link>
+            </Button>
+          )}
           <HeaderInvestmentScoreMobile />
           <HeaderInvestmentScore />
           <Button variant="outline" size="sm" className="sm:hidden" onClick={() => setPresentationMode(true)} aria-label="Presentation mode">

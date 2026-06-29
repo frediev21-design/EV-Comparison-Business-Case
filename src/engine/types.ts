@@ -262,7 +262,7 @@ export interface BusinessCaseResult {
   decision: DecisionIntelligence;
 }
 
-export type SavedWorkflowMode = "quick" | "full";
+export type SavedWorkflowMode = "showroom" | "quick" | "full";
 
 export interface ScenarioRecord {
   id: string;

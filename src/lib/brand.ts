@@ -18,6 +18,7 @@ export const PAGE_TITLES = {
   privacy: `Privacy Policy | ${APP_NAME}`,
   terms: `Terms of Use | ${APP_NAME}`,
   app: `${APP_NAME} | Vehicle upgrade calculator`,
+  embed: `${APP_NAME} Showroom`,
 } as const;
 
 export interface ExportBranding {

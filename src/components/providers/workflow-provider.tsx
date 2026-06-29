@@ -3,7 +3,8 @@
 import { useEffect, Suspense } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useCaseStore, WIZARD_STEPS, type WizardStep } from "@/store/case-store";
-import { getNextStep, getPrevStep } from "@/lib/wizard-steps";
+import { getNextStep, getPrevStep, parseWorkflowMode } from "@/lib/wizard-steps";
+import { isEmbedPath } from "@/lib/embed";
 import { useWizardStepAdvance } from "@/hooks/use-wizard-step-advance";
 import { CaseRouteSync } from "@/components/providers/case-route-sync";
 
@@ -20,7 +21,23 @@ function WorkflowSyncInner() {
   const activeStep = useCaseStore((s) => s.activeStep);
   const workflowMode = useCaseStore((s) => s.workflowMode);
   const setActiveStep = useCaseStore((s) => s.setActiveStep);
+  const setWorkflowMode = useCaseStore((s) => s.setWorkflowMode);
+  const setEmbedSession = useCaseStore((s) => s.setEmbedSession);
   const { advanceFromStep } = useWizardStepAdvance();
+
+  useEffect(() => {
+    if (isEmbedPath(pathname)) {
+      setEmbedSession(true);
+      setWorkflowMode("showroom");
+      return;
+    }
+    const modeParam = parseWorkflowMode(searchParams.get("mode"));
+    if (modeParam) {
+      setEmbedSession(false);
+      setWorkflowMode(modeParam);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- sync embed/mode once on route
+  }, [pathname]);
 
   useEffect(() => {
     const stepParam = searchParams.get("step");
@@ -32,7 +49,9 @@ function WorkflowSyncInner() {
   }, []);
 
   useEffect(() => {
-    if (!pathname.endsWith("/case/new") || searchParams.get("fresh") !== "1") return;
+    const isNewCase =
+      pathname.endsWith("/case/new") || pathname.endsWith("/embed/case/new");
+    if (!isNewCase || searchParams.get("fresh") !== "1") return;
 
     useCaseStore.getState().resetCase();
     window.dispatchEvent(new CustomEvent("fleet-tco:cancel-autosave"));

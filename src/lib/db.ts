@@ -8,7 +8,7 @@ export interface ScenarioEntity {
   createdAt: string;
   updatedAt: string;
   snapshot: BusinessCaseInput;
-  workflowMode?: "quick" | "full";
+  workflowMode?: "showroom" | "quick" | "full";
 }
 
 class FinCompDatabase extends Dexie {

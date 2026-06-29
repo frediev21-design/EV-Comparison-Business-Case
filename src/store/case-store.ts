@@ -52,6 +52,8 @@ interface CaseStore {
   result: BusinessCaseResult;
   activeStep: WizardStep;
   workflowMode: WorkflowMode;
+  /** Minimal chrome for dealer tablet / iframe embeds. */
+  embedSession: boolean;
   ownershipHorizon: 5 | 7 | 10;
   presentationMode: boolean;
   lastSavedAt: string | null;
@@ -63,6 +65,7 @@ interface CaseStore {
   setTags: (tags: string[]) => void;
   setActiveStep: (step: WizardStep) => void;
   setWorkflowMode: (mode: WorkflowMode) => void;
+  setEmbedSession: (on: boolean) => void;
   setOwnershipHorizon: (years: 5 | 7 | 10) => void;
   updateCurrent: (partial: Partial<BusinessCaseInput["current"]>) => void;
   updateTradeIn: (partial: Partial<BusinessCaseInput["tradeIn"]>) => void;
@@ -105,6 +108,7 @@ export const useCaseStore = create<CaseStore>((set) => ({
   result: computeResult(defaultInput),
   activeStep: "current",
   workflowMode: "full",
+  embedSession: false,
   ownershipHorizon: 10,
   presentationMode: false,
   lastSavedAt: null,
@@ -116,6 +120,7 @@ export const useCaseStore = create<CaseStore>((set) => ({
   setTags: (tags) => set({ tags }),
   setActiveStep: (step) => set({ activeStep: step }),
   setWorkflowMode: (mode) => set({ workflowMode: mode }),
+  setEmbedSession: (on) => set({ embedSession: on }),
   setOwnershipHorizon: (years) => set({ ownershipHorizon: years }),
   setPresentationMode: (on) => set({ presentationMode: on }),
   setLastSavedAt: (iso) => set({ lastSavedAt: iso }),

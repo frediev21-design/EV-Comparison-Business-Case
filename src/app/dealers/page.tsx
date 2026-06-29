@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 export default function DealersPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <MarketingHeader ctaLabel="Try demo" ctaHref="/case/new?dealer=byd-centurion&fresh=1" />
+      <MarketingHeader ctaLabel="Try showroom" ctaHref="/embed?dealer=byd-centurion" />
 
       <main className="flex-1">
         <section className="mx-auto max-w-5xl px-4 py-16 lg:px-6 lg:py-24">
@@ -40,12 +40,15 @@ export default function DealersPage() {
           <p className="mt-4 max-w-xl text-lg text-muted-foreground">{APP_DEALER_PITCH}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button size="lg" asChild>
-              <Link href="/case/new?dealer=byd-centurion&fresh=1">
-                Start dealer demo
+              <Link href="/embed?dealer=byd-centurion">
+                Open showroom embed
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
+              <Link href="/case/new?dealer=byd-centurion&fresh=1">Full app demo</Link>
+            </Button>
+            <Button size="lg" variant="ghost" asChild>
               <Link href="/case/new?fresh=1">Open {APP_NAME}</Link>
             </Button>
           </div>
@@ -63,7 +66,7 @@ export default function DealersPage() {
                 {
                   icon: Tablet,
                   title: "Tablet-ready",
-                  text: "Quick mode gets from current car to dashboard in three steps.",
+                  text: "Showroom embed: current car → stock unit → trade-in → PDF in three steps.",
                 },
                 {
                   icon: Store,
@@ -127,9 +130,8 @@ export default function DealersPage() {
             </div>
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {DEALER_PROFILES.map((dealer) => (
-                <Link
+                <div
                   key={dealer.id}
-                  href={`/case/new?dealer=${dealer.id}&fresh=1`}
                   className="rounded-xl border border-border bg-card p-5 transition-colors hover:border-accent/50 hover:bg-accent/5"
                 >
                   <p className="font-semibold">{dealer.name}</p>
@@ -137,11 +139,26 @@ export default function DealersPage() {
                   <p className="mt-3 text-xs text-muted-foreground">
                     {dealer.vehiclePresets.map((v) => v.name).join(" · ")}
                   </p>
-                  <span className="mt-4 inline-flex items-center text-sm font-medium text-accent">
-                    Open demo
-                    <ArrowRight className="ml-1 h-3 w-3" />
-                  </span>
-                </Link>
+                  <div className="mt-4 flex flex-col gap-2">
+                    <Link
+                      href={`/embed?dealer=${dealer.id}`}
+                      className="inline-flex items-center text-sm font-medium text-accent"
+                    >
+                      Showroom embed
+                      <ArrowRight className="ml-1 h-3 w-3" />
+                    </Link>
+                    <Link
+                      href={`/case/new?dealer=${dealer.id}&fresh=1`}
+                      className="inline-flex items-center text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      Full app demo
+                      <ArrowRight className="ml-1 h-3 w-3" />
+                    </Link>
+                  </div>
+                  <p className="mt-3 rounded-md bg-muted/50 px-2 py-1.5 font-mono text-[10px] text-muted-foreground">
+                    /embed?dealer={dealer.id}
+                  </p>
+                </div>
               ))}
             </div>
           </div>

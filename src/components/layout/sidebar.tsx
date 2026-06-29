@@ -29,7 +29,10 @@ import {
   Check,
   Zap,
   List,
+  Tablet,
 } from "lucide-react";
+import Link from "next/link";
+import { buildMainAppCaseUrl } from "@/lib/embed";
 import { Button } from "@/components/ui/button";
 import { APP_NAME, APP_TAGLINE } from "@/lib/brand";
 import { DeveloperCredit } from "@/components/layout/developer-credit";
@@ -56,13 +59,15 @@ const STEP_ICONS: Record<WizardStep, React.ComponentType<{ className?: string }>
 interface SidebarProps {
   className?: string;
   onNavigate?: () => void;
+  embed?: boolean;
 }
 
-export function Sidebar({ className, onNavigate }: SidebarProps) {
+export function Sidebar({ className, onNavigate, embed = false }: SidebarProps) {
   const activeStep = useCaseStore((s) => s.activeStep);
   const setActiveStep = useCaseStore((s) => s.setActiveStep);
   const workflowMode = useCaseStore((s) => s.workflowMode);
   const setWorkflowMode = useCaseStore((s) => s.setWorkflowMode);
+  const caseId = useCaseStore((s) => s.caseId);
   const input = useCaseStore((s) => s.input);
   const nextIncompleteStep = getNextIncompleteStep(workflowMode, input);
 
@@ -108,30 +113,50 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
             <p className="text-xs text-muted-foreground">{APP_TAGLINE}</p>
           </div>
         </div>
-        <div className="mt-4 flex gap-1 rounded-lg bg-muted p-1">
-          <Button
-            variant={workflowMode === "quick" ? "secondary" : "ghost"}
-            size="sm"
-            className="h-7 flex-1 text-xs"
-            onClick={() => handleModeChange("quick")}
-          >
-            <Zap className="mr-1 h-3 w-3" />
-            Quick
-          </Button>
-          <Button
-            variant={workflowMode === "full" ? "secondary" : "ghost"}
-            size="sm"
-            className="h-7 flex-1 text-xs"
-            onClick={() => handleModeChange("full")}
-          >
-            <List className="mr-1 h-3 w-3" />
-            Full
-          </Button>
-        </div>
+        {!embed ? (
+          <div className="mt-4 flex gap-1 rounded-lg bg-muted p-1">
+            <Button
+              variant={workflowMode === "showroom" ? "secondary" : "ghost"}
+              size="sm"
+              className="h-7 flex-1 text-xs"
+              onClick={() => handleModeChange("showroom")}
+            >
+              <Tablet className="mr-1 h-3 w-3" />
+              Show
+            </Button>
+            <Button
+              variant={workflowMode === "quick" ? "secondary" : "ghost"}
+              size="sm"
+              className="h-7 flex-1 text-xs"
+              onClick={() => handleModeChange("quick")}
+            >
+              <Zap className="mr-1 h-3 w-3" />
+              Quick
+            </Button>
+            <Button
+              variant={workflowMode === "full" ? "secondary" : "ghost"}
+              size="sm"
+              className="h-7 flex-1 text-xs"
+              onClick={() => handleModeChange("full")}
+            >
+              <List className="mr-1 h-3 w-3" />
+              Full
+            </Button>
+          </div>
+        ) : (
+          <div className="mt-4 rounded-lg bg-accent/10 px-3 py-2">
+            <p className="text-xs font-medium text-accent">Showroom mode</p>
+            <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
+              3 steps → dashboard → PDF
+            </p>
+          </div>
+        )}
         <p className="mt-2 text-[11px] leading-snug text-muted-foreground">
-          {workflowMode === "quick"
-            ? "4 setup steps → dashboard"
-            : "8 setup steps + full analysis"}
+          {workflowMode === "showroom"
+            ? "Current car → stock unit → trade-in → results"
+            : workflowMode === "quick"
+              ? "4 setup steps → dashboard"
+              : "8 setup steps + full analysis"}
         </p>
       </div>
       <nav className="flex-1 overflow-y-auto p-4">
@@ -186,6 +211,11 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
         ))}
       </nav>
       <div className="border-t border-border p-4 no-print">
+        {embed && (
+          <Button variant="outline" size="sm" className="mb-3 w-full text-xs" asChild>
+            <Link href={buildMainAppCaseUrl(caseId, "full")}>Open full SwitchSave</Link>
+          </Button>
+        )}
         <DealerSettings compact />
         <DeveloperCredit className="mt-3 block text-[10px]" />
       </div>

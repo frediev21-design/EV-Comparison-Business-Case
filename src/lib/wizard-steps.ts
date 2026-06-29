@@ -3,13 +3,24 @@ import type { WizardStep } from "@/store/case-store";
 import { WIZARD_STEPS } from "@/store/case-store";
 import { isStepComplete } from "@/lib/wizard-validation";
 
-export type WorkflowMode = "quick" | "full";
+export type WorkflowMode = "showroom" | "quick" | "full";
 
 export const DATA_ENTRY_STEP_IDS: WizardStep[] = WIZARD_STEPS.filter(
   (s) => s.step >= 1 && s.step <= 8
 ).map((s) => s.id);
 
+/** Showroom floor: minimum inputs only */
+export const SHOWROOM_DATA_ENTRY_IDS: WizardStep[] = ["current", "replacement", "trade-in"];
+
 export const QUICK_DATA_ENTRY_IDS: WizardStep[] = ["current", "replacement", "trade-in"];
+
+export const SHOWROOM_WORKFLOW_STEPS: WizardStep[] = [
+  "current",
+  "replacement",
+  "trade-in",
+  "dashboard",
+  "reports",
+];
 
 export const QUICK_WORKFLOW_STEPS: WizardStep[] = [
   "current",
@@ -25,11 +36,15 @@ export const QUICK_WORKFLOW_STEPS: WizardStep[] = [
 export const FULL_WORKFLOW_STEPS: WizardStep[] = WIZARD_STEPS.map((s) => s.id);
 
 export function getWorkflowSteps(mode: WorkflowMode): WizardStep[] {
-  return mode === "quick" ? QUICK_WORKFLOW_STEPS : FULL_WORKFLOW_STEPS;
+  if (mode === "showroom") return SHOWROOM_WORKFLOW_STEPS;
+  if (mode === "quick") return QUICK_WORKFLOW_STEPS;
+  return FULL_WORKFLOW_STEPS;
 }
 
 export function getDataEntrySteps(mode: WorkflowMode): WizardStep[] {
-  return mode === "quick" ? QUICK_DATA_ENTRY_IDS : DATA_ENTRY_STEP_IDS;
+  if (mode === "showroom") return SHOWROOM_DATA_ENTRY_IDS;
+  if (mode === "quick") return QUICK_DATA_ENTRY_IDS;
+  return DATA_ENTRY_STEP_IDS;
 }
 
 export function isStepInWorkflow(step: WizardStep, mode: WorkflowMode): boolean {
@@ -63,4 +78,15 @@ export function getFirstActiveStep(mode: WorkflowMode, input: BusinessCaseInput)
   const steps = getWorkflowSteps(mode);
   const incomplete = steps.find((step) => !isStepComplete(step, input));
   return incomplete ?? "dashboard";
+}
+
+export function parseWorkflowMode(value: string | null): WorkflowMode | null {
+  if (value === "showroom" || value === "quick" || value === "full") return value;
+  return null;
+}
+
+export function workflowModeLabel(mode: WorkflowMode): string {
+  if (mode === "showroom") return "Showroom";
+  if (mode === "quick") return "Quick";
+  return "Full";
 }

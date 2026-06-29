@@ -48,6 +48,7 @@ export function TradeInStep() {
   const tradeIn = useCaseStore((s) => s.result.tradeIn);
   const input = useCaseStore((s) => s.input);
   const result = useCaseStore((s) => s.result);
+  const workflowMode = useCaseStore((s) => s.workflowMode);
   const current = input.current;
   const fleetCount = input.assumptions.fleetVehicleCount ?? 1;
   const additionalCashPerVehicle = input.tradeIn?.additionalCashDeposit ?? 0;
@@ -60,7 +61,7 @@ export function TradeInStep() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <ValidationAlerts messages={validationMessages} step="trade-in" />
-      <MarketSyncCard />
+      {workflowMode !== "showroom" && <MarketSyncCard />}
       <div>
         <h2 className="text-lg font-semibold">Trade-In Calculator</h2>
         <p className="text-sm text-muted-foreground">
