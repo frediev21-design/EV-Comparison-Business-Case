@@ -57,9 +57,9 @@ export function AppHeader({ onMenuClick }: AppHeaderProps) {
           <Button variant="ghost" size="icon" className="lg:hidden" onClick={onMenuClick}>
             <Menu className="h-5 w-5" />
           </Button>
-          <div>
-            <h1 className="text-sm font-semibold lg:text-base">{vehicleComparison}</h1>
-            <p className="text-xs text-muted-foreground">
+          <div className="min-w-0 flex-1">
+            <h1 className="truncate text-sm font-semibold lg:text-base">{vehicleComparison}</h1>
+            <p className="hidden truncate text-xs text-muted-foreground sm:block">
               {showScenarioName && <span>{caseName} · </span>}
               {tags.length > 0 && <span>{tags.join(" · ")}</span>}
               {tags.length > 0 && lastSavedAt && <span className="mx-1.5">·</span>}
@@ -69,9 +69,9 @@ export function AppHeader({ onMenuClick }: AppHeaderProps) {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
           <OpenAnalysisMenu />
-          <Button variant="ghost" size="sm" className="hidden sm:flex" asChild>
+          <Button variant="ghost" size="sm" className="hidden md:flex" asChild>
             <Link href="/cases">
               <LayoutGrid className="mr-2 h-4 w-4" />
               My analyses

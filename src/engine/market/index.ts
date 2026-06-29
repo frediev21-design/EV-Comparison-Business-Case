@@ -11,6 +11,7 @@ import {
   findUsedVehicle,
   searchNewVehicles,
   listNewVehicleLabels,
+  MARKET_DATA_AS_OF,
   type CuratedNewVehicle,
   type CuratedUsedVehicle,
 } from "./curated-data";
@@ -293,4 +294,4 @@ export function buildMarketExecutiveSummary(
   };
 }
 
-export { MARKET_RATING_LABELS, searchNewVehicles, listNewVehicleLabels };
+export { MARKET_RATING_LABELS, searchNewVehicles, listNewVehicleLabels, MARKET_DATA_AS_OF };

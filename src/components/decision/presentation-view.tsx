@@ -1,14 +1,13 @@
 "use client";
 
 import { useCaseStore } from "@/store/case-store";
-import { ExecutiveScoreCard } from "@/components/decision/executive-score-card";
-import { DecisionTrafficLight } from "@/components/decision/decision-traffic-light";
+import { buildVehicleComparisonLabel } from "@/lib/case-labels";
+import { ExecutiveDashboardHero } from "@/components/dashboard/executive-dashboard-hero";
+import { DashboardKpiStrip } from "@/components/dashboard/dashboard-kpi-strip";
 import { BoardSummaryPanel } from "@/components/decision/board-summary-panel";
-import { KpiCard } from "@/components/kpi/kpi-card";
 import { ChartSuite } from "@/components/charts/chart-suite";
 import { RecommendationCard } from "@/components/dashboard/recommendation-card";
 import { MonthlyRepaymentComparisonCard } from "@/components/dashboard/monthly-repayment-comparison-card";
-import { formatCurrency } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { X, Presentation } from "lucide-react";
 
@@ -16,12 +15,11 @@ export function PresentationView() {
   const decision = useCaseStore((s) => s.result.decision);
   const kpis = useCaseStore((s) => s.result.kpis);
   const tradeIn = useCaseStore((s) => s.result.tradeIn);
-  const solar = useCaseStore((s) => s.result.solar);
-  const selected = useCaseStore((s) =>
-    s.input.replacements.find((v) => v.id === s.input.selectedReplacementId)
-  );
+  const input = useCaseStore((s) => s.input);
+  const selected = input.replacements.find((v) => v.id === input.selectedReplacementId);
   const setPresentationMode = useCaseStore((s) => s.setPresentationMode);
   const caseName = useCaseStore((s) => s.caseName);
+  const comparisonLabel = buildVehicleComparisonLabel(input).replace(" → ", " vs ");
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-background">
@@ -30,7 +28,7 @@ export function PresentationView() {
           <Presentation className="h-5 w-5 text-accent" />
           <div>
             <h1 className="font-semibold">{caseName}</h1>
-            <p className="text-xs text-muted-foreground">Board Presentation Mode</p>
+            <p className="text-xs text-muted-foreground">Total Cost of Ownership — {comparisonLabel}</p>
           </div>
         </div>
         <Button variant="outline" size="sm" onClick={() => setPresentationMode(false)}>
@@ -40,21 +38,17 @@ export function PresentationView() {
       </div>
 
       <div className="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
-        <ExecutiveScoreCard score={decision.investmentScore} />
-        <DecisionTrafficLight trafficLight={decision.trafficLight} />
+        <ExecutiveDashboardHero
+          score={decision.investmentScore}
+          trafficLight={decision.trafficLight}
+        />
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <KpiCard title="Investment Score" value={`${decision.investmentScore.total}/100`} />
-          <KpiCard title="Current Repayment" value={formatCurrency(kpis.currentFinanceInstalment)} subtitle="/ month" />
-          <KpiCard title="Replacement Repayment" value={formatCurrency(kpis.replacementFinanceInstalment)} subtitle="/ month" />
-          <KpiCard title="Monthly Saving" value={formatCurrency(kpis.monthlySaving)} positiveIsGood />
-          <KpiCard title="Annual Saving" value={formatCurrency(kpis.annualSaving)} positiveIsGood />
-          <KpiCard title="10-Year Saving" value={formatCurrency(kpis.tenYearSaving)} positiveIsGood />
-          <KpiCard title="Finance Required" value={formatCurrency(tradeIn.amountFinanced)} />
-          <KpiCard title="Trade Equity" value={formatCurrency(tradeIn.tradeEquity)} />
-          <KpiCard title="Solar Contribution" value={`${solar.solarContributionPercent.toFixed(0)}%`} />
-          <KpiCard title="Break-even" value={kpis.paybackMonths > 0 ? `${kpis.paybackMonths} mo` : "N/A"} />
-        </div>
+        <DashboardKpiStrip
+          monthlySaving={kpis.monthlySaving}
+          amountFinanced={tradeIn.amountFinanced}
+          tenYearSaving={kpis.tenYearSaving}
+          paybackMonths={kpis.paybackMonths}
+        />
 
         <MonthlyRepaymentComparisonCard compact />
         <BoardSummaryPanel summary={decision.boardSummary} />

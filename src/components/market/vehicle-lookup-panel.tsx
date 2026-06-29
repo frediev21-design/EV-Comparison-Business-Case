@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useMarketStore } from "@/store/market-store";
-import { searchNewVehicles, listNewVehicleLabels } from "@/engine/market";
+import { searchNewVehicles, listNewVehicleLabels, MARKET_DATA_AS_OF } from "@/engine/market";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,6 +32,7 @@ export function VehicleLookupPanel() {
         <CardTitle className="text-base">New Vehicle Price Lookup</CardTitle>
         <p className="text-sm text-muted-foreground">
           Search curated SA market data — select a suggestion or type a brand/model.
+          <span className="mt-1 block text-xs">Indicative pricing · dataset updated {MARKET_DATA_AS_OF}</span>
         </p>
       </CardHeader>
       <CardContent className="space-y-4">

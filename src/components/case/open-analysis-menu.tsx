@@ -8,7 +8,7 @@ import { previewScenario, sortScenariosByUpdated } from "@/lib/scenario-preview"
 import { useOpenScenario } from "@/hooks/use-open-scenario";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/format";
-import { FolderOpen, Plus, ChevronDown } from "lucide-react";
+import { FolderOpen, Plus, ChevronDown, LayoutGrid } from "lucide-react";
 
 export function OpenAnalysisMenu() {
   const [open, setOpen] = useState(false);
@@ -50,18 +50,19 @@ export function OpenAnalysisMenu() {
       <Button
         variant="outline"
         size="sm"
-        className="hidden sm:flex"
+        className="px-2 sm:px-3"
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
         aria-haspopup="listbox"
+        aria-label="Open saved analysis"
       >
-        <FolderOpen className="mr-2 h-4 w-4" />
-        Open analysis
-        <ChevronDown className="ml-1 h-4 w-4 opacity-60" />
+        <FolderOpen className="h-4 w-4 sm:mr-2" />
+        <span className="hidden sm:inline">Open analysis</span>
+        <ChevronDown className="ml-1 hidden h-4 w-4 opacity-60 sm:inline" />
       </Button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-lg border border-border bg-card p-2 shadow-lg">
+        <div className="absolute right-0 top-full z-50 mt-2 w-[min(20rem,calc(100vw-2rem))] rounded-lg border border-border bg-card p-2 shadow-lg">
           <p className="px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Saved on this device
           </p>
@@ -100,7 +101,10 @@ export function OpenAnalysisMenu() {
           )}
           <div className="mt-2 flex flex-col gap-1 border-t border-border pt-2">
             <Button asChild variant="ghost" size="sm" className="justify-start" onClick={() => setOpen(false)}>
-              <Link href="/cases">View all analyses</Link>
+              <Link href="/cases">
+                <LayoutGrid className="mr-2 h-4 w-4" />
+                View all analyses
+              </Link>
             </Button>
             <Button asChild variant="ghost" size="sm" className="justify-start" onClick={() => setOpen(false)}>
               <Link href="/case/new?fresh=1">

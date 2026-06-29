@@ -25,6 +25,7 @@ import { DecisionTimeline } from "@/components/decision/decision-timeline";
 import { DecisionAdvisor } from "@/components/decision/decision-advisor";
 import { InfographicPromptPanel } from "./infographic-prompt-panel";
 import { RecommendationSummaryCopyButton } from "./recommendation-summary-panel";
+import { ReplacementComparisonTable } from "./replacement-comparison-table";
 import { QuickModeDefaultsBanner } from "./quick-mode-defaults-banner";
 
 export function ExecutiveDashboard() {
@@ -105,6 +106,8 @@ export function ExecutiveDashboard() {
         tenYearSaving={kpis.tenYearSaving}
         paybackMonths={kpis.paybackMonths}
       />
+
+      <ReplacementComparisonTable />
 
       <SavingsBreakdownCard />
 
