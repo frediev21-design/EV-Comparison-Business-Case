@@ -1,4 +1,4 @@
-const CACHE = "fleet-ev-tco-v1";
+const CACHE = "switchsave-v1";
 const PRECACHE = ["/", "/cases", "/manifest.webmanifest", "/icons/icon.svg"];
 
 self.addEventListener("install", (event) => {

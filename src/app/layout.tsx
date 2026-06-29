@@ -1,10 +1,13 @@
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { AutoSaveProvider } from "@/components/providers/auto-save-provider";
 import { ToastProvider } from "@/components/providers/toast-provider";
 import { PwaProvider } from "@/components/providers/pwa-provider";
+import { DealerProvider } from "@/components/dealer/dealer-provider";
+import { APP_DESCRIPTION, APP_NAME, PAGE_TITLES } from "@/lib/brand";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -12,17 +15,16 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Fleet EV TCO | Compare Your Vehicle vs EV & Hybrid",
-  description:
-    "Free South African vehicle comparison tool. Calculate finance, fuel, trade-in, solar, and total cost of ownership for EV and hybrid replacements.",
+  title: PAGE_TITLES.app,
+  description: APP_DESCRIPTION,
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    title: "Fleet EV TCO",
+    title: APP_NAME,
   },
   openGraph: {
-    title: "Fleet EV TCO — Business Case Calculator",
-    description: "Compare your current vehicle with EV and hybrid replacements in minutes.",
+    title: PAGE_TITLES.home,
+    description: APP_DESCRIPTION,
     type: "website",
   },
 };
@@ -42,7 +44,11 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <ToastProvider>
             <PwaProvider>
-              <AutoSaveProvider>{children}</AutoSaveProvider>
+              <Suspense fallback={null}>
+                <DealerProvider>
+                  <AutoSaveProvider>{children}</AutoSaveProvider>
+                </DealerProvider>
+              </Suspense>
             </PwaProvider>
           </ToastProvider>
         </ThemeProvider>

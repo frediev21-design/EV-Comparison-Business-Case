@@ -1,7 +1,9 @@
 "use client";
 
 import { useCaseStore } from "@/store/case-store";
-import { VEHICLE_PRESETS, createEmptyReplacementVehicle } from "@/store/defaults";
+import { createEmptyReplacementVehicle } from "@/store/defaults";
+import { useDealer } from "@/components/dealer/dealer-provider";
+import type { VehiclePreset } from "@/config/dealers/profiles";
 import { FormField, FormSelect, FormSection, FormSliderField } from "./form-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,8 +30,14 @@ export function ReplacementVehiclesStep() {
   const updateTradeIn = useCaseStore((s) => s.updateTradeIn);
   const removeReplacement = useCaseStore((s) => s.removeReplacement);
   const selectReplacement = useCaseStore((s) => s.selectReplacement);
+  const { vehiclePresets, profile } = useDealer();
 
   const num = (v: string) => parseLocaleNumber(v);
+
+  const addPreset = (preset: VehiclePreset) => {
+    const interestRate = profile?.defaultInterestRate ?? preset.interestRate;
+    addReplacement({ ...preset, interestRate });
+  };
 
   return (
     <div className="space-y-6">
@@ -47,12 +55,12 @@ export function ReplacementVehiclesStep() {
           <Plus className="mr-1 h-3 w-3" />
           Add custom vehicle
         </Button>
-        {VEHICLE_PRESETS.map((preset) => (
+        {vehiclePresets.map((preset) => (
           <Button
             key={preset.name}
             variant="outline"
             size="sm"
-            onClick={() => addReplacement(preset)}
+            onClick={() => addPreset(preset)}
           >
             <Plus className="mr-1 h-3 w-3" />
             {preset.name}

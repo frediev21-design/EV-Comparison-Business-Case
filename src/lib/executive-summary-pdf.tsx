@@ -13,6 +13,7 @@ import type { TrafficLightStatus } from "@/engine/decision/types";
 import { formatCurrency } from "./format";
 import { downloadBlob } from "./export-excel";
 import { MODEL_DISCLAIMER } from "./model-disclaimer";
+import { defaultExportBranding, formatDeveloperCredit, type ExportBranding } from "./brand";
 
 const TRAFFIC_LIGHT_COLOR: Record<TrafficLightStatus, string> = {
   go: "#10b981",
@@ -141,9 +142,10 @@ interface ExecutiveSummaryDocProps {
   input: BusinessCaseInput;
   result: BusinessCaseResult;
   caseName: string;
+  branding: ExportBranding;
 }
 
-function ExecutiveSummaryDocument({ input, result, caseName }: ExecutiveSummaryDocProps) {
+function ExecutiveSummaryDocument({ input, result, caseName, branding }: ExecutiveSummaryDocProps) {
   const selectedName =
     input.replacements.find((v) => v.id === input.selectedReplacementId)?.name ?? "Replacement";
   const currentName = `${input.current.manufacturer} ${input.current.model}`.trim();
@@ -153,7 +155,18 @@ function ExecutiveSummaryDocument({ input, result, caseName }: ExecutiveSummaryD
   return (
     <Document title={`Executive Summary — ${caseName}`}>
       <Page size="A4" style={styles.page}>
-        <Text style={styles.brand}>Fleet EV TCO</Text>
+        {branding.dealerName ? (
+          <>
+            <Text style={{ fontSize: 14, fontWeight: "bold", marginBottom: 2 }}>{branding.dealerName}</Text>
+            {branding.dealerTagline ? (
+              <Text style={{ fontSize: 9, color: "#64748b", marginBottom: 6 }}>{branding.dealerTagline}</Text>
+            ) : null}
+          </>
+        ) : null}
+        <Text style={styles.brand}>
+          {branding.appName}
+          {branding.consultantName ? ` · ${branding.consultantName}` : ""}
+        </Text>
         <Text style={styles.title}>Executive Summary</Text>
         <Text style={styles.meta}>
           {caseName} · {currentName || "Current vehicle"} → {selectedName} ·{" "}
@@ -205,7 +218,11 @@ function ExecutiveSummaryDocument({ input, result, caseName }: ExecutiveSummaryD
         <Text style={styles.sectionTitle}>Recommendation</Text>
         <Text style={styles.recommendation}>{d.executiveRecommendation}</Text>
 
-        <Text style={styles.disclaimer}>{MODEL_DISCLAIMER}</Text>
+        <Text style={styles.disclaimer}>
+          {formatDeveloperCredit(branding)}
+          {"\n"}
+          {MODEL_DISCLAIMER}
+        </Text>
       </Page>
     </Document>
   );
@@ -214,10 +231,11 @@ function ExecutiveSummaryDocument({ input, result, caseName }: ExecutiveSummaryD
 export async function downloadExecutiveSummary(
   input: BusinessCaseInput,
   result: BusinessCaseResult,
-  caseName: string
+  caseName: string,
+  branding: ExportBranding = defaultExportBranding()
 ) {
   const blob = await pdf(
-    <ExecutiveSummaryDocument input={input} result={result} caseName={caseName} />
+    <ExecutiveSummaryDocument input={input} result={result} caseName={caseName} branding={branding} />
   ).toBlob();
   const slug = caseName.replace(/\s+/g, "-").toLowerCase() || "executive-summary";
   downloadBlob(blob, `${slug}-executive-summary.pdf`);

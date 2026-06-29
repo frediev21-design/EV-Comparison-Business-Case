@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { exportToExcel, downloadBlob } from "@/lib/export-excel";
 import { printReport, downloadPdfViaPrint } from "@/lib/export-pdf";
 import { downloadExecutiveSummary } from "@/lib/executive-summary-pdf";
+import { getExportBranding } from "@/lib/dealer-store";
 import { showToast } from "@/lib/toast";
 import { FileDown, FileSpreadsheet, FileText, Printer } from "lucide-react";
 
@@ -25,16 +26,16 @@ export function ReportPanel() {
   const caseName = useCaseStore((s) => s.caseName);
 
   const handleExcel = async (reportType: string) => {
-    const blob = await exportToExcel(input, result, reportType);
+    const blob = await exportToExcel(input, result, reportType, getExportBranding());
     downloadBlob(blob, `${caseName}-${reportType.replace(/\s/g, "-")}.xlsx`);
   };
 
   const handlePdf = (reportType: string) => {
-    downloadPdfViaPrint(input, result, reportType);
+    downloadPdfViaPrint(input, result, reportType, getExportBranding());
   };
 
   const handlePrint = (reportType: string) => {
-    printReport(input, result, reportType);
+    printReport(input, result, reportType, getExportBranding());
   };
 
   return (
@@ -56,7 +57,7 @@ export function ReportPanel() {
             size="sm"
             onClick={async () => {
               try {
-                await downloadExecutiveSummary(input, result, caseName);
+                await downloadExecutiveSummary(input, result, caseName, getExportBranding());
                 showToast("Executive summary downloaded", "success");
               } catch {
                 showToast("Could not generate PDF", "error");

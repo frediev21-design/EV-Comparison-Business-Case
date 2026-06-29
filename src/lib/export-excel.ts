@@ -1,16 +1,19 @@
 import ExcelJS from "exceljs";
 import type { BusinessCaseResult, BusinessCaseInput } from "@/engine/types";
+import { defaultExportBranding, formatDeveloperCredit, type ExportBranding } from "./brand";
 
 export async function exportToExcel(
   input: BusinessCaseInput,
   result: BusinessCaseResult,
-  reportType: string
+  reportType: string,
+  branding: ExportBranding = defaultExportBranding()
 ): Promise<Blob> {
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = "Fleet EV TCO Platform";
+  workbook.creator = branding.dealerName ? `${branding.dealerName} · ${branding.appName}` : branding.appName;
 
   const summary = workbook.addWorksheet("Summary");
-  summary.addRow(["Fleet EV Business Case", reportType]);
+  if (branding.dealerName) summary.addRow([branding.dealerName, branding.dealerTagline ?? ""]);
+  summary.addRow([`${branding.appName} upgrade analysis`, reportType]);
   summary.addRow(["Generated", new Date().toLocaleString()]);
   summary.addRow([]);
   summary.addRow(["KPI", "Value"]);
@@ -25,6 +28,8 @@ export async function exportToExcel(
   summary.addRow(["10-Year NPV", result.kpis.npv10Year]);
   summary.addRow(["Discount Rate %", input.assumptions.discountRate ?? 10.5]);
   summary.addRow(["Payback Months", result.kpis.paybackMonths]);
+  summary.addRow([]);
+  summary.addRow([formatDeveloperCredit(branding)]);
 
   const inputs = workbook.addWorksheet("Inputs");
   inputs.addRow(["Current Vehicle"]);

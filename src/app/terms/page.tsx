@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { PAGE_TITLES, APP_NAME, DEVELOPER_NAME, DEVELOPER_URL } from "@/lib/brand";
 
 export const metadata = {
-  title: "Terms of Use | Fleet EV TCO",
+  title: PAGE_TITLES.terms,
 };
 
 export default function TermsPage() {
@@ -17,8 +18,12 @@ export default function TermsPage() {
 
         <div className="prose prose-sm mt-8 max-w-none space-y-4 text-sm text-muted-foreground">
           <p>
-            By using Fleet EV TCO you agree to these terms. If you do not agree, do not use the
-            application.
+            {APP_NAME} is developed by{" "}
+            <a href={DEVELOPER_URL} className="text-foreground underline" target="_blank" rel="noopener noreferrer">
+              {DEVELOPER_NAME}
+            </a>{" "}
+            ({DEVELOPER_URL.replace(/^https?:\/\//, "")}). By using {APP_NAME} you agree to these
+            terms. If you do not agree, do not use the application.
           </p>
           <h2 className="text-base font-semibold text-foreground">Estimates only</h2>
           <p>

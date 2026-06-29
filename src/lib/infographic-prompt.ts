@@ -3,6 +3,7 @@ import { formatCurrency } from "./format";
 import { isStepComplete } from "./wizard-validation";
 import { buildCurrentVehicleLabel, buildVehicleComparisonLabel } from "./case-labels";
 import { generateRecommendationSummary } from "./recommendation-summary";
+import { APP_NAME } from "./brand";
 
 export function isInfographicPromptReady(input: BusinessCaseInput): boolean {
   return (
@@ -31,10 +32,10 @@ export function generateInfographicPrompt(
   const fleetNote =
     kpis.fleetVehicleCount > 1 ? `\nFleet size: ${kpis.fleetVehicleCount} identical vehicles` : "";
 
-  return `Create a professional single-page infographic for a South African fleet EV business case. Use a clean, modern layout suitable for sharing with a customer or internal decision meeting.
+  return `Create a professional single-page infographic for a South African vehicle upgrade comparison. Use a clean, modern layout suitable for sharing with a customer or internal decision meeting.
 
 ## Brand & style
-- Title: "Fleet EV TCO — Business Case Summary"
+- Title: "${APP_NAME} — Upgrade Summary"
 - Subtitle: "${comparisonLabel}"
 - Colour palette: deep teal (#0f766e) as primary accent, white/light grey background, green for savings, amber for review, red only for negative outcomes
 - Include subtle automotive / energy motifs (not clip-art heavy)

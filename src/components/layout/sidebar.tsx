@@ -31,6 +31,9 @@ import {
   List,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { APP_NAME, APP_TAGLINE } from "@/lib/brand";
+import { DeveloperCredit } from "@/components/layout/developer-credit";
+import { DealerSettings } from "@/components/dealer/dealer-settings";
 
 const STEP_ICONS: Record<WizardStep, React.ComponentType<{ className?: string }>> = {
   current: Car,
@@ -101,8 +104,8 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
             <BarChart3 className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-semibold">Fleet EV TCO</p>
-            <p className="text-xs text-muted-foreground">Business Case Platform</p>
+            <p className="text-sm font-semibold">{APP_NAME}</p>
+            <p className="text-xs text-muted-foreground">{APP_TAGLINE}</p>
           </div>
         </div>
         <div className="mt-4 flex gap-1 rounded-lg bg-muted p-1">
@@ -182,6 +185,10 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
           </div>
         ))}
       </nav>
+      <div className="border-t border-border p-4 no-print">
+        <DealerSettings compact />
+        <DeveloperCredit className="mt-3 block text-[10px]" />
+      </div>
     </aside>
   );
 }

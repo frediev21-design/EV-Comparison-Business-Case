@@ -8,8 +8,9 @@ import { sortScenariosByUpdated } from "@/lib/scenario-preview";
 import { CaseCard } from "./case-card";
 import { Button } from "@/components/ui/button";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { MarketingHeader } from "@/components/layout/marketing-header";
 import { showToast } from "@/lib/toast";
-import { ArrowRight, FolderOpen, Plus } from "lucide-react";
+import { ArrowRight, FolderOpen } from "lucide-react";
 
 export function CasesHome() {
   const [scenarios, setScenarios] = useState<ScenarioRecord[]>([]);
@@ -34,19 +35,7 @@ export function CasesHome() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <header className="border-b border-border">
-        <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 lg:px-6">
-          <Link href="/" className="font-semibold tracking-tight hover:opacity-80">
-            Fleet EV TCO
-          </Link>
-          <Button asChild>
-            <Link href="/case/new?fresh=1">
-              <Plus className="mr-2 h-4 w-4" />
-              New analysis
-            </Link>
-          </Button>
-        </div>
-      </header>
+      <MarketingHeader ctaLabel="New analysis" ctaHref="/case/new?fresh=1" />
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 lg:px-6">
         <div className="mb-8">

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { APP_NAME } from "@/lib/brand";
 import { Download, X } from "lucide-react";
 
 interface BeforeInstallPromptEvent extends Event {
@@ -36,7 +37,7 @@ function InstallPrompt() {
   return (
     <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto flex max-w-md items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-lg sm:left-auto">
       <div className="flex-1 text-sm">
-        <p className="font-medium">Install Fleet EV TCO</p>
+        <p className="font-medium">Install {APP_NAME}</p>
         <p className="text-muted-foreground">Open your saved analyses from your home screen.</p>
       </div>
       <Button size="sm" onClick={handleInstall}>

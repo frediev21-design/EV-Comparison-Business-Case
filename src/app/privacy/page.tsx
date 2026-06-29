@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { PAGE_TITLES, APP_NAME, DEVELOPER_NAME, DEVELOPER_URL } from "@/lib/brand";
 
 export const metadata = {
-  title: "Privacy Policy | Fleet EV TCO",
+  title: PAGE_TITLES.privacy,
 };
 
 export default function PrivacyPage() {
@@ -17,7 +18,12 @@ export default function PrivacyPage() {
 
         <div className="prose prose-sm mt-8 max-w-none space-y-4 text-sm text-muted-foreground">
           <p>
-            Fleet EV TCO is designed to run primarily in your browser. Business case inputs,
+            {APP_NAME} is developed by{" "}
+            <a href={DEVELOPER_URL} className="text-foreground underline" target="_blank" rel="noopener noreferrer">
+              {DEVELOPER_NAME}
+            </a>{" "}
+            ({DEVELOPER_URL.replace(/^https?:\/\//, "")}) and is designed to run primarily in your
+            browser. Vehicle comparison inputs,
             scenarios, and calculations are stored locally on your device using IndexedDB unless you
             choose to export data.
           </p>

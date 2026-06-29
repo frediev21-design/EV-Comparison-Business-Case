@@ -1,7 +1,7 @@
 {
-  "name": "Fleet EV TCO",
-  "short_name": "Fleet EV TCO",
-  "description": "Compare your current vehicle with EV and hybrid replacements — finance, fuel, trade-in, and TCO.",
+  "name": "SwitchSave",
+  "short_name": "SwitchSave",
+  "description": "See what switching saves — compare ICE, PHEV and EV upgrades. Developed by Prodexa360.",
   "start_url": "/cases",
   "display": "standalone",
   "background_color": "#ffffff",

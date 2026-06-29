@@ -1,11 +1,27 @@
 import type { BusinessCaseResult, BusinessCaseInput } from "@/engine/types";
 import { formatCurrency } from "./format";
 import { MODEL_DISCLAIMER } from "./model-disclaimer";
+import { defaultExportBranding, formatDeveloperCredit, type ExportBranding } from "./brand";
+
+function renderBrandingHeader(branding: ExportBranding): string {
+  const parts: string[] = [];
+  if (branding.dealerName) {
+    parts.push(`<div style="font-size: 18px; font-weight: 700; margin-bottom: 2px;">${branding.dealerName}</div>`);
+    if (branding.dealerTagline) {
+      parts.push(`<div style="font-size: 12px; color: #64748b; margin-bottom: 8px;">${branding.dealerTagline}</div>`);
+    }
+  }
+  const meta = [branding.appName, branding.consultantName].filter(Boolean).join(" · ");
+  parts.push(`<div style="font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">${meta}</div>`);
+  parts.push(`<div style="font-size: 10px; color: #94a3b8; margin-bottom: 24px;">${formatDeveloperCredit(branding)}</div>`);
+  return parts.join("");
+}
 
 export function generatePrintHtml(
   input: BusinessCaseInput,
   result: BusinessCaseResult,
-  reportType: string
+  reportType: string,
+  branding: ExportBranding = defaultExportBranding()
 ): string {
   const selectedName =
     input.replacements.find((v) => v.id === input.selectedReplacementId)?.name ?? "Replacement";
@@ -14,7 +30,7 @@ export function generatePrintHtml(
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>${reportType} - Fleet EV TCO</title>
+  <title>${reportType} - ${branding.appName}</title>
   <style>
     body { font-family: Inter, system-ui, sans-serif; padding: 40px; color: #1a1a2e; }
     h1 { font-size: 24px; margin-bottom: 4px; }
@@ -32,6 +48,7 @@ export function generatePrintHtml(
   </style>
 </head>
 <body>
+  ${renderBrandingHeader(branding)}
   <h1>${reportType}</h1>
   <p class="meta">Generated ${new Date().toLocaleString()} · ${input.current.manufacturer} ${input.current.model} → ${selectedName}</p>
 
@@ -84,13 +101,21 @@ export function generatePrintHtml(
     ).join("") ?? ""}
   </table>` : ""}
 
-  <p class="meta" style="margin-top: 48px; border-top: 1px solid #e2e8f0; padding-top: 16px;">${MODEL_DISCLAIMER}</p>
+  <p class="meta" style="margin-top: 48px; border-top: 1px solid #e2e8f0; padding-top: 16px;">
+    ${formatDeveloperCredit(branding)}<br />
+    ${MODEL_DISCLAIMER}
+  </p>
 </body>
 </html>`;
 }
 
-export function printReport(input: BusinessCaseInput, result: BusinessCaseResult, reportType: string) {
-  const html = generatePrintHtml(input, result, reportType);
+export function printReport(
+  input: BusinessCaseInput,
+  result: BusinessCaseResult,
+  reportType: string,
+  branding?: ExportBranding
+) {
+  const html = generatePrintHtml(input, result, reportType, branding);
   const win = window.open("", "_blank");
   if (win) {
     win.document.write(html);
@@ -100,8 +125,13 @@ export function printReport(input: BusinessCaseInput, result: BusinessCaseResult
   }
 }
 
-export function downloadPdfViaPrint(input: BusinessCaseInput, result: BusinessCaseResult, reportType: string) {
-  printReport(input, result, reportType);
+export function downloadPdfViaPrint(
+  input: BusinessCaseInput,
+  result: BusinessCaseResult,
+  reportType: string,
+  branding?: ExportBranding
+) {
+  printReport(input, result, reportType, branding);
 }
 
 /** Combined executive board pack for CFO / board presentations. */

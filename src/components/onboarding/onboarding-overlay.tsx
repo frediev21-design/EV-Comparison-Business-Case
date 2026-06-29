@@ -5,7 +5,9 @@ import { useCaseStore } from "@/store/case-store";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BarChart3, Car, X } from "lucide-react";
 
-const STORAGE_KEY = "fleet-ev-tco-onboarded";
+import { APP_NAME, APP_TAGLINE } from "@/lib/brand";
+
+const STORAGE_KEY = "switchsave-onboarded";
 
 export function OnboardingOverlay() {
   const [visible, setVisible] = useState(false);
@@ -51,9 +53,9 @@ export function OnboardingOverlay() {
         >
           <X className="h-4 w-4" />
         </button>
-        <h2 className="text-xl font-bold">Welcome to Fleet EV TCO</h2>
+        <h2 className="text-xl font-bold">Welcome to {APP_NAME}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Compare your current vehicle with EV or hybrid replacements in a few steps.
+          {APP_TAGLINE}. Compare your current vehicle with EV or PHEV replacements in a few steps.
         </p>
         <ol className="mt-6 space-y-4">
           {[
