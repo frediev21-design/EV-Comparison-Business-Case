@@ -80,6 +80,14 @@ export function TradeInStep() {
         </div>
       )}
 
+      {tradeIn.tradeEquity < 0 && (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm">
+          You have{" "}
+          <span className="font-semibold tabular-nums">{formatCurrency(Math.abs(tradeIn.tradeEquity))}</span>{" "}
+          negative equity — the shortfall is added to the replacement finance amount.
+        </div>
+      )}
+
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField
           label="Current Vehicle Value"
@@ -128,7 +136,11 @@ export function TradeInStep() {
           <div className="flex justify-center py-1">
             <Equal className="h-4 w-4 text-muted-foreground" />
           </div>
-          <WaterfallRow label="Trade Equity" value={tradeIn.tradeEquity} variant="positive" />
+          <WaterfallRow
+            label="Trade Equity"
+            value={tradeIn.tradeEquity}
+            variant={tradeIn.tradeEquity < 0 ? "negative" : "positive"}
+          />
           <div className="flex justify-center py-1">
             <Plus className="h-4 w-4 text-muted-foreground" />
           </div>
@@ -143,7 +155,11 @@ export function TradeInStep() {
           <div className="flex justify-center py-1">
             <Equal className="h-4 w-4 text-muted-foreground" />
           </div>
-          <WaterfallRow label="Total Deposit Available" value={tradeIn.totalDeposit} variant="highlight" />
+          <WaterfallRow
+            label="Total Deposit Available"
+            value={tradeIn.totalDeposit}
+            variant={tradeIn.totalDeposit < 0 ? "negative" : "highlight"}
+          />
           <div className="my-4 border-t border-border" />
           <WaterfallRow label="Vehicle Price" value={tradeIn.vehiclePrice} />
           <WaterfallRow label="Amount Financed" value={tradeIn.amountFinanced} variant="highlight" />

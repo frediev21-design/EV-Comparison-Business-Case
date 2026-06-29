@@ -38,17 +38,22 @@ export function getCaseValidationMessages(
     });
   }
 
-  if (current.outstandingFinance > current.currentValue * 0.9) {
+  if (result.tradeIn.tradeEquity < 0) {
     messages.push({
       id: "negative-equity",
+      severity: "warning",
+      message: `Outstanding finance exceeds trade value by ${Math.abs(result.tradeIn.tradeEquity).toLocaleString("en-ZA", { style: "currency", currency: "ZAR", maximumFractionDigits: 0 })} — this shortfall is added to the replacement finance amount.`,
+      step: "trade-in",
+    });
+  } else if (current.outstandingFinance > current.currentValue * 0.9 && current.currentValue > 0) {
+    messages.push({
+      id: "low-equity-buffer",
       severity: "warning",
       message:
         "Outstanding finance is close to trade value — very little equity for the replacement deposit.",
       step: "trade-in",
     });
-  }
-
-  if (result.tradeIn.tradeEquity < 50000 && current.currentValue > 0) {
+  } else if (result.tradeIn.tradeEquity < 50000 && current.currentValue > 0) {
     messages.push({
       id: "low-equity",
       severity: "warning",

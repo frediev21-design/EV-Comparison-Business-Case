@@ -30,6 +30,25 @@ describe("trade-in engine", () => {
     expect(result.totalDeposit).toBe(548000);
     expect(result.amountFinanced).toBe(412000);
   });
+
+  it("rolls negative equity into amount financed when owing more than trade value", () => {
+    const input = createDefaultBusinessCase();
+    input.current.currentValue = 320000;
+    input.current.tradeInValue = 320000;
+    input.current.outstandingFinance = 386000;
+    input.replacements[0].price = 520000;
+    input.tradeIn.additionalCashDeposit = 0;
+
+    const result = calculateTradeIn(
+      input.current,
+      input.tradeIn,
+      input.replacements[0]
+    );
+
+    expect(result.tradeEquity).toBe(-66000);
+    expect(result.totalDeposit).toBe(-66000);
+    expect(result.amountFinanced).toBe(586000);
+  });
 });
 
 describe("full business case", () => {

@@ -9,7 +9,7 @@ export function calculateTradeIn(
   const currentVehicleValue =
     overrides?.tradeValue ?? current.tradeInValue ?? current.currentValue;
   const outstandingFinance = overrides?.outstandingFinance ?? current.outstandingFinance;
-  const tradeEquity = Math.max(0, currentVehicleValue - outstandingFinance);
+  const tradeEquity = currentVehicleValue - outstandingFinance;
   const additionalCash = tradeIn.additionalCashDeposit;
   const totalDeposit = tradeEquity + additionalCash;
   const vehiclePrice = replacement?.price ?? 0;
